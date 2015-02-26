@@ -1,0 +1,40 @@
+meta:
+    yaml_version: 2.1
+    kind: pbs
+cloudmesh:
+    pbs:
+      india:
+        manager: india 
+        queues:
+        - batch
+        - long
+        - b534
+        - systest
+        - reserved
+        - interactive
+      echo:
+        manager: india
+        queues:
+        - echo
+      delta:
+        manager: india
+        queues:
+        - delta
+        - delta-long
+      bravo:
+        manager: india
+        queues:
+        - bravo
+        - bravo-long
+      quarry:
+         manager: quarry
+      bigred:
+         manager: bigred
+      gordon:
+         manager: gordon
+      karst:
+         manager: karst
+      drebber:
+         manager: drebber
+      blacklight:
+         manager: blacklight
