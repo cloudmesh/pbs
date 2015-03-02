@@ -1,5 +1,5 @@
 from __future__ import print_function
-from cloudmesh.config.ConfigDict import ConfigDict
+from cloudmesh_base.ConfigDict import ConfigDict
 from cloudmesh_install import config_file
 from cloudmesh_pbs.api.xshellutil import xcopy, xmkdir
 from cloudmesh.shell.Shell import Shell
@@ -7,9 +7,32 @@ from api.ssh_config import ssh_config
 from xml.dom import minidom
 import json
 from string import Template
+import os
 
 class PBS(object):
 
+    id_file = "id.txt"
+    
+    def jobid_set(self, id):
+        with open(self.id_file, "w") as text_file:
+            text_file.write('%s' % id)
+    
+    def jobid_get(self):
+        try:
+            with open(self.id_file, "r") as f:
+                content = f.read()
+        except:
+            self.jobid_set(0)
+            content = 0
+        self.id = content
+            
+        return content
+    
+    def jobid_incr(self):
+        id = self.jobid_get()
+        id = int(id)+1
+        self.jobid_set(id)
+        
     def load(self):
         self.filename = config_file("/cloudmesh_pbs.yaml")
         self.data = ConfigDict(filename=self.filename)
@@ -19,7 +42,8 @@ class PBS(object):
         if deploy:
             self.deploy()
         self.load()
-
+        self.id = self.jobid_get()
+        
     def __str__(self):
         return self.data.json()
 
@@ -34,7 +58,7 @@ class PBS(object):
         return self.data["cloudmesh"]["pbs"].keys()
 
     def queues(self, server):
-        server = config.data["cloudmesh"]["pbs"][server]
+        server = pbs.data["cloudmesh"]["pbs"][server]
         if "queues" in server:
             return server["queues"]
         else:
@@ -111,15 +135,40 @@ class PBS(object):
     def username(self, host):
         return self.hosts.username(host)
 
+    def _write_to_file(self, script, filename):
+        with open(filename, "w") as text_file:
+            text_file.write('%s' % script)
     
-    def qsub(self, script, template=None):
+    def qsub(self,  name, host, script, template=None):
+        self.jobid_incr()
+        jobscript = self.create_script(name, script, template)
+        
+        # copy the script to the remote host
+        self._write_to_file(jobscript, name)
+        # copy script to remote host
+        
+        host = "india"
+        remote_path = self.data.get("cloudmesh", "pbs", host, "scripts")
+        
+        print (remote_path)
+        xmkdir(host, remote_path)
+        
+        print ("pp")
+        # call qsub on the remot host
+        r = Shell.scp("-v", name, host +":" + remote_path)
+        print (r)
+        
+        r = Shell.ssh(host, "qsub {0}/{1}".format(remote_path, name))
+        print (r)
         pass
 
-    def create_script(self, script, template=None):
+    def create_script(self, name, script, template=None):
         if template is None:
             template_script = script        
         data = {}
         data['script'] = script
+        data['name'] = name
+        
         result = template.format(**data)
         return result
     
@@ -136,31 +185,48 @@ class PBS(object):
             
 if __name__ == "__main__":
 
-    config = PBS(deploy=True)
+    pbs = PBS(deploy=True)
 
-    print(config)
+    print(pbs)
 
-    script_template = config.read_script("etc/job.pbs")
+    script_template = pbs.read_script("etc/job.pbs")
     print (script_template)
     
     script = """
     uname -a
     """
     
-    job_script = config.create_script(script, script_template)
+    jobname = "job-" + pbs.jobid_get()
+    job_script = pbs.create_script(jobname, script, script_template)
     
     print(job_script)
 
-    xmkdir("india", "~/scripts/test")
+    # xmkdir("india", "~/scripts/test")
+    
+    
+    print(pbs.jobid_get())
+    pbs.jobid_set(100)
+    print(pbs.jobid_get())
+    pbs.jobid_incr()
+    
+    
+    
+    jobname = "job-" + pbs.jobid_get() + ".pbs"
+    pbs.qsub(jobname, "india", 'echo "Hello"', template=script_template)
+    
+    
+    
+    #os.system ("cat " + jobname)
+    print()
     
     '''
-    print("Hosts:", config.servers())
-    print ("Queues", config.queues("delta"))
-    print ("Queues", config.queues("karst"))
+    print("Hosts:", pbs.servers())
+    print ("Queues", pbs.queues("delta"))
+    print ("Queues", pbs.queues("karst"))
 
-    print(config.qstat("india"))
-    print(config.qstat("india", user="*"))
-    print(config.qstat("india", user="*", format="xml"))
-    print(json.dumps(config.qstat("india", user="*", format="dict"), indent=4))
-    print(config.username("bigred"))
+    print(pbs.qstat("india"))
+    print(pbs.qstat("india", user="*"))
+    print(pbs.qstat("india", user="*", format="xml"))
+    print(json.dumps(pbs.qstat("india", user="*", format="dict"), indent=4))
+    print(pbs.username("bigred"))
     '''
