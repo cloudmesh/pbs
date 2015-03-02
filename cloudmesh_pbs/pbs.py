@@ -1,11 +1,12 @@
 from __future__ import print_function
 from cloudmesh.config.ConfigDict import ConfigDict
 from cloudmesh_install import config_file
-from api.xshellutil import xcopy
+from api.xshellutil import xcopy, xmkdir
 from cloudmesh.shell.Shell import Shell
 from api.ssh_config import ssh_config
 from xml.dom import minidom
 import json
+from string import Template
 
 class PBS(object):
 
@@ -110,12 +111,49 @@ class PBS(object):
     def username(self, host):
         return self.hosts.username(host)
 
+    
+    def qsub(self, script, template=None):
+        pass
+
+    def create_script(self, script, template=None):
+        if template is None:
+            template_script = script        
+        data = {}
+        data['script'] = script
+        result = template.format(**data)
+        return result
+    
+    def read_script(self, filename, user=None, host='localhost'):
+        if host in ['localhost'] and user is None:
+            with file(filename) as f:
+                content = f.read()
+        else:
+            # TODO: copy file from remote host
+            print ("ERROR: not implemented")
+            pass
+
+        return content
+            
 if __name__ == "__main__":
 
     config = PBS(deploy=True)
 
     print(config)
 
+    script_template = config.read_script("etc/job.pbs")
+    print (script_template)
+    
+    script = """
+    uname -a
+    """
+    
+    job_script = config.create_script(script, script_template)
+    
+    print(job_script)
+
+    xmkdir("india", "~/scripts/test")
+    
+    '''
     print("Hosts:", config.servers())
     print ("Queues", config.queues("delta"))
     print ("Queues", config.queues("karst"))
@@ -125,3 +163,4 @@ if __name__ == "__main__":
     print(config.qstat("india", user="*", format="xml"))
     print(json.dumps(config.qstat("india", user="*", format="dict"), indent=4))
     print(config.username("bigred"))
+    '''

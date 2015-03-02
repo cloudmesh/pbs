@@ -2,6 +2,7 @@ from __future__ import print_function
 import glob
 import os.path
 import shutil
+from cloudmesh_base.Shell import Shell
 
 def xcopy(src_dir, dest_dir, pattern, force=True):
     """copies all files matching a glob pattern such as *.yaml from
@@ -20,3 +21,12 @@ def xcopy(src_dir, dest_dir, pattern, force=True):
             print("Warning: {0} exists in {1}. "
                   "Ignoring copy.".format(file,
                                           os.path.join(os.path.split(_dest_dir)[-2:])))
+
+def xmkdir(host, path):
+    try:
+        r = Shell.ssh("user@host", "mkdir -p {0}".format(path))    
+        print (r)
+    except Exception as e:
+        print (e)
+        
+    

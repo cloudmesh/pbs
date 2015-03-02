@@ -4,7 +4,8 @@ meta:
 cloudmesh:
     pbs:
       india:
-        manager: india 
+        manager: india
+	      scripts: ~/qsub/india
         queues:
         - batch
         - long
@@ -14,27 +15,36 @@ cloudmesh:
         - interactive
       echo:
         manager: india
+	      scripts: ~/qsub/echo	
         queues:
         - echo
       delta:
         manager: india
+	      scripts: ~/qsub/delta	
         queues:
         - delta
         - delta-long
       bravo:
         manager: india
+	      scripts: ~/qsub/bravo	
         queues:
         - bravo
         - bravo-long
       quarry:
          manager: quarry
+	       scripts: ~/qsub/quarry	 
       bigred:
          manager: bigred
+	       scripts: ~/qsub/bigred	 
       gordon:
          manager: gordon
+	       scripts: ~/qsub/gordon	 
       karst:
          manager: karst
+	       scripts: ~/qsub/karst	 
       drebber:
          manager: drebber
+	       scripts: ~/qsub/drebber	 
       blacklight:
          manager: blacklight
+	       scripts: ~/qsub/backlight	 

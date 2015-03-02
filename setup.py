@@ -28,7 +28,7 @@ class InstallFancy(install):
 setup(
     name='cloudmesh_pbs',
     version=__import__('cloudmesh').version(),
-    description='A simple pbs queue management framework for multiple supercomputers",
+    description='A simple pbs queue management framework for multiple supercomputers',
     # description-file =
     #    README.rst
     author='Cloudmesh Team',
