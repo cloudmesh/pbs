@@ -1,7 +1,7 @@
 from __future__ import print_function
 from cloudmesh.config.ConfigDict import ConfigDict
 from cloudmesh_install import config_file
-from api.xshellutil import xcopy, xmkdir
+from cloudmesh_pbs.api.xshellutil import xcopy, xmkdir
 from cloudmesh.shell.Shell import Shell
 from api.ssh_config import ssh_config
 from xml.dom import minidom

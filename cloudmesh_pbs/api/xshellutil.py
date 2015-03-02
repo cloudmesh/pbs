@@ -3,6 +3,7 @@ import glob
 import os.path
 import shutil
 from cloudmesh_base.Shell import Shell
+from cloudmesh_pbs.api.ssh_config import ssh_config
 
 def xcopy(src_dir, dest_dir, pattern, force=True):
     """copies all files matching a glob pattern such as *.yaml from
@@ -24,7 +25,8 @@ def xcopy(src_dir, dest_dir, pattern, force=True):
 
 def xmkdir(host, path):
     try:
-        r = Shell.ssh("user@host", "mkdir -p {0}".format(path))    
+        hosts = ssh_config()
+        r = hosts.execute("india", "mkdir -p {0}".format(path))
         print (r)
     except Exception as e:
         print (e)
