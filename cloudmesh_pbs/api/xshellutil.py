@@ -26,7 +26,7 @@ def xcopy(src_dir, dest_dir, pattern, force=True):
 def xmkdir(host, path):
     try:
         hosts = ssh_config()
-        r = hosts.execute("india", "mkdir -p {0}".format(path))
+        r = hosts.execute(host, "mkdir -p {0}".format(path))
         print (r)
     except Exception as e:
         print (e)

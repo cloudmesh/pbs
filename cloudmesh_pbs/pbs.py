@@ -1,14 +1,20 @@
 from __future__ import print_function
-from cloudmesh_base.ConfigDict import ConfigDict
-from cloudmesh_install import config_file
-from cloudmesh_pbs.api.xshellutil import xcopy, xmkdir
-from cloudmesh.shell.Shell import Shell
-from api.ssh_config import ssh_config
-from xml.dom import minidom
+
 import json
-from string import Template
 import os
 from pprint import pprint
+from string import Template
+import sys
+from xml.dom import minidom
+
+from cloudmesh.shell.Shell import Shell
+from cloudmesh_base.ConfigDict import ConfigDict
+from cloudmesh_install import config_file
+
+from api.ssh_config import ssh_config
+from cloudmesh_pbs.api.xshellutil import xcopy, xmkdir
+from cloudmesh_pbs.database import pbs_shelve
+
 
 class PBS(object):
 
@@ -115,17 +121,18 @@ class PBS(object):
 
     def qstat(self, host, user=None, format=None):
         data = None
+        manager_host = self.manager(host)
         if user == "*":
             if format == None:
-                data = Shell.ssh(host, "qstat").rstrip()
+                data = Shell.ssh(manager_host, "qstat").rstrip()
             elif format in ["xml", "dict"]:
-                data = Shell.ssh(host, "qstat", "-x").rstrip()
+                data = Shell.ssh(manager_host, "qstat", "-x").rstrip()
         elif user == None:
-            user = self.username(host)
+            user = self.username(manager_host)
             if format == None:
-                data = Shell.ssh(host, "qstat", "-u", user).rstrip()
+                data = Shell.ssh(manager_host, "qstat", "-u", user).rstrip()
             elif format in ["xml", "dict"]:
-                data = Shell.ssh(host, "qstat", "-x", "-u", user).rstrip()
+                data = Shell.ssh(manager_host, "qstat", "-x", "-u", user).rstrip()
             else:
                 print ("ERROR: cloudmesh qstat parameters wrong")
         if format in ["dict"]:
@@ -135,6 +142,9 @@ class PBS(object):
 
     def username(self, host):
         return self.hosts.username(host)
+    
+    def manager(self, host):
+        return self.data.get("cloudmesh", "pbs", host, "manager")
 
     def _write_to_file(self, script, filename):
         with open(filename, "w") as text_file:
@@ -148,18 +158,19 @@ class PBS(object):
         self._write_to_file(jobscript, name)
         # copy script to remote host
         
-        host = "india"
         remote_path = self.data.get("cloudmesh", "pbs", host, "scripts")
         
         print (remote_path)
         xmkdir(host, remote_path)
         
+        manager_host = self.manager(host)
+        
         # call qsub on the remot host
-        r = Shell.scp("-v", name, host +":" + remote_path)        
-        jobid = Shell.ssh(host, "qsub {0}/{1}".format(remote_path, name)).rstrip()
+        r = Shell.scp(name, manager_host +":" + remote_path)        
+        jobid = Shell.ssh(manager_host, "qsub {0}/{1}".format(remote_path, name)).rstrip()
         
         
-        qstat_xml_data = Shell.ssh(host, "qstat", "-x",  jobid).rstrip() 
+        qstat_xml_data = Shell.ssh(manager_host, "qstat", "-x",  jobid).rstrip() 
             
         if kind == 'xml':
             r = qstat_xml_data
@@ -170,6 +181,10 @@ class PBS(object):
             r = yaml.dump(r, default_flow_style=False)
         return r
 
+    def getid(self, data):
+        key = data.keys()[0]
+        return key
+    
     def variable_list(self, data):
         key = data.keys()[0]
         var_list = data[key]['Variable_List'].split(',')
@@ -204,7 +219,15 @@ class PBS(object):
             
 if __name__ == "__main__":
 
+    # TODO: when hosts are bravo, echo, delta, the manager need sto be used to ssh
+
+    host = "bravo" 
+    
     pbs = PBS(deploy=True)
+    manager = pbs.manager(host)
+    xmkdir(manager, "~/scripts/test")
+
+    sys.exit()
 
     print(pbs)
 
@@ -220,7 +243,6 @@ if __name__ == "__main__":
     
     print(job_script)
 
-    # xmkdir("india", "~/scripts/test")
     
     
     print(pbs.jobid_get())
@@ -231,21 +253,29 @@ if __name__ == "__main__":
     
     
     jobname = "job-" + pbs.jobid_get() + ".pbs"
-    r = pbs.qsub(jobname, "india", 'echo "Hello"', template=script_template)
+    r = pbs.qsub(jobname, host, 'echo "Hello"', template=script_template)
     pprint(r)
     pprint(pbs.variable_list(r))
     
     #os.system ("cat " + jobname)
     print()
     
+    db = pbs_shelve("pbd.shelve")
+    
+    id = pbs.getid(r)
+    
+    db[id] = r 
+    
+    print (db[id])
+    
     '''
     print("Hosts:", pbs.servers())
     print ("Queues", pbs.queues("delta"))
     print ("Queues", pbs.queues("karst"))
 
-    print(pbs.qstat("india"))
-    print(pbs.qstat("india", user="*"))
-    print(pbs.qstat("india", user="*", format="xml"))
-    print(json.dumps(pbs.qstat("india", user="*", format="dict"), indent=4))
+    print(pbs.qstat(host))
+    print(pbs.qstat(host, user="*"))
+    print(pbs.qstat(host, user="*", format="xml"))
+    print(json.dumps(pbs.qstat(host, user="*", format="dict"), indent=4))
     print(pbs.username("bigred"))
     '''
