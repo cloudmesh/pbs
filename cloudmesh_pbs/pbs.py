@@ -8,6 +8,7 @@ from xml.dom import minidom
 import json
 from string import Template
 import os
+from pprint import pprint
 
 class PBS(object):
 
@@ -24,9 +25,9 @@ class PBS(object):
         except:
             self.jobid_set(0)
             content = 0
-        self.id = content
-            
-        return content
+        self.id = content.strip()
+        
+        return self.id
     
     def jobid_incr(self):
         id = self.jobid_get()
@@ -139,7 +140,7 @@ class PBS(object):
         with open(filename, "w") as text_file:
             text_file.write('%s' % script)
     
-    def qsub(self,  name, host, script, template=None):
+    def qsub(self,  name, host, script, template=None, kind="dict"):
         self.jobid_incr()
         jobscript = self.create_script(name, script, template)
         
@@ -153,15 +154,33 @@ class PBS(object):
         print (remote_path)
         xmkdir(host, remote_path)
         
-        print ("pp")
         # call qsub on the remot host
-        r = Shell.scp("-v", name, host +":" + remote_path)
-        print (r)
+        r = Shell.scp("-v", name, host +":" + remote_path)        
+        jobid = Shell.ssh(host, "qsub {0}/{1}".format(remote_path, name)).rstrip()
         
-        r = Shell.ssh(host, "qsub {0}/{1}".format(remote_path, name))
-        print (r)
-        pass
+        
+        qstat_xml_data = Shell.ssh(host, "qstat", "-x",  jobid).rstrip() 
+            
+        if kind == 'xml':
+            r = qstat_xml_data
+        else:    
+            r = self.qstat_xml_to_dict(qstat_xml_data)
+            r[unicode(jobid)][u"cm_jobid"] = self.jobid_get() 
+        if kind == 'yaml':
+            r = yaml.dump(r, default_flow_style=False)
+        return r
 
+    def variable_list(self, data):
+        key = data.keys()[0]
+        var_list = data[key]['Variable_List'].split(',')
+        d = {}
+        for element in var_list:
+            (attribute, value) = element.split('=')
+            d[attribute] = value
+        
+        return d
+         
+        
     def create_script(self, name, script, template=None):
         if template is None:
             template_script = script        
@@ -212,9 +231,9 @@ if __name__ == "__main__":
     
     
     jobname = "job-" + pbs.jobid_get() + ".pbs"
-    pbs.qsub(jobname, "india", 'echo "Hello"', template=script_template)
-    
-    
+    r = pbs.qsub(jobname, "india", 'echo "Hello"', template=script_template)
+    pprint(r)
+    pprint(pbs.variable_list(r))
     
     #os.system ("cat " + jobname)
     print()
