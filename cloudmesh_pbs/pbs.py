@@ -7,13 +7,14 @@ from string import Template
 import sys
 from xml.dom import minidom
 
-from cloudmesh.shell.Shell import Shell
+from cloudmesh_base.Shell import Shell
 from cloudmesh_base.ConfigDict import ConfigDict
-from cloudmesh_install import config_file
+from cloudmesh_base.util import banner
+from cloudmesh_base.locations import config_file
+from cloudmesh_pbs.api.xshellutil import xcopy, xmkdir
+import yaml
 
 from api.ssh_config import ssh_config
-from cloudmesh_pbs.api.xshellutil import xcopy, xmkdir
-from cloudmesh_pbs.database import pbs_shelve
 
 
 class PBS(object):
@@ -119,25 +120,28 @@ class PBS(object):
             pass
         return info
 
-    def qstat(self, host, user=None, format=None):
+    def qstat(self, host, user=True, format='dict'):
         data = None
-        manager_host = self.manager(host)
-        if user == "*":
-            if format == None:
-                data = Shell.ssh(manager_host, "qstat").rstrip()
-            elif format in ["xml", "dict"]:
-                data = Shell.ssh(manager_host, "qstat", "-x").rstrip()
-        elif user == None:
-            user = self.username(manager_host)
-            if format == None:
-                data = Shell.ssh(manager_host, "qstat", "-u", user).rstrip()
-            elif format in ["xml", "dict"]:
-                data = Shell.ssh(manager_host, "qstat", "-x", "-u", user).rstrip()
-            else:
-                print ("ERROR: cloudmesh qstat parameters wrong")
-        if format in ["dict"]:
-            d_data = self.qstat_xml_to_dict(data)
-            data = d_data
+        username = self.username(host)
+        manager_host = self.manager(host)        
+        xml_data = Shell.ssh(manager_host, "qstat", "-x").rstrip()
+        
+        if format == 'dict':
+            data = self.qstat_xml_to_dict(xml_data)
+            selected_data = {}
+            for jobid in data:
+                data[unicode(jobid)][u"cm_jobid"] = jobid
+                (owner, cm_host) = data[jobid]['Job_Owner'].split('@')    
+                if (not user) or (user and owner == username): 
+                    selected_data[unicode(jobid)] = data[unicode(jobid)]
+                    selected_data[unicode(jobid)][u"cm_jobid"] = jobid
+                    selected_data[unicode(jobid)][u"cm_Variable_list"] = self.variable_list(selected_data,jobid)
+            data = selected_data
+        elif format == "xml":
+            if user is not None:
+                print ("WARNING: "
+                       "restrictiong xml data for a user not supported.")
+            data = xml_data
         return data
 
     def username(self, host):
@@ -150,6 +154,20 @@ class PBS(object):
         with open(filename, "w") as text_file:
             text_file.write('%s' % script)
     
+    def jobstatus(self, host, jobid, kind='dict'):
+        manager_host = self.manager(host)
+        qstat_xml_data = Shell.ssh(manager_host, "qstat", "-x",  jobid).rstrip() 
+            
+        if kind == 'xml':
+            r = qstat_xml_data
+        else:    
+            r = self.qstat_xml_to_dict(qstat_xml_data)
+            r[unicode(jobid)][u"cm_jobid"] = self.jobid_get()
+            r[unicode(jobid)]["cm_Variable_list"] = self.variable_list(r)
+        if kind == 'yaml':
+            r = yaml.dump(r, default_flow_style=False)
+        return r
+        
     def qsub(self,  name, host, script, template=None, kind="dict"):
         self.jobid_incr()
         jobscript = self.create_script(name, script, template)
@@ -169,24 +187,17 @@ class PBS(object):
         r = Shell.scp(name, manager_host +":" + remote_path)        
         jobid = Shell.ssh(manager_host, "qsub {0}/{1}".format(remote_path, name)).rstrip()
         
+        return self.jobstatus(host, jobid, kind=kind)
         
-        qstat_xml_data = Shell.ssh(manager_host, "qstat", "-x",  jobid).rstrip() 
-            
-        if kind == 'xml':
-            r = qstat_xml_data
-        else:    
-            r = self.qstat_xml_to_dict(qstat_xml_data)
-            r[unicode(jobid)][u"cm_jobid"] = self.jobid_get() 
-        if kind == 'yaml':
-            r = yaml.dump(r, default_flow_style=False)
-        return r
-
     def getid(self, data):
         key = data.keys()[0]
         return key
     
-    def variable_list(self, data):
-        key = data.keys()[0]
+    def variable_list(self, data, id=None):
+        if id is None:
+            key = data.keys()[0]
+        else:
+            key = id
         var_list = data[key]['Variable_List'].split(',')
         d = {}
         for element in var_list:
@@ -194,7 +205,6 @@ class PBS(object):
             d[attribute] = value
         
         return d
-         
         
     def create_script(self, name, script, template=None):
         if template is None:
@@ -221,13 +231,11 @@ if __name__ == "__main__":
 
     # TODO: when hosts are bravo, echo, delta, the manager need sto be used to ssh
 
-    host = "bravo" 
+    host = "india" 
     
     pbs = PBS(deploy=True)
     manager = pbs.manager(host)
     xmkdir(manager, "~/scripts/test")
-
-    sys.exit()
 
     print(pbs)
 
@@ -251,12 +259,29 @@ if __name__ == "__main__":
     pbs.jobid_incr()
     
     
+    banner('qsub')    
     
     jobname = "job-" + pbs.jobid_get() + ".pbs"
     r = pbs.qsub(jobname, host, 'echo "Hello"', template=script_template)
     pprint(r)
+    banner('variable list')    
     pprint(pbs.variable_list(r))
     
+    
+    
+    banner('status')    
+    jobid = pbs.getid(r)
+    r = pbs.jobstatus(host, jobid)
+    
+    pprint (r)
+    
+    r = pbs.qstat("india")
+    
+    banner("RESULT")
+
+    pprint(r)
+    
+    '''
     #os.system ("cat " + jobname)
     print()
     
@@ -266,7 +291,8 @@ if __name__ == "__main__":
     
     db[id] = r 
     
-    print (db[id])
+    pprint (db[id])
+    '''
     
     '''
     print("Hosts:", pbs.servers())
