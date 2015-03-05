@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 from setuptools.command.install import install
 
 
-version = "2.2.0"
+version = "2.2.2"
 
 requirements =     [
         'cloudmesh_base',             
@@ -17,6 +17,7 @@ requirements =     [
         'pyaml',
         'simplejson',
         'nose',
+        'cmd3',
     ]
 
 
@@ -41,7 +42,7 @@ def auto_create_version():
 auto_create_version()
 
 #
-# AUTOCREATE REQUIREMENTS FROM ARRAY
+# AUTO-CREATE REQUIREMENTS FROM ARRAY
 #
 def auto_create_requirements():
     banner("Creating requirements.txt file")

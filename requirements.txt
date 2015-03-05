@@ -4,3 +4,4 @@ docopt
 pyaml
 simplejson
 nose
+cmd3
