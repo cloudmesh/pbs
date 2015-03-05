@@ -1,0 +1,6 @@
+cloudmesh_base
+sh
+docopt
+pyaml
+simplejson
+nose
