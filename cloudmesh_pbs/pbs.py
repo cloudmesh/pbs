@@ -209,10 +209,8 @@ class PBS(object):
     def create_script(self, name, script, template=None):
         if template is None:
             template_script = script        
-        data = {}
-        data['script'] = script
-        data['name'] = name
-        
+        data = {'script': script, 'name': name}
+
         result = template.format(**data)
         return result
     

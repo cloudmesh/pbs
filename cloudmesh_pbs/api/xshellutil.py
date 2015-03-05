@@ -15,7 +15,7 @@ def xcopy(src_dir, dest_dir, pattern, force=True):
     _dest_dir = os.path.expanduser(dest_dir)
 
     for file in glob.glob(os.path.join(_src_dir, pattern)):
-        if (force or file not in glob.glob(os.path.join(_src_dir, pattern))):
+        if force or file not in glob.glob(os.path.join(_src_dir, pattern)):
             print("Copy file {0} -> {1}".format(file, _dest_dir))
             shutil.copy(file, _dest_dir)
         else:

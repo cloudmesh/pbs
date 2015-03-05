@@ -2,8 +2,8 @@ Cloudmesh PBS
 ======================================================================
 
 Cloudmesh PBS provides an easy mechanism to interface with queuing
-systems. It is based on cloudmesn version 2 that uses seperate pacakes
-instead of one big cloudmesh package. The pacages are named
+systems. It is based on cloudmesh version 2 that uses separate packages
+instead of one big cloudmesh package. The packages are named
 cloudmesh_*, where * is a placeholder for the package names.
 
 The advantage of cloudmesh_pbs is that it can start pbs jobs on remote
@@ -20,7 +20,7 @@ Project requirements:
 Instalation (pending)
 ----------------------------------------------------------------------
 
-The easiest way to install cloudmesh PBS is with pip. We recoomment
+The easiest way to install cloudmesh PBS is with pip. We recommend
 that you do it in a virtual environment. Once you have created and
 activated a virtualenv you can install cloudmesh_pbs with the
 following commands::
@@ -46,7 +46,7 @@ Service Specification
 When dealing with remote services we often need to customize
 interfaces and access. Instead of completely reinventing a
 specification file, we are leveraging first the ssh config file for
-the remote login to the servers taht allow us to execute pbs
+the remote login to the servers that allow us to execute pbs
 commands. Second we have defined a simple yaml file that allows us to
 set up some service specific items. At this time it supports the
 specification of jobs submitted through various supercomputers that
@@ -72,7 +72,7 @@ on the cluster, you will be able to log into the machine with::
 
   ssh cluster
 
-Naturaly, you can try commands such as::
+Naturally, you can try commands such as::
 
   ssh cluster uname -a
 
@@ -89,14 +89,14 @@ have::
   meta:
     yaml_version: 2.1
     kind: pbs
-  cloudmesh:
+    cloudmesh:
       pbs:
-	cluster:
-	  manager: cluster
-	  scripts: ~/qsub/india
-	  queues:
-	  - batch
-	  - long
+        cluster:
+          manager: cluster
+          scripts: ~/qsub/india
+          queues:
+          - batch
+          - long
 
 This file is places in the directory ~/.cloudmesh
 
@@ -140,7 +140,7 @@ let us create on that host the directory ~/scripts/test::
   
     xmkdir(manager, "~/scripts/test")
 
-Now we need tocreate a pbs job script. For this we use a template that
+Now we need to create a pbs job script. For this we use a template that
 we have in the etc directory::
 
     script_template = pbs.read_script("etc/job.pbs")
@@ -192,7 +192,7 @@ Listing of all jobs
 
 TBD
 
-Persitant Database
+Persistent Database
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 TBD

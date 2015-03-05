@@ -78,6 +78,7 @@ class RegisterWithPypi(install):
 class InstallBase(install):
     """Install the package."""
     def run(self):
+        auto_create_requirements()
         banner("Install Cloudmesh Base")
         install.run(self)
 
