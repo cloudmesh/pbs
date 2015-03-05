@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 from setuptools.command.install import install
 
 
-version = "2.1.15"
+version = "2.2.0"
 
 requirements =     [
         'cloudmesh_base',             
@@ -27,6 +27,18 @@ requirements =     [
 #     from fabric.api import local
 
 home = os.path.expanduser("~")
+
+
+def auto_create_version():
+    with open("cloudmesh_pbs/__init__.py", "r") as f:
+        content = f.read()
+    
+    if content != 'version = "{0}"'.format(version):
+        banner("Updating version to {0}".format(version))
+        with open("cloudmesh_pbs/__init__.py", "w") as text_file:
+            text_file.write('version="%s"' % version)
+
+auto_create_version()
 
 #
 # AUTOCREATE REQUIREMENTS FROM ARRAY
@@ -83,6 +95,13 @@ class InstallAll(install):
         banner("Install Cloudmesh Base")        
         install.run(self)
 
+class CreateDoc(install):
+    """Install requirements and the package."""
+    def run(self):
+        banner("Create Documentation")
+        os.system("python setup.py install")
+        os.system("sphinx-apidoc -o docs/source cloudmesh_pbs")
+        os.system("cd docs; make -f Makefile html")
 
 setup(
     name='cloudmesh_pbs',
@@ -142,6 +161,7 @@ setup(
         'pypi': UploadToPypi,
         'pypiregister': RegisterWithPypi, 
         'create_requirements': CreateRequirementsFile,
+        'doc': CreateDoc,
         },
 )
 
