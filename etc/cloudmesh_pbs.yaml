@@ -2,6 +2,15 @@ meta:
     yaml_version: 2.1
     kind: pbs
 cloudmesh:
+    pbsview:
+      default:
+      - cm_jobid
+      - cm_jobid
+      - cm_host
+      - cm_user
+      - Job_Name
+      - job_state
+      - exit_status
     pbs:
       india:
         manager: india

@@ -1,5 +1,5 @@
 from cloudmesh_base.base import HEADING
-from cloudmesh_pbs.database import pbs_db, pbs_shelve
+from cloudmesh_pbs.database import pbs_db
 import os
  
 class TestDatabase:
@@ -8,7 +8,7 @@ class TestDatabase:
     
     def setup(self):
         # HEADING()
-        self.db = pbs_db(self.filename, pbs_shelve)
+        self.db = pbs_db(self.filename)
         
     def teardown(self):
         # HEADING()
@@ -33,3 +33,4 @@ class TestDatabase:
         HEADING()
         self.db["element"] = "test"
         assert self.db['element'] == "test"
+        a = a

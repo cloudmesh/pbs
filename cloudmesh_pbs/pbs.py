@@ -11,10 +11,10 @@ from cloudmesh_base.Shell import Shell
 from cloudmesh_base.ConfigDict import ConfigDict
 from cloudmesh_base.util import banner
 from cloudmesh_base.locations import config_file
-from cloudmesh_pbs.api.xshellutil import xcopy, xmkdir
+from cloudmesh_base.xshellutil import xcopy, xmkdir
 import yaml
 
-from api.ssh_config import ssh_config
+from cloudmesh_base.ssh_config import ssh_config
 
 
 class PBS(object):
@@ -130,13 +130,16 @@ class PBS(object):
             data = self.qstat_xml_to_dict(xml_data)
             selected_data = {}
             for jobid in data:
-                data[unicode(jobid)][u"cm_jobid"] = jobid
-                (owner, cm_host) = data[jobid]['Job_Owner'].split('@')    
-                if (not user) or (user and owner == username): 
+                (owner, cm_host) = data[jobid]['Job_Owner'].split('@')
+                if not user:
                     selected_data[unicode(jobid)] = data[unicode(jobid)]
-                    selected_data[unicode(jobid)][u"cm_jobid"] = jobid
-                    selected_data[unicode(jobid)][u"cm_Variable_list"] = self.variable_list(selected_data,jobid)
+                elif owner == username: 
+                    selected_data[unicode(jobid)] = data[unicode(jobid)]
             data = selected_data
+            for jobid in data:
+                data[unicode(jobid)][u"cm_jobid"] = jobid
+                if "Variable_list" in data[unicode(jobid)]:
+                    data[unicode(jobid)][u"cm_Variable_list"] = self.variable_list(data,jobid)
         elif format == "xml":
             if user is not None:
                 print ("WARNING: "
@@ -167,7 +170,19 @@ class PBS(object):
         if kind == 'yaml':
             r = yaml.dump(r, default_flow_style=False)
         return r
-        
+
+    @classmethod
+    def list(cls, data, attributes):
+        content = {}
+        for jobid in data:
+            content[jobid] = {}
+            for attribute in attributes:
+                try:
+                    content[jobid][attribute] = data[jobid][attribute]
+                except:
+                    content[jobid][attribute] = "None"
+        return content
+            
     def qsub(self,  name, host, script, template=None, kind="dict"):
         self.jobid_incr()
         jobscript = self.create_script(name, script, template)

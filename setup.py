@@ -1,17 +1,9 @@
 #!/usr/bin/env python
 
-import glob
-import os
-
-from cloudmesh_base.util import banner
-from setuptools import setup, find_packages
-from setuptools.command.install import install
-
-
-version = "2.2.2"
+version = "2.2.3"
 
 requirements =     [
-        'cloudmesh_base',             
+        'cloudmesh_base',
         'sh',
         'docopt',
         'pyaml',
@@ -19,6 +11,24 @@ requirements =     [
         'nose',
         'cmd3',
     ]
+
+import glob
+import os
+from cloudmesh_base.util import banner
+from setuptools import setup, find_packages
+from setuptools.command.install import install
+
+try:
+    from cloudmesh_base.util import banner
+except:
+    os.system("pip install cloudmesh_base")
+
+from cloudmesh_base.util import banner
+from cloudmesh_base.util import path_expand
+from cloudmesh_base.Shell import Shell
+from cloudmesh_base.util import auto_create_version
+from cloudmesh_base.util import auto_create_requirements
+
 
 
 # try:
@@ -29,43 +39,21 @@ requirements =     [
 
 home = os.path.expanduser("~")
 
-
-def auto_create_version():
-    with open("cloudmesh_pbs/__init__.py", "r") as f:
-        content = f.read()
-    
-    if content != 'version = "{0}"'.format(version):
-        banner("Updating version to {0}".format(version))
-        with open("cloudmesh_pbs/__init__.py", "w") as text_file:
-            text_file.write('version="%s"' % version)
-
-auto_create_version()
-
-#
-# AUTO-CREATE REQUIREMENTS FROM ARRAY
-#
-def auto_create_requirements():
-    banner("Creating requirements.txt file")
-    with open("requirements.txt", "r") as f:
-        file_content = f.read()
-        
-    setup_requirements = '\n'.join(requirements)
-    
-    if setup_requirements != file_content:
-        with open("requirements.txt", "w") as text_file:
-            text_file.write(setup_requirements)
-
+banner("Install cloudmesh PBS")
+auto_create_version("cloudmesh_pbs", version)
+auto_create_requirements(requirements)
 
 class CreateRequirementsFile(install):
     """Create the requiremnets file."""
     def run(self):    
-        auto_create_requirements()
-        
+        auto_create_requirements(requirements)
+
 class UploadToPypi(install):
     """Upload the package to pypi."""
     def run(self):
-        auto_create_version()
-        os.system("Make clean Install")
+        auto_create_version("cloudmesh_pbs", version)
+        auto_create_requirements(requirements)
+        os.system("make clean")
         os.system("python setup.py install")                
         banner("Build Distribution")
         os.system("python setup.py sdist --format=bztar,zip upload")        
@@ -79,7 +67,8 @@ class RegisterWithPypi(install):
 class InstallBase(install):
     """Install the package."""
     def run(self):
-        auto_create_requirements()
+        auto_create_version("cloudmesh_pbs", version)
+        auto_create_requirements(requirements)
         banner("Install Cloudmesh Base")
         install.run(self)
 
