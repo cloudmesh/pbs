@@ -13,13 +13,8 @@ echo "######################################################################"
 echo "Running tests"
 echo "######################################################################"
 
+rm -rf ~/NOSETESTS
 mkdir ~/NOSETESTS
-
-cd ~/NOSETESTS
-#
-# git clone git@github.com:cloudmesh/cmd3.git
-# 
-#
 
 cd ~/NOSETESTS
 git clone git@github.com:cloudmesh/pbs.git
