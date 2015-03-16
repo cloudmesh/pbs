@@ -16,9 +16,13 @@ echo "######################################################################"
 rm -rf ~/NOSETESTS
 mkdir ~/NOSETESTS
 
-cd ~/NOSETESTS
-git clone git@github.com:cloudmesh/pbs.git
-cd pbs/tests
 
-nosetests --nocapture -v database.py
-nosetests --nocapture -v submit.py
+PACKAGE=pbs
+
+cd ~/NOSETESTS
+git clone git@github.com:cloudmesh/$PACKAGE.git
+cd $PACKAGE
+python setup.py install
+
+# nosetests --nocapture -v database.py
+nosetests --nocapture -v tests/submit.py
