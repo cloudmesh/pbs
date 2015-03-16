@@ -8,7 +8,7 @@ from cloudmesh_base.util import banner
 
 
 class pbs_db_interface(object):
-    __metaclass__  = abc.ABCMeta
+    __metaclass__ = abc.ABCMeta
     
     def __getitem__(self, id):
         return self.data[id]
@@ -46,16 +46,24 @@ class pbs_db_interface(object):
     def update(self):
         """load the database"""
       
-class pbs_db(pbs_db_interface):    
+
+class pbs_db(pbs_db_interface):
     
-    def __init__(self, filename):
-        self.filename = filename
+    def __init__(self, filename=None):
+        if filename is not None:
+            self.filename = filename
+        else:
+            pbs = PBS(deploy=True)
+            self.filename = path_expand(pbs.database_filename())
+        path = os.path.dirname(self.filename)
+        Shell.mkdir(path)
+
         self.load()
         self.pbs = PBS(deploy=True)    
     
     def load(self):
         """load the database"""
-        self.data = shelve.open(self.filename, writeback = True) 
+        self.data = shelve.open(self.filename, writeback=True)
    
     def save(self):
         self.data.sync()
@@ -104,12 +112,11 @@ if __name__ == "__main__":
     r = pbs.qsub(jobname, host, 'echo "Hello"', template=script_template)
     pprint(r)
     
-    filename = "qstat-shelve"
+    filename = "pbs.db"
     
     db = pbs_db(filename)
     db.clear()
-    
-    
+
     db = pbs_db(filename)
     
     # key = "gregor"

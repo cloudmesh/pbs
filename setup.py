@@ -30,7 +30,6 @@ from cloudmesh_base.util import auto_create_version
 from cloudmesh_base.util import auto_create_requirements
 
 
-
 # try:
 #     from fabric.api import local
 # except:

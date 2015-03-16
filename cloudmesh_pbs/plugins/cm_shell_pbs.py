@@ -7,9 +7,10 @@ from cloudmesh_pbs.pbs import PBS
 from pprint import pprint
 from cloudmesh_base.tables import dict_printer
 
+
 class cm_shell_pbs:
 
-    def activate_cm_shell_pbs (self):
+    def activate_cm_shell_pbs(self):
         self.register_command_topic('mycommands', 'qstat')
 
     @command
@@ -65,16 +66,14 @@ class cm_shell_pbs:
                 Console.info("No jobs found")
             else:
                 if arguments['--output'] == 'dict' or None:
-                    pprint (r)
+                    pprint(r)
                 else:
                     print(dict_printer(r))
-                                
-                
+
         # shell_command_open_ssh(arguments)
         pass
 
 
-     
 if __name__ == '__main__':
     command = cm_shell_pbs()
     command.do_pbs("iu.edu")

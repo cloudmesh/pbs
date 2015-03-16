@@ -11,6 +11,8 @@ cloudmesh:
       - Job_Name
       - job_state
       - exit_status
+    pbsdatabase:
+       filename: ~/.cloudmesh/pbs/pbs.db
     pbs:
       india:
         manager: india

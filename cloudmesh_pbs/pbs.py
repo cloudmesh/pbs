@@ -7,15 +7,123 @@ from string import Template
 import sys
 from xml.dom import minidom
 
+from cloudmesh_base.tables import dict_printer
+
+from cloudmesh_base.tables import print_format_dict
+
+
 from cloudmesh_base.Shell import Shell
 from cloudmesh_base.ConfigDict import ConfigDict
 from cloudmesh_base.util import banner
+from cloudmesh_base.util import path_expand
 from cloudmesh_base.locations import config_file
 from cloudmesh_base.xshellutil import xcopy, xmkdir
 import yaml
-
+import abc
+from pprint import pprint
+import shelve
 from cloudmesh_base.ssh_config import ssh_config
 
+
+class pbs_db_interface(object):
+    __metaclass__ = abc.ABCMeta
+
+    def __getitem__(self, id):
+        return self.data[id]
+
+    def __setitem__(self, id, value):
+        self.data[id] = value
+
+    @abc.abstractmethod
+    def load(self, filename):
+        """loads the saved databsa from the file"""
+
+    @abc.abstractmethod
+    def get(self, id):
+        """get the object with the id"""
+
+    @abc.abstractmethod
+    def set(self, id, value):
+        """set the objet with the id to value"""
+
+    def set_filename(self, filename):
+        """set the objet with the id to value"""
+        self.filename = filename
+
+    def clear(self):
+        try:
+            os.remove(self.filename)
+        except:
+            pass
+
+    @abc.abstractmethod
+    def save(self):
+        """save the database"""
+
+    @abc.abstractmethod
+    def update(self):
+        """load the database"""
+
+
+class pbs_db(pbs_db_interface):
+
+    def __init__(self, pbs, filename=None):
+        if filename is not None:
+            self.filename = filename
+        else:
+            self.filename = path_expand(pbs.database_filename())
+        # self.pbs = PBS(deploy=True)
+        path = os.path.dirname(self.filename)
+        Shell.mkdir(path)
+        self.load()
+        self.pbs = pbs
+
+
+    def load(self):
+        """load the database"""
+        self.data = shelve.open(self.filename, writeback=True)
+
+    def save(self):
+        self.data.sync()
+
+    def get(self, id):
+        return self.data[id]
+
+    def set(self, id, value):
+        self.data[id] = value
+        self.save()
+
+    def keys(self):
+        self.data.keys()
+
+    def delete(self, id):
+        del self.data[id]
+
+    def close(self):
+        self.data.close()
+
+    def update(self, user=True, host=None):
+        self.load()
+        r = self.pbs.qstat(host, user=user, format='dict')
+        for jobid in r:
+            self.data[jobid] = r[jobid]
+
+        self.save()
+
+    def list(self, attributes, output="table"):
+        attributes = ["cm_jobid", "cm_host",  "cm_user", "Job_Name",  "job_state", "exit_status"]
+        if output in ["table", "dict", "yaml"]:
+            return dict_printer(self.data, order=attributes)
+        elif output == "csv":
+            for jobid in self.data:
+                content = []
+                for attribute in attributes:
+                    try:
+                        content.append(self.data[jobid][attribute])
+                    except:
+                        content.append("None")
+            return ",".join(content)
+        return None
 
 class PBS(object):
 
@@ -50,6 +158,7 @@ class PBS(object):
         if deploy:
             self.deploy()
         self.load()
+        self.db = pbs_db(self, self.database_filename())
         self.id = self.jobid_get()
         
     def __str__(self):
@@ -139,7 +248,7 @@ class PBS(object):
             for jobid in data:
                 data[unicode(jobid)][u"cm_jobid"] = jobid
                 if "Variable_list" in data[unicode(jobid)]:
-                    data[unicode(jobid)][u"cm_Variable_list"] = self.variable_list(data,jobid)
+                    data[unicode(jobid)][u"cm_Variable_list"] = self.variable_list(data, jobid)
         elif format == "xml":
             if user is not None:
                 print ("WARNING: "
@@ -152,6 +261,9 @@ class PBS(object):
     
     def manager(self, host):
         return self.data.get("cloudmesh", "pbs", host, "manager")
+
+    def database_filename(self):
+        return path_expand(self.data.get("cloudmesh", "pbsdatabase", "filename"))
 
     def _write_to_file(self, script, filename):
         with open(filename, "w") as text_file:
@@ -199,7 +311,7 @@ class PBS(object):
         manager_host = self.manager(host)
         
         # call qsub on the remot host
-        r = Shell.scp(name, manager_host +":" + remote_path)        
+        r = Shell.scp(name, manager_host + ":" + remote_path)
         jobid = Shell.ssh(manager_host, "qsub {0}/{1}".format(remote_path, name)).rstrip()
         
         return self.jobstatus(host, jobid, kind=kind)
@@ -264,14 +376,11 @@ if __name__ == "__main__":
     
     print(job_script)
 
-    
-    
-    print(pbs.jobid_get())
-    pbs.jobid_set(100)
-    print(pbs.jobid_get())
+    #print(pbs.jobid_get())
+    #pbs.jobid_set(100)
+    #print(pbs.jobid_get())
     pbs.jobid_incr()
-    
-    
+
     banner('qsub')    
     
     jobname = "job-" + pbs.jobid_get() + ".pbs"
@@ -279,14 +388,12 @@ if __name__ == "__main__":
     pprint(r)
     banner('variable list')    
     pprint(pbs.variable_list(r))
-    
-    
-    
+
     banner('status')    
     jobid = pbs.getid(r)
     r = pbs.jobstatus(host, jobid)
     
-    pprint (r)
+    pprint(r)
     
     r = pbs.qstat("india")
     
@@ -318,3 +425,14 @@ if __name__ == "__main__":
     print(json.dumps(pbs.qstat(host, user="*", format="dict"), indent=4))
     print(pbs.username("bigred"))
     '''
+
+    pbs.db.update(host="india")
+    attributes = ["cm_jobid", "cm_host",  "cm_user", "Job_Name",  "job_state", "exit_status"]
+    banner("LIST")
+    print(pbs.db.list(attributes, output="csv"))
+
+
+    pprint (pbs.data)
+    #print(print_format_dict(pbs.db.data, header=None, kind='table'))
+
+    #print(pbs.db.list(attributes, output="dict"))
