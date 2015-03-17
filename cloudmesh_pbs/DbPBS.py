@@ -83,8 +83,9 @@ class DbPBS(pbs_db_interface):
         self.load()
 
     def clear(self):
-        self.remove()
-        self.open()
+        for id in self.db:
+            del self.db[id]
+        self.save()
 
     def load(self):
         """load the database"""
@@ -157,8 +158,16 @@ class DbPBS(pbs_db_interface):
             return dict_printer(d, order=columns, output=output)
         return None
 
+    def qsub(self, name, host, script, template=None, kind="dict"):
+        r = self.pbs.qsub(name, host, script, template=template, kind=kind)
+        pprint(r)
+        return dict(r)
+
 
 if __name__ == "__main__":
+
+    qsub = False
+
     db = DbPBS()
     db.clear()
     db.info()
@@ -167,3 +176,24 @@ if __name__ == "__main__":
     print(db.list(output="csv"))
     print(db.list(output="dict"))
     print(db.list(output="yaml"))
+
+    banner("user")
+    db.clear()
+    db.update(host="india")
+    print(db.list(output="table"))
+
+
+    if qsub:
+        banner('qsub')
+
+        pbs = OpenPBS()
+        jobname = "job-" + pbs.jobid + ".pbs"
+        host = "india"
+
+        script_template = pbs.read_script("etc/job.pbs")
+        print(script_template)
+
+        r = db.qsub(jobname, host, 'echo "Hello"', template=script_template)
+        pprint(r)
+        banner('variable list')
+        pprint(OpenPBS.variable_list(r))

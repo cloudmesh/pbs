@@ -238,7 +238,8 @@ class OpenPBS(object):
         key = data.keys()[0]
         return key
 
-    def variable_list(self, data, id=None):
+    @classmethod
+    def variable_list(cls, data, id=None):
         if id is None:
             key = data.keys()[0]
         else:
@@ -305,7 +306,7 @@ if __name__ == "__main__":
     r = pbs.qsub(jobname, host, 'echo "Hello"', template=script_template)
     pprint(r)
     banner('variable list')
-    pprint(pbs.variable_list(r))
+    pprint(OpenPBS.variable_list(r))
 
     banner('status')
     jobid = pbs.getid(r)
