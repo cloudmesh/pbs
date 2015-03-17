@@ -1,8 +1,7 @@
 from cloudmesh_base.util import HEADING
 from cloudmesh_base.util import banner
 
-from cloudmesh_pbs.database import pbs_db
-from cloudmesh_pbs.pbs import PBS
+from DbPBS.OpenPBS import PBS
 from cloudmesh_base.xshellutil import xmkdir
 
 from pprint import pprint
@@ -23,15 +22,12 @@ class TestPBSubmit:
         self.pbs = PBS(deploy=True)
         self.manager = self.pbs.manager(self.host)
 
-        #self.db = pbs_db(self.filename)
-        
     def teardown(self):
         # HEADING()
         pass
 
     # def test_clear(self):
     #     HEADING()
-    #     self.db.clear()
     #     assert not os.path.isfile(self.filename)
 
     def test_generate_script(self):
@@ -39,12 +35,10 @@ class TestPBSubmit:
         banner("Create Dir")
         xmkdir(self.manager, "~/scripts/test")
 
-        # print(self.pbs)
-
         assert self.pbs.data.get("cloudmesh.pbs.{0}.manager".format(self.host))
 
         script_template = self.pbs.read_script("etc/job.pbs")
-        jobname = "job-" + self.pbs.jobid_get()
+        jobname = "job-" + self.pbs.jobid
         job_script = self.pbs.create_script(jobname, self.script, script_template)
         print(job_script)
 
@@ -58,7 +52,7 @@ class TestPBSubmit:
 
         banner('qsub')
 
-        jobname = "job-" + self.pbs.jobid_get() + ".pbs"
+        jobname = "job-" + self.pbs.jobid + ".pbs"
 
         print(jobname)
         print (self.host)
@@ -76,6 +70,14 @@ class TestPBSubmit:
         r = self.pbs.jobstatus(self.host, jobid)
         print(r)
 
+
+        #pprint (pbs.data)
+        # banner("table")
+        # print(pbs.db.list(attributes, output="table"))
+        #banner("yaml")
+        #print(pbs.db.list(attributes, output="yaml"))
+        #banner("dict")
+        #print(pbs.db.list(attributes, output="dict"))
         #r = self.pbs.qstat("india")
 
         #banner("RESULT")

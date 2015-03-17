@@ -14,7 +14,7 @@
 
 import sys
 import os
-import cloudmesh_pbs
+import DbPBS
 
 import sphinx_rtd_theme
 
@@ -63,7 +63,7 @@ copyright = u'2015, The Cloudmesh Team'
 # built documents.
 #
 # The short X.Y version.
-version = cloudmesh_pbs.version
+version = DbPBS.version
 # The full version, including alpha/beta/rc tags.
 release = version
 

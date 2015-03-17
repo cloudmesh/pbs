@@ -3,7 +3,7 @@ import os
 from cmd3.console import Console
 from cmd3.shell import command
 
-from cloudmesh_pbs.pbs import PBS
+from DbPBS.OpenPBS import PBS
 from pprint import pprint
 from cloudmesh_base.tables import dict_printer
 
