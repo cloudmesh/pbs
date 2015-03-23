@@ -1,17 +1,9 @@
 from __future__ import print_function
 
-import json
-import os
-import yaml
-import abc
-import sys
 from pprint import pprint
-from string import Template
 from xml.dom import minidom
-import shelve
 
-from cloudmesh_base.tables import dict_printer
-from cloudmesh_base.tables import print_format_dict
+import yaml
 from cloudmesh_base.Shell import Shell
 from cloudmesh_base.ConfigDict import ConfigDict
 from cloudmesh_base.util import banner
@@ -20,9 +12,9 @@ from cloudmesh_base.locations import config_file
 from cloudmesh_base.xshellutil import xcopy, xmkdir
 from cloudmesh_base.ssh_config import ssh_config
 
+
 class OpenPBS(object):
     id_file = "id.txt"
-
 
     def __init__(self, deploy=False):
         if deploy:
@@ -39,7 +31,7 @@ class OpenPBS(object):
             with open(self.id_file, "r") as f:
                 content = f.read()
         except:
-            self.jobid_set(0)
+            self.jobid = 0
             content = 0
         self.id = content.strip()
         return self.id
@@ -89,7 +81,6 @@ class OpenPBS(object):
         thrown. If the file is the same as in etc no warning is thrown.
         """
         xcopy("../etc/", "~/.cloudmesh", "*.yaml", force=force)
-
 
     #
     # QSTAT
@@ -175,7 +166,13 @@ class OpenPBS(object):
         return self.hosts.username(host)
 
     def manager(self, host):
-        return self.data.get("cloudmesh", "pbs", host, "manager")
+        try:
+            m = self.data.get("cloudmesh", "pbs", host, "manager")
+        except:
+            print ("WARNING: Manager not defined for", host)
+            print ("         Using the host")
+            m = host
+        return m
 
     def database_filename(self):
         return path_expand(self.data.get("cloudmesh", "pbsdatabase", "filename"))
@@ -253,6 +250,7 @@ class OpenPBS(object):
         return d
 
     def create_script(self, name, script, template=None):
+        # BUG
         if template is None:
             template_script = script
         data = {'script': script, 'name': name}
@@ -296,8 +294,8 @@ if __name__ == "__main__":
     print(job_script)
 
     # print(pbs.jobid)
-    #pbs.jobid_set(100)
-    #print(pbs.jobid)
+    # pbs.jobid_set(100)
+    # print(pbs.jobid)
     pbs.jobid_incr()
 
     banner('qsub')
@@ -345,13 +343,12 @@ if __name__ == "__main__":
     print(pbs.username("bigred"))
     '''
 
-    #pbs.db.update(host="india")
+    # pbs.db.update(host="india")
     # attributes = ["cm_jobid", "cm_host", "cm_user", "Job_Name", "job_state", "exit_status"]
     # banner("LIST")
     # print(pbs.db.list(attributes, output="csv"))
 
-
-    #pprint (pbs.data)
+    # pprint (pbs.data)
     # banner("table")
     # print(pbs.db.list(attributes, output="table"))
     # banner("yaml")
@@ -359,6 +356,6 @@ if __name__ == "__main__":
     # banner("dict")
     # print(pbs.db.list(attributes, output="dict"))
 
-    #print(print_format_dict(pbs.db.data, header=None, kind='table'))
+    # print(print_format_dict(pbs.db.data, header=None, kind='table'))
 
-    #print(pbs.db.list(attributes, output="dict"))
+    # print(pbs.db.list(attributes, output="dict"))

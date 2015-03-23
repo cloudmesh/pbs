@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-version = "2.2.6"
+version = "2.2.7"
 
 requirements = [
     'cloudmesh_base',

@@ -3,7 +3,7 @@ import os
 from cmd3.console import Console
 from cmd3.shell import command
 
-from DbPBS.OpenPBS import PBS
+from cloudmesh_pbs.OpenPBS import OpenPBS
 from pprint import pprint
 from cloudmesh_base.tables import dict_printer
 
@@ -43,9 +43,10 @@ class cm_shell_pbs:
                 arguments['--view'] = True
                 arguments['VIEW'] = 'default'                
             # pprint(arguments)
-            
+
+            r = {}
             try:
-                pbs = PBS(deploy=True)
+                pbs = OpenPBS(deploy=True)
                 if arguments["-a"]:
                     r = pbs.qstat(host, user=False)
                 else:
@@ -53,11 +54,11 @@ class cm_shell_pbs:
                 Console.info("machine " + host + " has been found. ok.")
 
                 if len(arguments['ATTRIBUTES']) != 0 and not arguments['--view']:
-                    r = PBS.list(r, arguments['ATTRIBUTES'])
+                    r = OpenPBS.list(r, arguments['ATTRIBUTES'])
                 elif arguments['--view']:
                     view = arguments['VIEW']
                     attributes = pbs.data.get("cloudmesh.pbsview.{0}".format(view))
-                    r = PBS.list(r, attributes)
+                    r = OpenPBS.list(r, attributes)
                 
             except Exception, e:
                 Console.error("machine " + host + " not reachable. error.")
@@ -76,5 +77,5 @@ class cm_shell_pbs:
 
 if __name__ == '__main__':
     command = cm_shell_pbs()
-    command.do_pbs("iu.edu")
-    command.do_pbs("iu.edu-wrong")
+    command.do_qstat("india")
+    # command.do_qstat("iu.edu-wrong")

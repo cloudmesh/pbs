@@ -1,7 +1,7 @@
 from cloudmesh_base.util import HEADING
 from cloudmesh_base.util import banner
 
-from DbPBS.OpenPBS import PBS
+from cloudmesh_pbs.OpenPBS import OpenPBS
 from cloudmesh_base.xshellutil import xmkdir
 
 from pprint import pprint
@@ -19,7 +19,7 @@ class TestPBSubmit:
     def setup(self):
         # HEADING()
 
-        self.pbs = PBS(deploy=True)
+        self.pbs = OpenPBS(deploy=True)
         self.manager = self.pbs.manager(self.host)
 
     def teardown(self):
@@ -31,7 +31,7 @@ class TestPBSubmit:
     #     assert not os.path.isfile(self.filename)
 
     def test_generate_script(self):
-
+        HEADING()
         banner("Create Dir")
         xmkdir(self.manager, "~/scripts/test")
 

@@ -1,24 +1,14 @@
 from __future__ import print_function
 
-import json
 import os
-import yaml
 import abc
 import shelve
-import sys
 from pprint import pprint
-from string import Template
 
-from xml.dom import minidom
 from cloudmesh_base.tables import dict_printer
-from cloudmesh_base.tables import print_format_dict
 from cloudmesh_base.Shell import Shell
-from cloudmesh_base.ConfigDict import ConfigDict
 from cloudmesh_base.util import banner
 from cloudmesh_base.util import path_expand
-from cloudmesh_base.locations import config_file
-from cloudmesh_base.xshellutil import xcopy, xmkdir
-from cloudmesh_base.ssh_config import ssh_config
 
 from cloudmesh_pbs.OpenPBS import OpenPBS
 
@@ -31,11 +21,11 @@ class pbs_db_interface(object):
     def data(self):
         return dict(self.db)
 
-    def __getitem__(self, id):
-        return self.db[id]
+    def __getitem__(self, index):
+        return self.db[index]
 
-    def __setitem__(self, id, value):
-        self.db[id] = value
+    def __setitem__(self, index, value):
+        self.db[index] = value
 
     @abc.abstractmethod
     def load(self, filename):
@@ -91,7 +81,7 @@ class DbPBS(pbs_db_interface):
         """load the database"""
         print('loading', self.filename)
         # remove db ending so that shelve automatically adds it
-        self.filename = self.filename.replace(".db","")
+        self.filename = self.filename.replace(".db", "")
         self.db = shelve.open(self.filename, writeback=True)
 
     def save(self):
@@ -122,20 +112,20 @@ class DbPBS(pbs_db_interface):
             raise
         print("QSTAT")
         r = dict(self.pbs.qstat(host, user=user, format='dict'))
-        pprint (r)
+        pprint(r)
         if r is not {}:
             for jobid in r:
                 self.db[jobid] = r[jobid]
             self.save()
         else:
-            print ("no jobs found after query")
+            print("no jobs found after query")
         print("update completed")
 
     def info(self):
         print("Filename:", self.filename)
 
     def list(self, attributes=None, output="table"):
-        if self.db is None or len(self.db) == 0 :
+        if self.db is None or len(self.db) == 0:
             print("No jobs found")
             return None
         columns = attributes
@@ -181,7 +171,6 @@ if __name__ == "__main__":
     db.clear()
     db.update(host="india")
     print(db.list(output="table"))
-
 
     if qsub:
         banner('qsub')

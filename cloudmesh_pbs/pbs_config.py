@@ -1,9 +1,9 @@
 from __future__ import print_function
-from cloudmesh.config.ConfigDict import ConfigDict
-from cloudmesh_install import config_file
-from api.xshellutil import xcopy
-from cloudmesh.shell.Shell import Shell
-
+from cloudmesh_base.ConfigDict import ConfigDict
+from cloudmesh_base.locations import config_file
+from cloudmesh_base.xshellutil import xcopy
+from cloudmesh_base.Shell import Shell
+from cloudmesh_pbs.pbs_config import PBS
 
 class PBS(object):
 
@@ -42,7 +42,7 @@ class PBS(object):
 
 if __name__ == "__main__":
 
-    config = pbs_config(deploy=True)
+    config = PBS(deploy=True)
 
     print(config)
 
