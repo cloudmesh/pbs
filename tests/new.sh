@@ -8,7 +8,6 @@ source ~/TEST/bin/activate
 which python
 pip install cmd3
 pip install cloudmesh_base
-pip install cloudmesh_database
 echo "######################################################################"
 echo "Running tests"
 echo "######################################################################"

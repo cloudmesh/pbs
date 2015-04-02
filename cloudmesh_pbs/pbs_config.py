@@ -19,25 +19,26 @@ class PBS(object):
     def __str__(self):
         return self.data.json()
 
-    def deploy(self, force=True):
-        """copies the yal file from etc in the distribution to the .cloudmesh
+    @staticmethod
+    def deploy(force=True):
+        """copies the yaml file from etc in the distribution to the .cloudmesh
         directory. If the file exits it will not be copied and a warning is
         thrown. If the file is the same as in etc no warning is thrown.
         """
         xcopy("../etc/", "~/.cloudmesh", "*.yaml", force=force)
 
     def servers(self):
-        return config.data["cloudmesh"]["pbs"].keys()
+        return self.data["cloudmesh"]["pbs"].keys()
 
     def queues(self, server):
-        server = config.data["cloudmesh"]["pbs"][server]
+        server = self.data["cloudmesh"]["pbs"][server]
         if "queues" in server:
             return server["queues"]
         else:
             return None
 
-    def qstat(self, host):
-
+    @staticmethod
+    def qstat(host):
         return Shell.ssh(host, "qstat").rstrip()
 
 if __name__ == "__main__":
