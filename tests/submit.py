@@ -46,6 +46,7 @@ class TestPBSubmit:
 
 
     def test_job_submit(self):
+        HEADING()
         xmkdir(self.manager, "~/scripts/test")
 
         self.pbs.jobid_incr()

@@ -1,5 +1,7 @@
 from __future__ import print_function
 
+import os
+import sys
 from pprint import pprint
 from xml.dom import minidom
 
@@ -12,15 +14,55 @@ from cloudmesh_base.locations import config_file
 from cloudmesh_base.xshellutil import xcopy, xmkdir
 from cloudmesh_base.ssh_config import ssh_config
 
+from cloudmesh_base.logger import LOGGER
+
+log = LOGGER(__file__)
 
 class OpenPBS(object):
-    id_file = "id.txt"
 
-    def __init__(self, deploy=False):
+    # #################################################################
+    # INITIALIZATION
+    # #################################################################
+
+    def __init__(self, deploy=True, yaml_filename="/cloudmesh_pbs.yaml"):
+        self.yaml_filename = config_file(yaml_filename)
+
+        self.pbs_dir = config_file("/pbs")
+        self.id_file = config_file("/pbs/id.txt")
+        self.db_file = config_file("/pbs/pbs.db")
+
         if deploy:
             self.deploy()
         self.load()
         self.id = self.jobid
+
+    def info(self):
+        print("{:>20} = {:}".format("Config Dir", self.pbs_dir))
+        print("{:>20} = {:}".format("Job ID file", self.id_file))
+        print("{:>20} = {:}".format("Db file", self.db_file))
+
+    def load(self, yaml_filename=None):
+        log.debug("PBS yaml filename: {0}".format(self.yaml_filename))
+        if yaml_filename is None:
+            yaml_filename = self.yaml_filename
+        else:
+            self.yaml_filename = config_file(yaml_filename)
+        self.data = ConfigDict(filename=self.yaml_filename)
+        self.hosts = ssh_config()
+
+    def deploy(self, force=True):
+        """copies the yaml file from etc in the distribution to the .cloudmesh
+        directory. If the file exits it will not be copied and a warning is
+        thrown. If the file is the same as in etc no warning is thrown.
+        """
+        # setup ~/.cloudmesh/pbs
+        log.debug(self.pbs_dir)
+        if not os.path.isdir(self.pbs_dir):
+            os.makedirs(self.pbs_dir)
+
+        self._load_jobid()
+
+        xcopy("../etc/", config_file(""), "*.yaml", force=force)
 
     # #################################################################
     # JOB ID COUNTER
@@ -30,14 +72,17 @@ class OpenPBS(object):
         try:
             with open(self.id_file, "r") as f:
                 content = f.read()
+            self.id = content.strip()
         except:
             self.jobid = 0
-            content = 0
-        self.id = content.strip()
+
         return self.id
 
     def _write_jobid(self, id):
-        with open(self.id_file, "w") as text_file:
+        log.debug("CCC:" + self.id_file)
+        if not os.path.isfile(self.id_file):
+            open('file', 'w').close()
+        with open(self.id_file, "w+") as text_file:
             text_file.write('%s' % id)
 
     @property
@@ -53,10 +98,6 @@ class OpenPBS(object):
         id = int(id) + 1
         self.jobid = id
 
-    def load(self):
-        self.filename = config_file("/cloudmesh_pbs.yaml")
-        self.data = ConfigDict(filename=self.filename)
-        self.hosts = ssh_config()
 
     # ###################
     # GET DATA
@@ -75,12 +116,6 @@ class OpenPBS(object):
         else:
             return None
 
-    def deploy(self, force=True):
-        """copies the yal file from etc in the distribution to the .cloudmesh
-        directory. If the file exits it will not be copied and a warning is
-        thrown. If the file is the same as in etc no warning is thrown.
-        """
-        xcopy("../etc/", "~/.cloudmesh", "*.yaml", force=force)
 
     #
     # QSTAT
@@ -276,6 +311,10 @@ if __name__ == "__main__":
     host = "india"
 
     pbs = OpenPBS(deploy=True)
+
+    pbs.info()
+
+
     manager = pbs.manager(host)
     xmkdir(manager, "~/scripts/test")
 
