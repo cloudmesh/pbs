@@ -5,7 +5,6 @@ from cloudmesh_base.logger import LOGGER
 
 log = LOGGER(__file__)
 
-
 class cmd3_check:
     @staticmethod
     def yaml(plugin):
