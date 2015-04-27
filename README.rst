@@ -201,3 +201,98 @@ Cloudmesh integration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 TBD
+
+Swagger
+--------------------------
+
+Often we need to document REST APIs that we write so others can look
+up their usage. Swagger is a tool that allows us to do that while
+augmenting the code with meta data. For Python there are multiple
+options to generate REST APIs. One of them is with The
+FlaskRestful (https://flask-restful.readthedocs.org/en/0.3.2/).
+There is also an extension that allws to integarted swagger into the
+tool (https://github.com/rantav/flask-restful-swagger).
+
+To use the tools I recommend to first install the swagger ui on your
+local machine. This can be done as follows::
+
+  mkdir -p ~/github
+  cd ~/github
+  git clone https://github.com/swagger-api/swagger-ui.git
+  cd swagger-ui
+  open dist/index.html
+
+where opne is the command to open a web browse (on OSX this is open
+;-) ) This will open up the swagger user interface in the browser.
+Now you can past and copy your api documentation of the code that you
+generate.
+
+The cloudmesh_pbs code contains a file called server.py. YOu can start
+the server in a second terminal. we assume you have checked out the
+codse and configured cmd3 accordingly. We are not describing here hwo
+to change the cmd3.yaml file. This can be found elsewhere::
+
+  cd ~/github
+  git clone https://github.com/cloudmesh/pbs.git
+  cd pbs
+  python cloudmesh_pbs/server.py
+
+Now the server is running and we can use the swagger api to look at
+it. YOu find the location of the API in the swagger.docs method. There
+you find a variable `api_spec_url`. In our case it is
+`/pbs/api/spec`. To look at the documentation we just have to prefix
+it with our host and port. In our case this is
+`http://127.0.0.1:5000`. Hence, you can paste in the
+Swagger UI the URL::
+
+  http://127.0.0.1:5000/pbs/api/spec
+
+If everything is done right, you will see the documentation of the
+API. Now its just a matter of doing the documentation right. As the
+pbs code is under development, this is not yet completed, but it shows
+you a simple way on how to get a documentation from a running REST
+service via swagger.
+
+Excersises
+================
+
+Do not modify server.py, but instead create server-rest.py We want to
+maintain server.py as a simple example.
+
+A. complete the pbs implementation with functions that allow to view
+   individual jobs and queues by id. Think about routes such as::
+
+     /pbs/job/<host>/<id>
+     /pbs/queue/<host>/<id>
+
+   Use for the backend implementation the OpenPBS class
+
+B. Make sure that the right objects are returned in the restful
+   implementation. E.g. json objects when asked, ....
+
+C. Identify a mechanism to creat estatic documentation from the
+   swagger API in html. This would be useful to be outomatically
+   created from a shell script. The output should be written into::
+
+     docs/build/swagger
+
+D. The current implementation does not yet have security. Build upon
+   what you learned from A. B. C. To build a secure flask service that
+   uses
+
+D. 1. password authentication via https
+
+D. 2. tokenbased authentication
+
+   
+   
+
+   
+   
+   
+   
+
+
+
+
+

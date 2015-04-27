@@ -6,3 +6,4 @@ simplejson
 nose
 cmd3
 flask-restful
+flask-restful-swagger
