@@ -253,6 +253,24 @@ pbs code is under development, this is not yet completed, but it shows
 you a simple way on how to get a documentation from a running REST
 service via swagger.
 
+Development setup
+=====================
+
+::
+
+  mkdir -p ~/github
+  cd ~/github
+
+  git clone https://github.com/cloudmesh/cmd3.git
+  cd cloudmesh_base
+  python setup.py install
+
+  cd ~/github
+  git clone https://github.com/cloudmesh/cmd3.git
+  cd cmd3
+  python setup.py install
+
+
 Excersises
 ================
 

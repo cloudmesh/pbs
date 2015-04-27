@@ -25,6 +25,24 @@ class OpenPBS(object):
     # #################################################################
 
     def __init__(self, deploy=True, yaml_filename="/cloudmesh_pbs.yaml"):
+        """
+        Creates an object instance of communication with pbs batch queues
+        running on multiple hosts.
+
+        It also is used to create some configuration parameters if deploy
+        is set to True.
+
+        it creates in the CLOUDMESH deploy directory the directory pbs and puts
+        the dababse file pbs.db and the file that is used to store the current
+        job number. The job number is shared among all resources and supposed
+        to be unique.
+
+
+        :param deploy: If True, creates the configuration files
+        :param yaml_filename: The cloudmesh pbs yaml file. Defaults to
+                              cloudmesh_pbs.yaml
+        :return: an object instance of OpenPBS
+        """
         self.yaml_filename = config_file(yaml_filename)
 
         self.pbs_dir = config_file("/pbs")
@@ -36,12 +54,25 @@ class OpenPBS(object):
         self.load()
         self.id = self.jobid
 
+        self.pbs_nodes_data = None
+
     def info(self):
+        """
+        Prints some elementary information about the configuration of the
+        OpenPBS instance.
+
+        :return:
+        """
         print("{:>20} = {:}".format("Config Dir", self.pbs_dir))
         print("{:>20} = {:}".format("Job ID file", self.id_file))
         print("{:>20} = {:}".format("Db file", self.db_file))
 
     def load(self, yaml_filename=None):
+        """
+        Loads the cloudmesh pbs yaml file.
+
+        :param yaml_filename: The filename of the yaml file
+        """
         log.debug("PBS yaml filename: {0}".format(self.yaml_filename))
         if yaml_filename is None:
             yaml_filename = self.yaml_filename
@@ -51,9 +82,12 @@ class OpenPBS(object):
         self.hosts = ssh_config()
 
     def deploy(self, force=True):
-        """copies the yaml file from etc in the distribution to the .cloudmesh
+        """
+        Copies the yaml file from etc in the distribution to the .cloudmesh
         directory. If the file exits it will not be copied and a warning is
         thrown. If the file is the same as in etc no warning is thrown.
+
+        :param force: Forgot what this does, please document.
         """
         # setup ~/.cloudmesh/pbs
         log.debug(self.pbs_dir)
@@ -69,6 +103,11 @@ class OpenPBS(object):
     # #################################################################
 
     def _load_jobid(self):
+        """
+        internal method that loads the job id from the job id file.
+
+        :return: the string of the job id
+        """
         try:
             with open(self.id_file, "r") as f:
                 content = f.read()
@@ -79,21 +118,39 @@ class OpenPBS(object):
         return self.id
 
     def _write_jobid(self, id):
+        """
+        Internal method that overwrites the job id to the specified id.
+
+        :param id:  the job id
+        :return: the string of the id
+        """
         log.debug("CCC:" + self.id_file)
         if not os.path.isfile(self.id_file):
             open('file', 'w').close()
         with open(self.id_file, "w+") as text_file:
             text_file.write('%s' % id)
+        return id
 
     @property
     def jobid(self):
+        """
+        The job id
+        :return: The string of the job id
+        """
         return self._load_jobid()
 
     @jobid.setter
     def jobid(self, value):
+        """
+        sets the job id to the given value
+        :param value: The value of the jobid
+        """
         self._write_jobid(value)
 
     def jobid_incr(self):
+        """
+        increments the job id by 1
+        """
         id = self.jobid
         id = int(id) + 1
         self.jobid = id
@@ -104,12 +161,26 @@ class OpenPBS(object):
     # ###################
 
     def __str__(self):
+        """
+        Returns the json object of the dict as string
+        NOTE: should probably use json.dumps
+        :return: the string representation of teh job data
+        """
         return self.data.json()
 
     def servers(self):
+        """
+        List of the servers as defined in the .ssh/config file as dict
+        :return: the dict representing the servers
+        """
         return self.data["cloudmesh"]["pbs"].keys()
 
     def queues(self, server):
+        """
+        List the queues dict of the given server
+        :param server:
+        :return:
+        """
         server = pbs.data["cloudmesh"]["pbs"][server]
         if "queues" in server:
             return server["queues"]
@@ -123,6 +194,11 @@ class OpenPBS(object):
 
     @classmethod
     def qstat_xml_to_dict(cls, xmldata):
+        """
+        Internal method that converst a qsta xml representation to a dict.
+        :param xmldata: The xml data from qstat -x
+        :return: a dict representation of the data
+        """
         info = {}
         try:
             xmldoc = minidom.parseString(xmldata)
@@ -171,6 +247,16 @@ class OpenPBS(object):
         return info
 
     def qstat(self, host, user=True, format='dict'):
+        """
+        executes the qstat command on a particular host and returns
+        the information as dict.
+
+        :param host: The host as specified in ~/.ssh/config
+        :param user:  If True, only retirns information for the user
+                      If False, all jobs for all users are returned
+        :param format:
+        :return:
+        """
         data = None
         username = self.username(host)
         manager_host = self.manager(host)
@@ -198,9 +284,22 @@ class OpenPBS(object):
         return dict(data)
 
     def username(self, host):
+        """
+        The username of the host as specified in ~/.ssh/conf
+        :param host: The name of the host
+        :return: The username
+        """
         return self.hosts.username(host)
 
     def manager(self, host):
+        """
+        In some cases a queue of another machine is hosted through a
+        management node different from that machine. The manager command
+        allows us to specify on which machine the qstat command is issued.
+
+        :param host: The name of the host
+        :return: The name of the management host
+        """
         try:
             m = self.data.get("cloudmesh", "pbs", host, "manager")
         except:
@@ -210,16 +309,35 @@ class OpenPBS(object):
         return m
 
     def database_filename(self):
+        """
+        The name of the database file
+        :return:
+        """
         return path_expand(self.data.get("cloudmesh", "pbsdatabase", "filename"))
 
     def _write_to_file(self, script, filename):
+        """
+        Internal function to write a pbs script to a file
+        :param script: content of the script
+        :param filename: filename
+        """
         with open(filename, "w") as text_file:
             text_file.write('%s' % script)
 
     def db_jobstatus(self, host, jobid, kind='dict'):
+        """This method is not yet implemented"""
         return {}
 
     def jobstatus(self, host, jobid, kind='dict'):
+        """
+        The status of a specific job
+
+        :param host: The host on which the job is running
+        :param jobid: The jobid as specified by the queing system
+        :param kind: The output can be returned as dict, xml, and yaml
+        :return:
+        """
+
         manager_host = self.manager(host)
         qstat_xml_data = Shell.ssh(manager_host, "qstat", "-x", jobid).rstrip()
 
@@ -235,6 +353,12 @@ class OpenPBS(object):
 
     @classmethod
     def list(cls, data, attributes):
+        """
+        Internal function to lists the information in the data dict
+        :param data: The data directory
+        :param attributes: the attribute to return
+        :return: the content found for he specified attribute
+        """
         content = {}
         for jobid in data:
             content[jobid] = {}
@@ -246,6 +370,17 @@ class OpenPBS(object):
         return content
 
     def qsub(self, name, host, script, template=None, kind="dict"):
+        """
+        Executes the qsub command on a given host.
+        NOTE this method may not yet be fully implemented
+
+        :param name: name of the script
+        :param host: host on which the script is to be run
+        :param script: The name of the script
+        :param template: The script is wrapped into a template
+        :param kind: The return is passed as dict, yaml, xml
+        :return:
+        """
         self.jobid_incr()
         jobscript = self.create_script(name, script, template)
 
@@ -272,6 +407,14 @@ class OpenPBS(object):
 
     @classmethod
     def variable_list(cls, data, id=None):
+        """
+        Internal function to list the variables of a qstat job
+        which is 'Variable_List'
+
+        :param data: The input data value
+        :param id: The id of the job
+        :return:
+        """
         if id is None:
             key = data.keys()[0]
         else:
@@ -304,6 +447,57 @@ class OpenPBS(object):
 
         return content
 
+    def anodes(self, host, refresh=True):
+        pass
+
+
+    def nodes(self, host, refresh=True):
+        """
+        returns the information from the command pbsnodes in a dict.
+
+        :param host: the name of the host as specified in the .ssh/config file
+        :param refresh: if False, reads returns a cached value
+                        if True, issues a new command and refreshes the cach
+        :return: information of the pbsnodes command in a dict
+        """
+
+        manager_host = self.manager(host)
+        if self.pbs_nodes_data is None or refresh:
+            try:
+                result = Shell.ssh(manager_host, "pbsnodes", "-a")
+            except:
+                raise RuntimeError(
+                    "can not execute pbs nodes on host {0}".format(manager_host))
+            pbsinfo = {}
+            nodes = result.split("\n\n")
+            for node in nodes:
+                pbs_data = node.split("\n")
+                pbs_data = [e.strip() for e in pbs_data]
+                name = pbs_data[0]
+                if name != "":
+                    pbsinfo[name] = {u'name': name}
+                    for element in pbs_data[1:]:
+                        try:
+                            (attribute, value) = element.split(" = ")
+                            if attribute == 'status':
+                                status_elements = value.split(",")
+                                pbsinfo[name][attribute] = {}
+                                for e in status_elements:
+                                    (a, v) = e.split("=")
+                                    pbsinfo[name][attribute][a] = v
+                            elif attribute == 'jobs':
+                                pbsinfo[name][attribute] = value.split(',')
+                            elif attribute == 'note' and (
+                                        value.strip().startswith("{") or value.strip().startswith("[")):
+                                pbsinfo[name][attribute] = literal_eval(value)
+                            else:
+                                pbsinfo[name][attribute] = value
+                        except:
+                            pass
+            self.pbs_nodes_data = pbsinfo
+
+        return self.pbs_nodes_data
+
 
 if __name__ == "__main__":
     # TODO: when hosts are bravo, echo, delta, the manager need sto be used to ssh
@@ -311,6 +505,15 @@ if __name__ == "__main__":
     host = "india"
 
     pbs = OpenPBS(deploy=True)
+
+
+
+
+    manager = pbs.manager(host)
+
+    pprint (pbs.nodes(host))
+
+    sys.exit()
 
     pbs.info()
 
@@ -356,6 +559,9 @@ if __name__ == "__main__":
     banner("RESULT")
 
     pprint(r)
+
+
+
 
     '''
     #os.system ("cat " + jobname)
