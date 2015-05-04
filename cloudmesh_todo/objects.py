@@ -1,6 +1,8 @@
+from mongoengine import *
+
 class CloudmeshEntry(Document):
-    created: DateTimeField()
-    updated: DateTimeField()
+    created= DateTimeField()
+    updated= DateTimeField()
 
 class Job(CloudmeshEntry):
     script = StringField(required=True)
@@ -118,9 +120,10 @@ class FileRepository(object):
         """
         :param id: if timeout is none waits indevenetly for the
         task to be completed or failed. If the timeout is
-        specifies returns after the timeout is reached"""
+        specifies returns after the timeout is reached
         :id: the task id
         :param timeout: the timeout value
+        """
 
     def find_by_status(self, host, state):
         """returns all tasks in the given state"""
