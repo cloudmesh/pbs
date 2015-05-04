@@ -11,6 +11,48 @@ class Job(CloudmeshEntry):
 
     meta = {'allow_inheritance': True}
 
+class Jobmanager(object):
+
+    def add(self, script, inputs, outputs):
+        """adds a general job, returns the id"""
+
+    def kill(self, id):
+        """removes the job with the given id"""
+
+    def wait(self, timeoout=None, state="C-completed"):
+        """Waits for the job to reach the state"""
+
+    def submit (id, host):
+        """submits the job with the given id on the host"""
+
+    def get_inputs(self, id):
+        """copies the input of the job withthe id to the host
+        it is submitted on."""
+
+    def info(self,id):
+        """prints the info of the job. including the job state and the
+        state of io transfers."""
+
+    def progress(self,id):
+        """prints the progers of the job"""
+
+
+    def find(self, id):
+        """same as info"""
+
+    def query(self, query):
+        """
+
+            seach must be possible based on
+
+                scriptname
+                inputs
+                outputs
+                status of job
+                status of file transfers for job
+
+        """
+
 class FileRepository(CloudmeshEntry):
     path = StringField()
     endpoint = StringField()
@@ -46,6 +88,7 @@ class Queue(CloudmeshEntry)
 
 # API
 
+#
 class FileRepository(object):
 
     def find_file(self host, filename):
