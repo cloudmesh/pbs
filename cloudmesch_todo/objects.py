@@ -25,6 +25,25 @@ class File(CloudmeshEntry)
     meta = {'allow_inheritance': True}
 
 class Queue(CloudmeshEntry)
+    name = StringField()
+    host = StringField()
+    username = StringField()
+    max_running_jobs = IntegerField()
+    max_queued_jobs = IntegerField()
+    active = BooleanField()
+
+# Yaml Example
+#
+# india-batch:
+#     host: india
+#     name: batch
+#     username: gregor
+#     max_running_jobs: 3
+#     max_queued_jobs: 3
+#     active: True
+# ...
+
+
 
 
 def find_file(filename):
