@@ -4,6 +4,7 @@ import os
 import sys
 from pprint import pprint
 from xml.dom import minidom
+from collections import Counter
 
 import yaml
 from cloudmesh_base.Shell import Shell
@@ -498,6 +499,53 @@ class OpenPBS(object):
 
         return self.pbs_nodes_data
 
+    def nodes_sum(self, host):
+        sum = 0
+        distribution = self.nodes_distribution(host)
+        for key in distribution:
+            i = int(distribution[key])
+            sum = sum + i
+        return sum
+
+    def nodes_distribution(self, host):
+        """prints the distribution of services"""
+
+        manager_host = self.manager(host)
+
+        def pbsnodes_data(manager_host):
+            result = str(
+                Shell.ssh(manager_host, "pbsnodes", "-l", "-n"))[:-1]
+            return result
+
+
+        empty = ["", "", ""]
+        x = [x.split() for x in pbsnodes_data(manager_host).split("\n")]
+
+        # Fill missing values
+
+        r = []
+        for line in x:
+            new = ["unkown", "unkown", "unkown"]
+            for i in range(0, len(line)):
+                try:
+                    new[i] = line[i]
+                except:
+                    pass
+            r.append(new)
+
+        # just taking column 2
+
+        x = [x[2] for x in r]
+
+        # print "GFKHFJH ", x
+        cnt = Counter(x)
+
+        # print "COUNT",
+
+        result = dict(cnt)
+
+        return result
+
 
 if __name__ == "__main__":
     # TODO: when hosts are bravo, echo, delta, the manager need sto be used to ssh
@@ -513,6 +561,9 @@ if __name__ == "__main__":
 
     pprint (pbs.nodes(host))
 
+    pprint (pbs.nodes_distribution(host))
+
+    pprint (pbs.nodes_sum(host))
     sys.exit()
 
     pbs.info()
