@@ -115,3 +115,43 @@ class DatabaseMongo(object):
         ## print database statistics
         # print db.command("dbstats")
 
+    def find(self, **kwargs):
+        """
+        The query issued to the db
+        TODO implement
+        :param kwargs:
+        :return: objects matching the querry
+        """
+    def save(self):
+        """
+        saves the database after modifications have been done
+        :return:
+        TODO implement
+        """
+        pass
+
+    def add(self, element):
+        """
+        adds the element to the db (element is specifid as dict
+        :param element:
+        :return:
+        TODO implement
+        """
+        pass
+
+def test():
+    db = DatabaseMongo()
+
+    # if not db.deployed # todo
+    db.deploy()
+    db.start()
+
+    query = None # todo this is a dict passes along to mongo implement find function
+    db.find(query)
+    db.save()
+    db.kill()
+
+
+if __name__ == "__main__":
+    test()
+
