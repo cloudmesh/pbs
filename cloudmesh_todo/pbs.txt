@@ -18,4 +18,18 @@
 
         queue default --host=HOST [--queue=NAME]
 
-            set
+            sets the default hos or the default queue for a host
+
+    Example:
+
+        cm queue default --host=india --queue=batch
+
+            sets the default queue for india to batch.
+            This does not set the india host to be the
+            default queue. This must be explicitly set
+            with the next command
+
+        cm queue default --host=india
+
+            sets the defulat queue to india. if host is
+            not specified india is used
