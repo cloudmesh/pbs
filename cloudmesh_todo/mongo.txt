@@ -1,0 +1,100 @@
+::
+
+    Usage:
+
+        pbs mongo install
+        pbs mongo deploy --config CONFIG
+        pbs mongo deploy [--port=PORT] [--dbpath=DBPATH] [--logpath=LOGPATH]
+        pbs mongo start
+        pbs mongo stop
+        pbs mongo delete
+        pbs mongo statistics
+
+        pbs mongo find QUERY
+        pbs mongo find status=STATE [--short|--all|--limit=COUNT]
+        pbs mongo add DICT
+        pbs mongo summary
+
+        pbs mongo schema [-list] [--format=yaml|dict]
+        pbs mongo schema [--name=NAME][--format=yaml|dict]
+
+    Description:
+
+        pbs mongo install
+
+            detects the operating system and installs mongo on it.
+            Returns the string Success, Failed, or Unsupported.
+
+        pbs mongo deploy --config=CONFIG [--path=PATH]
+
+            deploys the mongo database parameters from the file CONFIG
+            into a configuration file that is used at startup. The location
+            of the file can be specified with path. by default this is
+            ~/.cloudmesh/pbs/database/config.yaml
+
+        pbs mongo deploy [--port=PORT] [--dbpath=DBPATH] [--logpath=LOGPATH] [--path=PATH]
+
+            writes the given values into a configuration file that is used at startup
+
+        pbs mongo start
+
+            starts the mongo db with the parameters defined with the deploy command
+
+        pbs mongo stop
+
+            stops the mongodb server
+
+        pbs mongo delete
+
+            deletes all opbject in the mongo db server
+
+         pbs mongo clean
+
+            removes all log files, database files and stops the server.
+
+        pbs mongo statistics
+
+            list statistics of the database
+
+        pbs mongo find QUERY
+
+            issues a query
+
+        pbs mongo find [host=HOST] [status=STATE] [--short|--all|--limit=COUNT]
+
+            issues a specific query while focussing on those elements with a specific state or host.
+            if neither host or status is specified the command fails
+
+        pbs mongo add DICT
+
+            add the object specified as a string to the database
+
+        pbs mongo summary
+
+            provides an easy to read summary of the objects.
+            For example includes a count of hwo many objects are in which state
+            How many objects are in the database (of a particular kind)
+            ...
+
+        pbs mongo schema [-list] [--format=yaml|dict]
+
+            lists the object name schema in the format specified
+
+        pbs mongo schema [--name=NAME][--format=yaml|dict]
+
+            list the object attributes with the given name in the format specified.
+
+    Arguments:
+
+        ... TODO ...
+
+        set default values for PATH and others as needed.
+
+    Format:
+
+        config.yaml
+
+        mongo:
+            port: 27017
+            dbpath: ~/.cloudmesh/pbs/data_mongo.db
+            logpath: ~/.cloudmesh/pbs/data_mongo.log

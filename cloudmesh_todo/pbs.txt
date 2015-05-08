@@ -1,0 +1,21 @@
+::
+
+    Usage:
+
+        queue stat [--host=HOST] ARGUMENTS
+        queue sub [--host=HOST] ARGUMENTS
+        queue default --host=HOST [--queue=NAME]
+
+    Description:
+
+        qstat [--host=HOST] ARGUMENTS
+
+            executes a qstat command on the given host
+
+        qsub [--host=HOST] ARGUMENTS
+
+            executes a qstat command on the given host
+
+        queue default --host=HOST [--queue=NAME]
+
+            set
