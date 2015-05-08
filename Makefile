@@ -9,7 +9,7 @@ view:
 clean:
 	rm -rf docs/build
 	rm -rf build
-	rm -rf cloudmesh_base.egg-info
+	rm -rf *.egg-info
 	rm -rf dist
 
 requirements:

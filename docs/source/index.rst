@@ -1,8 +1,9 @@
-.. include:: ../../README.rst
-
 .. toctree::
    :maxdepth: 2
 
+   readme
+   flask
+   modules
 
 Indices and tables
 ==================

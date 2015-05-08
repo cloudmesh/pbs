@@ -75,6 +75,7 @@ def html(theme_name='readthedocs'):
     # man()
     """build the doc locally and view"""
     clean()
+    local("cd docs; make manualpages")
     local("cd docs; make html")
     local("fab security.check")
     local("touch docs/build/html/.nojekyll")

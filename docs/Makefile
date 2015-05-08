@@ -175,3 +175,9 @@ pseudoxml:
 	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
+
+manualpages:
+	# mkdir -pf docs/source/man
+	cm pbs help > docs/source/man
+	cm queue help > docs/source/man
+	cm qstat help > docs/source/man

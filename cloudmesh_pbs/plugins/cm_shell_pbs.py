@@ -11,9 +11,11 @@ from cloudmesh_base.tables import dict_printer
 class cm_shell_pbs:
 
     def activate_cm_shell_pbs(self):
+        self.register_command_topic('mycommands', 'pbs')
+        self.register_command_topic('mycommands', 'queue')
         self.register_command_topic('mycommands', 'qstat')
 
-@command
+    @command
     def do_pbs(self, args, arguments):
         """
         ::
@@ -68,7 +70,7 @@ class cm_shell_pbs:
                     dbpath: ~/.cloudmesh/pbs/data_mongo.db
                     logpath: ~/.cloudmesh/pbs/data_mongo.log
         """
-    return
+        return
 
     @command
     def do_queue(self, args, arguments):

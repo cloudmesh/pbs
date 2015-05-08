@@ -1,3 +1,6 @@
+REST Service
+=============
+
 Develop an informational REST service that uses the OpenPBS class. The routs are as follows
 
 Informational routes
