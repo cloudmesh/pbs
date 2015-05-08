@@ -5,3 +5,4 @@ pyaml
 simplejson
 nose
 cmd3
+mongoengine
