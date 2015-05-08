@@ -177,7 +177,8 @@ pseudoxml:
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
 
 manualpages:
+	# TODO wix the tail issue to remove args and color coding
 	mkdir -p source/man
-	cm pbs help | tail -n+2 > source/man/pbs.rst
-	cm queue help | tail -n+2 > source/man/queue.rst
-	cm qstat help | tail -n+2 > source/man/qstat.rst
+	cm man pbs | tail -n+4 > source/man/pbs.rst
+	cm man queue | tail -n+4 > source/man/queue.rst
+	cm man qstat | tail -n+4 > source/man/qstat.rst
