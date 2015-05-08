@@ -15,7 +15,7 @@
 import sys
 import os
 from cloudmesh_pbs.DbPBS import OpenPBS
-from cloudmesh_pbs.yamlplugin import command_yamlplugin
+from cloudmesh_yamlplugin.command_yamlplugin import command_yamlplugin
 
 
 import sphinx_rtd_theme
