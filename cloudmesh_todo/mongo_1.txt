@@ -1,0 +1,72 @@
+::
+
+    Usage:
+
+        mongo install
+        mongo deploy --config CONFIG
+        mongo deploy [--port=PORT] [--dbpath=DBPATH] [--logpath=LOGPATH]
+        mongo start
+        mongo stop
+        mongo delete
+        mongo statistics
+
+        mongo find QUERY
+
+
+    Description:
+
+        mongo install
+
+            detects the operating system and installs mongo on it.
+            Returns the string Success, Failed, or Unsupported.
+
+        mongo deploy --config=CONFIG [--path=PATH]
+
+            deploys the mongo database parameters from the file CONFIG
+            into a configuration file that is used at startup. The location
+            of the file can be specified with path. by default this is
+            ~/.cloudmesh/pbs/database/config.yaml
+
+        mongo deploy [--port=PORT] [--dbpath=DBPATH] [--logpath=LOGPATH] [--path=PATH]
+
+            writes the given values into a configuration file that is used at startup
+
+        mongo start
+
+            starts the mongo db with the parameters defined with the deploy command
+
+        mongo stop
+
+            stops the mongodb server
+
+        mongo delete
+
+            deletes all opbject in the mongo db server
+
+        mongo clean
+
+            removes all log files, database files and stops the server.
+
+        mongo statistics
+
+            list statistics of the database
+
+        mongo find QUERY
+
+            issues a query
+
+
+    Arguments:
+
+        ... TODO ...
+
+        set default values for PATH and others as needed.
+
+    Format:
+
+        config.yaml
+
+        mongo:
+            port: 27017
+            dbpath: ~/.cloudmesh/pbs/data_mongo.db
+            logpath: ~/.cloudmesh/pbs/data_mongo.log

@@ -1,0 +1,51 @@
+::
+
+    Usage:
+
+        pbs mongo find status=STATE [--short|--all|--limit=COUNT]
+        pbs mongo add DICT
+        pbs mongo summary
+
+        pbs mongo schema [-list] [--format=yaml|dict]
+        pbs mongo schema [--name=NAME][--format=yaml|dict]
+
+    Description:
+
+        pbs mongo find [host=HOST] [status=STATE] [--short|--all|--limit=COUNT]
+
+            issues a specific query while focussing on those elements with a specific state or host.
+            if neither host or status is specified the command fails
+
+        pbs mongo add DICT
+
+            add the object specified as a string to the database
+
+        pbs mongo summary
+
+            provides an easy to read summary of the objects.
+            For example includes a count of hwo many objects are in which state
+            How many objects are in the database (of a particular kind)
+            ...
+
+        pbs mongo schema [-list] [--format=yaml|dict]
+
+            lists the object name schema in the format specified
+
+        pbs mongo schema [--name=NAME][--format=yaml|dict]
+
+            list the object attributes with the given name in the format specified.
+
+    Arguments:
+
+        ... TODO ...
+
+        set default values for PATH and others as needed.
+
+    Format:
+
+        config.yaml
+
+        mongo:
+            port: 27017
+            dbpath: ~/.cloudmesh/pbs/data_mongo.db
+            logpath: ~/.cloudmesh/pbs/data_mongo.log

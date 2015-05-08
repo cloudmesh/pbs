@@ -13,6 +13,104 @@ class cm_shell_pbs:
     def activate_cm_shell_pbs(self):
         self.register_command_topic('mycommands', 'qstat')
 
+@command
+    def do_pbs(self, args, arguments):
+        """
+        ::
+
+            Usage:
+
+                pbs mongo find status=STATE [--short|--all|--limit=COUNT]
+                pbs mongo add DICT
+                pbs mongo summary
+
+                pbs mongo schema [-list] [--format=yaml|dict]
+                pbs mongo schema [--name=NAME][--format=yaml|dict]
+
+            Description:
+
+                pbs mongo find [host=HOST] [status=STATE] [--short|--all|--limit=COUNT]
+
+                    issues a specific query while focussing on those elements with a specific state or host.
+                    if neither host or status is specified the command fails
+
+                pbs mongo add DICT
+
+                    add the object specified as a string to the database
+
+                pbs mongo summary
+
+                    provides an easy to read summary of the objects.
+                    For example includes a count of hwo many objects are in which state
+                    How many objects are in the database (of a particular kind)
+                    ...
+
+                pbs mongo schema [-list] [--format=yaml|dict]
+
+                    lists the object name schema in the format specified
+
+                pbs mongo schema [--name=NAME][--format=yaml|dict]
+
+                    list the object attributes with the given name in the format specified.
+
+            Arguments:
+
+                ... TODO ...
+
+                set default values for PATH and others as needed.
+
+            Format:
+
+                config.yaml
+
+                mongo:
+                    port: 27017
+                    dbpath: ~/.cloudmesh/pbs/data_mongo.db
+                    logpath: ~/.cloudmesh/pbs/data_mongo.log
+        """
+    return
+
+    @command
+    def do_queue(self, args, arguments):
+        """
+        ::
+
+            Usage:
+
+                queue stat [--host=HOST] ARGUMENTS
+                queue sub [--host=HOST] ARGUMENTS
+                queue default --host=HOST [--queue=NAME]
+
+            Description:
+
+                queue stat [--host=HOST] ARGUMENTS
+
+                    executes a qstat command on the given host
+
+                queue sub [--host=HOST] ARGUMENTS
+
+                    executes a qstat command on the given host
+
+                queue default --host=HOST [--queue=NAME]
+
+                    sets the default hos or the default queue for a host
+
+            Example:
+
+                cm queue default --host=india --queue=batch
+
+                    sets the default queue for india to batch.
+                    This does not set the india host to be the
+                    default queue. This must be explicitly set
+                    with the next command
+
+                cm queue default --host=india
+
+                    sets the defulat queue to india. if host is
+                    not specified india is used
+        """
+        return
+
     @command
     def do_qstat(self, args, arguments):
         """
