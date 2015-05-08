@@ -8,7 +8,7 @@
 
     Description:
 
-        quueue stat [--host=HOST] ARGUMENTS
+        queue stat [--host=HOST] ARGUMENTS
 
             executes a qstat command on the given host
 
