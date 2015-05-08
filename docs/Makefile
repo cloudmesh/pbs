@@ -177,7 +177,7 @@ pseudoxml:
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
 
 manualpages:
-	# mkdir -pf docs/source/man
-	cm pbs help > docs/source/man
-	cm queue help > docs/source/man
-	cm qstat help > docs/source/man
+	mkdir -p source/man
+	cm pbs help | tail -n+2 > source/man/pbs.rst
+	cm queue help | tail -n+2 > source/man/queue.rst
+	cm qstat help | tail -n+2 > source/man/qstat.rst

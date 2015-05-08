@@ -5,6 +5,16 @@
    flask
    modules
 
+Manualpages
+===========
+
+.. toctree::
+   :glob:
+
+   man/pbs
+   man/qstat
+   man/queue
+
 Indices and tables
 ==================
 
