@@ -1,6 +1,9 @@
+from __future__ import print_function
+
 from mongoengine import *
 from cloudmesh_base.Shell import Shell
 from cloudmesh_base.util import path_expand
+
 
 class DatabaseMongo(object):
     """
@@ -8,16 +11,16 @@ class DatabaseMongo(object):
     """
 
     config = {
-        'port' : 27017,
-        'dbpath' : "~/.cloudmesh/pbs/data_mongo.db",
-        'logpath' : "~/.cloudmesh/pbs/data_mongo.log",
+        'port': 27017,
+        'dbpath': "~/.cloudmesh/pbs/data_mongo.db",
+        'logpath': "~/.cloudmesh/pbs/data_mongo.log",
         'id': None
     }
 
     def __init__(self,
-                 port = None,
-                 dbpath = None,
-                 logpath = None):
+                 port=None,
+                 dbpath=None,
+                 logpath=None):
         """
         Creates a new database with the given datbase and log file path on the port
         :param port: The port to use
@@ -31,31 +34,31 @@ class DatabaseMongo(object):
         if logpath is not None:
             self.logpath = logpath
 
-        for key in ['dbpath', 'logpath']
+        for key in ['dbpath', 'logpath']:
             self.config[key] = path_expand(self.config[key])
 
     def start(self):
         """
         Starts the database process in the background.
         """
-        for key in ['dbpath', 'logpath']
+        for key in ['dbpath', 'logpath']:
             path = os.dirname(self.config[key])
             Shell.mkdir(path)
 
-        r = Shell.sh("mongod",  "--fork",
+        r = Shell.sh("mongod", "--fork",
                      "--logpath", self.config['logpath'],
                      "--prot", self.config['port'],
-                     '--dbpath', self.config['dbpath']
+                     '--dbpath', self.config['dbpath'])
         print (r)
         # TODO
         # get the id from r
-        self.config['id'] = None # put here the real id
+        self.config['id'] = None  # put here the real id
 
     def stop(self):
         """
         Stops the database process
         """
-        id = self.config['id'']
+        id = self.config['id']
         # TODO use pythonic way to kill
         # p = psutil.Process(pid)
         # p.terminate()  #or p.kill()
@@ -122,6 +125,7 @@ class DatabaseMongo(object):
         :param kwargs:
         :return: objects matching the querry
         """
+
     def save(self):
         """
         saves the database after modifications have been done
@@ -139,6 +143,7 @@ class DatabaseMongo(object):
         """
         pass
 
+
 def test():
     db = DatabaseMongo()
 
@@ -146,7 +151,7 @@ def test():
     db.deploy()
     db.start()
 
-    query = None # todo this is a dict passes along to mongo implement find function
+    query = None  # todo this is a dict passes along to mongo implement find function
     db.find(query)
     db.save()
     db.kill()

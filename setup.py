@@ -2,16 +2,6 @@
 
 version = "2.2.9"
 
-requirements = [
-    'cloudmesh_base',
-    'sh',
-    'docopt',
-    'pyaml',
-    'simplejson',
-    'nose',
-    'cmd3',
-]
-
 import os
 from setuptools import setup, find_packages
 from setuptools.command.install import install
@@ -29,7 +19,16 @@ home = os.path.expanduser("~")
 
 banner("Install cloudmesh PBS")
 auto_create_version("cloudmesh_pbs", version)
-auto_create_requirements(requirements)
+
+
+def parse_requirements(filename):
+    """ load requirements from a pip requirements file """
+    lineiter = (line.strip() for line in open(filename))
+    return [line for line in lineiter if line and not line.startswith("#")]
+
+
+requirements = parse_requirements('requirements.txt')
+
 
 
 class CreateRequirementsFile(install):
