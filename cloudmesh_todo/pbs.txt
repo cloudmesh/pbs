@@ -8,11 +8,11 @@
 
     Description:
 
-        qstat [--host=HOST] ARGUMENTS
+        quueue stat [--host=HOST] ARGUMENTS
 
             executes a qstat command on the given host
 
-        qsub [--host=HOST] ARGUMENTS
+        queue sub [--host=HOST] ARGUMENTS
 
             executes a qstat command on the given host
 
