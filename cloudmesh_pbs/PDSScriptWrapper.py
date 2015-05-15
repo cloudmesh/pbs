@@ -6,6 +6,8 @@ import shlex
 from collections import namedtuple
 import os.path
 from textwrap import dedent
+import os
+import stat
 
 
 PBSScriptParserResult = namedtuple(
@@ -31,7 +33,17 @@ class PBSScriptParser(object):
         self._directives = list()
 
         # these are the rest of the contents of the script
-        self._lines = list
+        self._lines = list()
+
+
+        # position
+        self._line_counter = 1
+
+    def is_shebang(self, line):
+        return self._line_counter == 1 and line.startswith('#!')
+
+    def handle_shebang(self, line):
+        self._shebang = line.strip()
 
     def handle_directive(self, line, prefix='#PBS'):
         assert line.startswith(prefix)
@@ -51,16 +63,20 @@ class PBSScriptParser(object):
     def result(self):
         # see comment in __init__ for why
         assert self._shebang is not None
-        script = '\n'.join(self._lines)
+        script = ''.join(self._lines)
         return PBSScriptParserResult(shebang=self._shebang,
                                      directives=self._directives,
                                      script=script)
 
     def _parse_line(self, line):
-        if self.is_directive(line):
+        if self.is_shebang(line):
+            self.handle_shebang(line)
+        elif self.is_directive(line):
             self.handle_directive(line)
         else:
             self.handle_script(line)
+
+        self._line_counter += 1
 
     def _parse_lines(self, line_itr):
         for line in line_itr:
@@ -89,19 +105,37 @@ class PBSScriptParser(object):
 
 
 class Script(object):
-    def __init__(self, name, contents):
+    def __init__(self, name, contents,
+                 mode=stat.S_IRWXU|stat.S_IRGRP|stat.S_IXGRP|stat.S_IROTH):
         self._name = name
         self._contents = contents
+        self._mode = mode
 
     @property
     def name(self):
         "Name (or path) of the script"
-        return name
+        return self._name
 
     @property
     def script(self):
         "The script body"
         return self._contents
+
+    @property
+    def mode(self):
+        "The script execution bits (passed to `os.chmod`"
+        return self._mode
+
+    @mode.setter
+    def mode(self, bits):
+        self._mode = bits
+
+    def write(self, directory):
+        "Writes the script into a file name ``name`` in the directory"
+        with open(os.path.join(directory, self.name), 'w') as fd:
+            fd.write(self.script)
+            os.chmod(fd.name, self.mode)
+
 
 class Status(object):
     "The various states of a job"
@@ -112,9 +146,15 @@ class Status(object):
 
 
 class WrappedScript(object):
-    def __init__(self, entrypoint, wrapped):
+    def __init__(self, entrypoint, wrapped,
+                 status='STATUS.txt',
+                 stdout='STDOUT.txt',
+                 stderr='STDERR.txt'):
         self._entrypoint = entrypoint
         self._wrapped = wrapped
+        self.status = status
+        self.stdout = stdout
+        self.stderr = stderr
 
     @property
     def entrypoint(self):
@@ -130,19 +170,21 @@ class WrappedScript(object):
 class Wrapper(object):
     def __init__(self, bash_location='/bin/bash'):
         # sometimes /usr/bin may not exist on grids
-        self._shebang = '#!' + bash_location
-        self._stdout = 'STDOUT.txt'
-        self._stderr = 'STDERR.txt '
-        self._status = 'STATUS.txt'
+        self.shebang = '#!' + bash_location
+        self.stdout = 'STDOUT.txt'
+        self.stderr = 'STDERR.txt'
+        self.status = 'STATUS.txt'
 
 
     def wrap(self, path_to_script):
         name = os.path.basename(path_to_script)
+        name_wrapped = 'wrapped-{}'.format(name)
 
         parser = PBSScriptParser()
         tokens = parser.parse(path_to_script)
 
-        wrapped = Script(name, tokens.script)
+        wrapped_script = tokens.shebang + '\n' + tokens.script
+        wrapped = Script(name_wrapped, wrapped_script)
 
         directives = ' '.join(tokens.directives)
         newscript_contents = dedent("""\
@@ -150,7 +192,7 @@ class Wrapper(object):
         {directives}
 
         echo {state_started} > {state}
-        ./wrapped-{old_name}.sh >{stdout} 2>{stderr}
+        ./wrapped-{old_name} >{stdout} 2>{stderr}
         exit_code=$?
 
         if [ $exit_code -eq 0 ];then
@@ -158,10 +200,12 @@ class Wrapper(object):
         else
             echo {state_failure} > {state}
         fi
-        """.format(shebang=self._shebang,
+        """.format(shebang=self.shebang,
                    directives=directives,
                    old_name=name,
-                   state=self._status,
+                   state=self.status,
+                   stdout=self.stdout,
+                   stderr=self.stderr,
                    state_started=Status.started,
                    state_success=Status.success,
                    state_failure=Status.failure
@@ -169,7 +213,10 @@ class Wrapper(object):
 
         newscript = Script(name, newscript_contents)
 
-        return WrappedScript(newscript, wrapped)
+        return WrappedScript(newscript, wrapped,
+                             status=self.status,
+                             stdout=self.stdout,
+                             stderr=self.stderr)
 
 
 # TODO: add tests
