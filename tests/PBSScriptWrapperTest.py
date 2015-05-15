@@ -1,4 +1,4 @@
-from cloudmesh_pbs.PDSScriptWrapper import \
+from cloudmesh_pbs.PBSScriptWrapper import \
   PBSScriptParser, \
   Script, \
   WrappedScript, \
