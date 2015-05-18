@@ -3,7 +3,7 @@ from cloudmesh_base.ConfigDict import ConfigDict
 from cloudmesh_base.locations import config_file
 from cloudmesh_base.xshellutil import xcopy
 from cloudmesh_base.Shell import Shell
-from cloudmesh_pbs.PBSDeploy import PBS
+from cloudmesh_pbs_server.PBSDeploy import PBS
 
 class PBSDeploy(object):
 
