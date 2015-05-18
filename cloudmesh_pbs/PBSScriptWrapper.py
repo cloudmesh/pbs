@@ -35,7 +35,6 @@ class PBSScriptParser(object):
         # these are the rest of the contents of the script
         self._lines = list()
 
-
         # position
         self._line_counter = 1
 
@@ -101,7 +100,6 @@ class PBSScriptParser(object):
             return self._parse_file(path_or_file)
         else:
             raise ValueError('Unsupport type {}'.format(path_or_file))
-
 
 
 class Script(object):
@@ -175,7 +173,6 @@ class Wrapper(object):
         self.stderr = 'STDERR.txt'
         self.status = 'STATUS.txt'
 
-
     def wrap(self, path_to_script):
         name = os.path.basename(path_to_script)
         name_wrapped = 'wrapped-{}'.format(name)
@@ -217,7 +214,3 @@ class Wrapper(object):
                              status=self.status,
                              stdout=self.stdout,
                              stderr=self.stderr)
-
-
-# TODO: add tests
-    
