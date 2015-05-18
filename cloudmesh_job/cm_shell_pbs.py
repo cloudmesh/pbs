@@ -16,7 +16,13 @@ class cm_shell_jobs:
 
     """
         job server start
+
+            starts the job server
+
         job server stop
+
+            stops the job server
+
         job server clean
 
             removes all data in the job server and does a graceful clean, e.g deletes all scheduled jobs
@@ -24,7 +30,7 @@ class cm_shell_jobs:
         job server kill
 
             kills just the job server, but does not delete the jobs from the scheudlers.
-            thsi command should not be called in normal circumstances.
+            this command should not be called in normal circumstances.
 
         job set GROUP
 
@@ -42,7 +48,7 @@ class cm_shell_jobs:
 
             stops the server
 
-        job add  ...
+        job add  ... not yet sure what in the rest of the command
 
             adds a job to the job server and returns its id
 

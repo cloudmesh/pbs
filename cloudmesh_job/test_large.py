@@ -4,8 +4,8 @@ db = cm_mongodb.db()
 
 db.startMongo()
 
-#Connect to test database
-print "Connecting to local database"
+#Connect to test cloudmesh_job
+print "Connecting to local cloudmesh_job"
 
 db.connect("newdb")
 

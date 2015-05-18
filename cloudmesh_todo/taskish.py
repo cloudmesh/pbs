@@ -82,7 +82,7 @@ class File(AbstractHexDigest, AbstractHasYamlRepr, AbstractHasYamlRepr):
 
 class Task(AbstractHexDigest, AbstractHasYamlRepr, AbstractHasJsonRepr):
 
-    """A `Task` is something that can be stored somewhere (database,
+    """A `Task` is something that can be stored somewhere (cloudmesh_job,
     filesystem, etc) and executed on some node.
     """
 

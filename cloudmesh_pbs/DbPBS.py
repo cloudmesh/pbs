@@ -51,11 +51,11 @@ class pbs_db_interface(object):
 
     @abc.abstractmethod
     def save(self):
-        """save the database"""
+        """save the cloudmesh_job"""
 
     @abc.abstractmethod
     def update(self):
-        """load the database"""
+        """load the cloudmesh_job"""
 
 
 class DbPBS(pbs_db_interface):
@@ -78,7 +78,7 @@ class DbPBS(pbs_db_interface):
         self.save()
 
     def load(self):
-        """load the database"""
+        """load the cloudmesh_job"""
         print('loading', self.filename)
         # remove db ending so that shelve automatically adds it
         self.filename = self.filename.replace(".db", "")

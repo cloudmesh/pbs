@@ -38,13 +38,13 @@ class cm_shell_pbs:
 
                 pbs mongo add DICT
 
-                    add the object specified as a string to the database
+                    add the object specified as a string to the cloudmesh_job
 
                 pbs mongo summary
 
                     provides an easy to read summary of the objects.
                     For example includes a count of hwo many objects are in which state
-                    How many objects are in the database (of a particular kind)
+                    How many objects are in the cloudmesh_job (of a particular kind)
                     ...
 
                 pbs mongo schema [-list] [--format=yaml|dict]

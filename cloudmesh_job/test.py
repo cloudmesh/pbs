@@ -4,7 +4,7 @@ db = cm_mongodb.db()
 
 db.startMongo()
 
-#Connect to database
+#Connect to cloudmesh_job
 db.connect("test")
 
 #Insert two jobs - one with only a name and one with input and output files

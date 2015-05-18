@@ -58,7 +58,7 @@ class db:
 
         else:
 
-            print "Please connect to a database before running this function"
+            print "Please connect to a cloudmesh_job before running this function"
             return -1
 
     def insertJobObject(self, job):
@@ -71,7 +71,7 @@ class db:
 
         else:
 
-            print "Please connect to a database before running this function"
+            print "Please connect to a cloudmesh_job before running this function"
             return -1
 
     def findJobs(self, key_name="", value=""):
@@ -88,7 +88,7 @@ class db:
 
         else:
 
-            print "Please connect to a database before running this function"
+            print "Please connect to a cloudmesh_job before running this function"
             return -1
 
     def deleteJobs(self, key_name="", value=""):
@@ -105,7 +105,7 @@ class db:
 
         else:
 
-            print "Please connect to a database before running this function"
+            print "Please connect to a cloudmesh_job before running this function"
             return -1
 
     def numJobs(self, key_name="", value=""):
@@ -122,7 +122,7 @@ class db:
 
         else:
 
-            print "Please connect to a database before running this function"
+            print "Please connect to a cloudmesh_job before running this function"
             return -1
 
     def updateJobEndTime(self, job_id, end_time=str(datetime.datetime.now())):
@@ -133,5 +133,5 @@ class db:
 
         else:
 
-            print "Please connect to a database before running this function"
+            print "Please connect to a cloudmesh_job before running this function"
             return -1

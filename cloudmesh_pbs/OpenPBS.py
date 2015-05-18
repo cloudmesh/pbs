@@ -311,7 +311,7 @@ class OpenPBS(object):
 
     def database_filename(self):
         """
-        The name of the database file
+        The name of the cloudmesh_job file
         :return:
         """
         return path_expand(self.data.get("cloudmesh", "pbsdatabase", "filename"))

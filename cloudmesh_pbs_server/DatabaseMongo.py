@@ -7,7 +7,7 @@ from cloudmesh_base.util import path_expand
 
 class DatabaseMongo(object):
     """
-    This class instantiates a database for storing python objects into it.
+    This class instantiates a cloudmesh_job for storing python objects into it.
     """
 
     config = {
@@ -22,9 +22,9 @@ class DatabaseMongo(object):
                  dbpath=None,
                  logpath=None):
         """
-        Creates a new database with the given datbase and log file path on the port
+        Creates a new cloudmesh_job with the given datbase and log file path on the port
         :param port: The port to use
-        :param dbpath: The database path
+        :param dbpath: The cloudmesh_job path
         :param logpath: The logpath
         """
         if port is not None:
@@ -39,7 +39,7 @@ class DatabaseMongo(object):
 
     def start(self):
         """
-        Starts the database process in the background.
+        Starts the cloudmesh_job process in the background.
         """
         for key in ['dbpath', 'logpath']:
             path = os.dirname(self.config[key])
@@ -56,7 +56,7 @@ class DatabaseMongo(object):
 
     def stop(self):
         """
-        Stops the database process
+        Stops the cloudmesh_job process
         """
         id = self.config['id']
         # TODO use pythonic way to kill
@@ -67,14 +67,14 @@ class DatabaseMongo(object):
 
     def clear(self):
         """
-        Empties the database from all entries.
+        Empties the cloudmesh_job from all entries.
         TODO not yet implemented
         """
         pass
 
     def deploy(self):
         """
-        A simple shell based deployment of the database backend.
+        A simple shell based deployment of the cloudmesh_job backend.
         It self detects the OS and installs the needed software.
         We assume tht you have sudo and run this command in a virtualenv.
         Supported platforms: OSX, ubuntu, redhat
@@ -85,7 +85,7 @@ class DatabaseMongo(object):
 
     def status(self):
         """
-        returns information about the status of teh database such as
+        returns information about the status of teh cloudmesh_job such as
         running, unavailable, ...
         TODO determine which states are useful
         :return:
@@ -103,7 +103,7 @@ class DatabaseMongo(object):
 
     def statistics(self):
         """
-        prints statistics for the database and all of its collections.
+        prints statistics for the cloudmesh_job and all of its collections.
         TODO implement
         :return:
         """
@@ -115,7 +115,7 @@ class DatabaseMongo(object):
         ## print collection statistics
         # print db.command("collstats", "events")
 
-        ## print database statistics
+        ## print cloudmesh_job statistics
         # print db.command("dbstats")
 
     def find(self, **kwargs):
@@ -128,7 +128,7 @@ class DatabaseMongo(object):
 
     def save(self):
         """
-        saves the database after modifications have been done
+        saves the cloudmesh_job after modifications have been done
         :return:
         TODO implement
         """
