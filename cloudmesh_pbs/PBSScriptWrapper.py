@@ -3,6 +3,7 @@ stderr, and provides support for checking the status of the job.
 """
 
 import shlex
+import pipes
 from collections import namedtuple
 import os.path
 from textwrap import dedent
@@ -34,7 +35,6 @@ class PBSScriptParser(object):
 
         # these are the rest of the contents of the script
         self._lines = list()
-
 
         # position
         self._line_counter = 1
@@ -101,7 +101,6 @@ class PBSScriptParser(object):
             return self._parse_file(path_or_file)
         else:
             raise ValueError('Unsupport type {}'.format(path_or_file))
-
 
 
 class Script(object):
@@ -175,10 +174,11 @@ class Wrapper(object):
         self.stderr = 'STDERR.txt'
         self.status = 'STATUS.txt'
 
-
-    def wrap(self, path_to_script):
+    def wrap(self, path_to_script, arguments=None):
         name = os.path.basename(path_to_script)
         name_wrapped = 'wrapped-{}'.format(name)
+
+        args = arguments or list()
 
         parser = PBSScriptParser()
         tokens = parser.parse(path_to_script)
@@ -192,7 +192,7 @@ class Wrapper(object):
         {directives}
 
         echo {state_started} > {state}
-        ./wrapped-{old_name} >{stdout} 2>{stderr}
+        ./wrapped-{old_name} {args} >{stdout} 2>{stderr}
         exit_code=$?
 
         if [ $exit_code -eq 0 ];then
@@ -203,6 +203,7 @@ class Wrapper(object):
         """.format(shebang=self.shebang,
                    directives=directives,
                    old_name=name,
+                   args=' '.join(map(pipes.quote, args)),
                    state=self.status,
                    stdout=self.stdout,
                    stderr=self.stderr,
@@ -217,7 +218,3 @@ class Wrapper(object):
                              status=self.status,
                              stdout=self.stdout,
                              stderr=self.stderr)
-
-
-# TODO: add tests
-    
