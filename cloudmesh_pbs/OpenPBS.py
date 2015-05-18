@@ -19,8 +19,8 @@ from cloudmesh_base.logger import LOGGER
 
 log = LOGGER(__file__)
 
-class OpenPBS(object):
 
+class OpenPBS(object):
     # #################################################################
     # INITIALIZATION
     # #################################################################
@@ -304,8 +304,8 @@ class OpenPBS(object):
         try:
             m = self.data.get("cloudmesh", "pbs", host, "manager")
         except:
-            print ("WARNING: Manager not defined for", host)
-            print ("         Using the host")
+            print("WARNING: Manager not defined for", host)
+            print("         Using the host")
             m = host
         return m
 
@@ -554,20 +554,16 @@ if __name__ == "__main__":
 
     pbs = OpenPBS(deploy=True)
 
-
-
-
     manager = pbs.manager(host)
 
-    pprint (pbs.nodes(host))
+    pprint(pbs.nodes(host))
 
-    pprint (pbs.nodes_distribution(host))
+    pprint(pbs.nodes_distribution(host))
 
-    pprint (pbs.nodes_sum(host))
+    pprint(pbs.nodes_sum(host))
     sys.exit()
 
     pbs.info()
-
 
     manager = pbs.manager(host)
     xmkdir(manager, "~/scripts/test")
@@ -610,9 +606,6 @@ if __name__ == "__main__":
     banner("RESULT")
 
     pprint(r)
-
-
-
 
     '''
     #os.system ("cat " + jobname)

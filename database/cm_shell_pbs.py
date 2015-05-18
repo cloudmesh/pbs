@@ -1,3 +1,5 @@
+#BUG: this import statement must be in the class wrapped in a boolean to see if the command was
+# initialized. this allows the shellto start without dependency on mongo
 import cm_mongodb
 
 class cm_shell_jobs:
@@ -6,23 +8,35 @@ class cm_shell_jobs:
     def activate_cm_shell_jobs(self):
         self.register_command_topic('mycommands', 'jobs')
 
+    # TODO THE COMMAND SEEMS COMPLICATED
+    # TODO the parsing of REQARG could be simplified while writing the commandout
+    # TODO maybe we need to split in multiple commands such as
+    # TODO
     @command
     def do_jobs(self, args, arguments):
         """
         ::
-cm
+
           Usage:
               jobs REQARG1 OPTARG1 OPTARG2 OPTARG3
+
           Performs various jobs functions explained below
+
           Arguments:
+
             REQARG1     Initial function to perform. Possible values: deploy, start, clear, set, delete, list
+
                         startMongo : deploys mongo instance, OPTARG1 is db_path, OPTARG2 is port, OPTARG3 is log_path
                         stopMongo  : stops mongo instance
-                        connect  : either connects to a pre-existing db or creates a new one
-                        insertJob    : Creates a new job, requires OPTARG1 to be job_name, OPTARG2 & OPTARG3 are input file and output file
-                        findJobs : Finds all running jobs, no required parameters but you may provide key_name and value to return specific jobs
-                        deleteJobs : deletes all running jobs, no required parameters but you may provide key_name and value to delete specific jobs
-						numJobs : prints a count of jobs currently running
+                        connect    : either connects to a pre-existing db or creates a new one
+                        insertJob  : Creates a new job, requires OPTARG1 to be job_name, OPTARG2 & OPTARG3 are input
+                                     file and output file
+                        findJobs :   Finds all running jobs, no required parameters but you may provide key_name and
+                                     value to return specific jobs
+                        deleteJobs : deletes all running jobs, no required parameters but you may provide key_name
+                                     and value to delete specific jobs
+						numJobs :    prints a count of jobs currently running
+
             OPTARG1
 
             OPTARG2
