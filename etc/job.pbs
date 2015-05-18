@@ -7,6 +7,9 @@
 #PBS -l mem=10mb
 #PBS -o {name}.out
 
+### #PBS -l nodes=1:ppn=1
+
+
 echo "# CLOUDMESH: STATUS: START. JOB", $PBS_O_HOST, $PBS_JOBID, $PBS_O_LOGNAME, $PBS_JOBNAME, $PBS_NODEFILE, `date`
 echo "####################################################"
 echo "User: $PBS_O_LOGNAME"
