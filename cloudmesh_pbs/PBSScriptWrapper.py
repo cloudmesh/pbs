@@ -165,6 +165,13 @@ class WrappedScript(object):
         "The wrapped script"
         return self._wrapped
 
+    def write(self, directory):
+        self.entrypoint.write(directory)
+        self.wrapped.write(directory)
+        return [os.path.join(directory, name)
+                for name in [self.entrypoint.name,
+                             self.wrapped.name]]
+
 
 class Wrapper(object):
     def __init__(self, bash_location='/bin/bash'):
