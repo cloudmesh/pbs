@@ -1,3 +1,4 @@
+# TODO instead of using subprocess, we like to use cloudmesh_base.Shell
 import subprocess
 import pymongo
 from pymongo import MongoClient
@@ -8,13 +9,21 @@ class db:
     database = None
     jobs = None
 
+    # BUG not a good location for  the data /data
+    # BUG not a good location for logpath as we run thi sin user mode
     def startMongo(self, db_path="/data/db/", port="27017", log_path="/var/log/mongod"):
 
         #Create the data path in case it does not already exist
         subprocess.call(["mkdir", "/data"])
+        # try:
+        #   r = Shell.mkdir("/data")
+        # except:
+        #   print " could not cretae"
+        # BUG / is not a good location for data and will not work on some systems
         subprocess.call(["mkdir", db_path])
 
         #Deploy the mongoDB
+        # use Shell
         subprocess.call(["mongod", "--dbpath", db_path, "--port", port, "--fork", "--logpath", log_path])
 
         print "MongoDB has been deployed at path " + db_path + " on port " + port + " with log " + log_path
