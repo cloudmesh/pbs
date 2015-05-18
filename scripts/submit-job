@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+
+from cloudmesh_base.Shell import Shell
+from cloudmesh_pbs.PBSScriptWrapper import Wrapper
+import sys
+import tempfile
+
+
+def getopts():
+    from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
+
+    usage = '{prog} [OPTIONS] <grid> <script> [-- parameters ...]'.format(prog=sys.argv[0])
+    p = ArgumentParser(usage=usage, formatter_class=ArgumentDefaultsHelpFormatter)
+
+    p.add_argument('grid', help='Name of the grid to submit to')
+    p.add_argument('script', help='The script to run on the engine')
+    p.add_argument('parameters', nargs='*', help='Parameters to the script')
+
+    p.add_argument('-p', '--prefix', default='~/qsub', help='Remote prefix under which to store jobs')
+
+    return p.parse_args()
+
+
+def wrap(localscriptpath, args=None):
+    w = Wrapper()
+    return w.wrap(localscriptpath, arguments=args)
+
+
+def main():
+    opts = getopts()
+    print opts
+
+    # scripts localy
+    wrapped = wrap(opts.script, args=opts.parameters)
+    tmpdir = tempfile.mkdtemp()
+    localpaths = wrapped.write(tmpdir)
+
+    # ensure remote prefix exists
+    ##
+    ## mkdir will fail if the directory already exists and sh (python
+    ## module) creates exceptions dynamics (eg sh.ErrorReturnCode_1)
+    ## documentation for man 1 mkdir does not indicate the semantics
+    ## of exit codes. Looking at man 2 mkdir implicates EEXIST, but
+    ## does not specify the numeric value. Additionally, the observed
+    ## value (1) is generally used as a catch all error code.
+    ##
+    ## hence the test -d ... hack: 
+    Shell.ssh([opts.grid, 'test -d {prefix} || mkdir -v {prefix}'.format(prefix=opts.prefix)])
+
+    # copy files to remote
+    for path in localpaths:
+        dst = '{grid}:{prefix}'.format(grid=opts.grid,
+                                       prefix=opts.prefix)
+        print '{src} -> {dst}'.format(src=path, dst=dst)
+        Shell.scp([path, dst])
+
+
+if __name__ == '__main__':
+    main()
