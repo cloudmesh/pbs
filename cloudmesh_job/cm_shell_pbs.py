@@ -1,6 +1,6 @@
 #BUG: this import statement must be in the class wrapped in a boolean to see if the command was
 # initialized. this allows the shellto start without dependency on mongo
-import cm_mongodb
+import cm_jobdb
 
 class cm_shell_jobs:
 	database = None
@@ -119,7 +119,7 @@ class cm_shell_jobs:
 
         if arguments["REQARG1"] == "startMongo":
 
-			self.database = cm_mongodb.db()
+			self.database = cm_jobdb.JobDB()
 
 			if arguments["OPTARG1"] is not None:
 				dbpath = arguments["OPTARG1"]
@@ -186,9 +186,9 @@ class cm_shell_jobs:
 			if argument["OPTARG1"] is not None:
 				keyname = argument["OPTARG1"]
 				value = argument["OPTARG2"]
-				self.database.deleteJobs(keyname, value)
+				self.database.delete_jobs(keyname, value)
             else:
-				self.database.deleteJobs()
+				self.database.delete_jobs()
 
 		elif arguments["REQARG1"] == "findJobs":
 
@@ -205,20 +205,20 @@ class cm_shell_jobs:
 			if argument["OPTARG1"] is not None:
 				keyname = argument["OPTARG1"]
 				value = argument["OPTARG2"]
-				self.database.numJobs(keyname, value)
+				self.database.count(keyname, value)
             else:
-				self.database.numJobs()
+				self.database.count()
 
 		elif arguments["REQARG1"] == "UpdateJobEndTime":
 
 			jobid = argument["OPTARG1"]
 			endtime = argument["OPTARG2"]
-			self.database.numJobs(jobid, endtime)
+			self.database.count(jobid, endtime)
 
 		elif argument["REQARG1"] == "insertJobObject":
 
 			job = argument["OPTARG1"]
-			self.database.insertJobObject(job)
+			self.database.insert_job_object(job)
 
         pass
 

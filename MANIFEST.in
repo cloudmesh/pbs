@@ -1,0 +1,8 @@
+include requirements.txt
+include AUTHORS
+include ChangeLog
+exclude .gitignore
+exclude .gitreview
+
+global-exclude *.pyc
+include etc/*.yaml

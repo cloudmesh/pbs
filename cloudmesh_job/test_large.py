@@ -1,6 +1,6 @@
-import cm_mongodb
+import cm_jobdb
 
-db = cm_mongodb.db()
+db = cm_jobdb.JobDB()
 
 db.startMongo()
 
@@ -14,12 +14,12 @@ db.connect("newdb")
 print "\nInserting all jobs"
 
 for i in range(0, 20):
-    db.insertJob("job" + str(i), "input", "output")
+    db.insert("job" + str(i), "input", "output")
 
 #Print out all jobs
 print "\nAll Jobs:"
 
-for job in db.findJobs():
+for job in db.find_jobs():
     print job
 
 #Print all jobs with job name as "job2"
@@ -30,30 +30,30 @@ for job in db.findJobs():
 #   output_filename
 print "\nJob with Job Name as 'job2'"
 
-for job in db.findJobs("job_name", "job2"):
+for job in db.find_jobs("job_name", "job2"):
     print job
 
 #Print out count of all jobs
-numJobs = db.numJobs()
+numJobs = db.count()
 print "\nNumber of Total Jobs: " + str(numJobs)
 
 #Print out count of all jobs with job name as "job2"
-numJobs2 = db.numJobs("job_name", "job2")
+numJobs2 = db.count("job_name", "job2")
 print "\nNumber of Jobs with Job Name as 'job2': " + str(numJobs2)
 
 #Delete all jobs with job name as "job2"
-db.deleteJobs("job_name", "job2")
+db.delete_jobs("job_name", "job2")
 
 #Print out count of all jobs with job name as "job2"
 print "\nDeleting all jobs with job name as 'job2'"
 
-numJobs2 = db.numJobs("job_name", "job2")
+numJobs2 = db.count("job_name", "job2")
 print "Number of Jobs with Job Name as 'job2': " + str(numJobs2)
 
 #Delete all jobs
-db.deleteJobs()
+db.delete_jobs()
 
 #Print out count of all jobs
 print "\nDeleting all remaining jobs"
-numJobs = db.numJobs()
+numJobs = db.count()
 print "Number of Total Jobs: " + str(numJobs)

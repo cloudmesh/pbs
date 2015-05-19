@@ -127,22 +127,11 @@ setup(
     ],
     packages=find_packages(),
     include_package_data=True,
-    # data_files=[
-    # (home + '/.cloudmesh', [
-    # 'etc/FGLdapCacert.pem',
-    # 'etc/india-havana-cacert.pem',
-    # 'etc/cloudmesh_flavor.yaml']),
-    # (home + '/.cloudmesh/etc', [
-    # 'etc/cloudmesh.yaml',
-    # 'etc/me-none.yaml',
-    # 'etc/cloudmesh.yaml',
-    # 'etc/cloudmesh_server.yaml',
-    # 'etc/cloudmesh_rack.yaml',
-    # 'etc/cloudmesh_celery.yaml',
-    # 'etc/cloudmesh_mac.yaml',
-    # 'etc/cloudmesh_flavor.yaml',
-    # 'etc/ipython_notebook_config.py']),
-    # ],
+    data_files=[
+        (home + '/.cloudmesh',
+            ['etc/cloudmesh_pbs.yaml']
+        ),
+    ],
     # entry_points={'console_scripts': [
     # 'cm-cluster = cloudmesh.cluster.cm_shell_cluster:main',
     # ]},
