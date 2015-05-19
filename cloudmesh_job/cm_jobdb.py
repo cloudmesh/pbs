@@ -95,7 +95,7 @@ class job_db (object):
 
         Console.info("Connecting to the Mongo Database")
 
-    def insertJob(self,
+    def insert(self,
                   job_name,
                   job_group,
                   job_label,
@@ -143,49 +143,54 @@ class job_db (object):
             Console.error("Please connect to the database first")
             return -1
 
-    def findJobs(self, key_name="", value=""):
+    def find_jobs(self, attribute="", value=""):
 
         if self.database is not None:
 
             #Return all jobs if not given search parameters
-            if key_name == "" and value == "":
+            if attribute == "" and value == "":
                 return self.jobs.find()
 
             #Return all jobs given the search parameters
             else:
-                return self.jobs.find({key_name: value})
+                return self.jobs.find({attribute: value})
 
         else:
             Console.error("Please connect to the database first")
             return -1
 
-    def deleteJobs(self, key_name="", value=""):
+    def delete_jobs(self, attribute="", value=""):
 
         if self.database is not None:
 
             #Delete all jobs if no key name or value has been given
-            if key_name == "" and value == "":
+            if attribute == "" and value == "":
                 self.jobs.remove()
 
             #Delete only records from a query result if key name and value have been given
             else:
-                self.jobs.remove({key_name: value})
+                self.jobs.remove({attribute: value})
 
         else:
             Console.error("Please connect to the database first")
             return -1
 
-    def numJobs(self, key_name="", value=""):
-
+    def count(self, attribute="", value=""):
+        """
+        return the count of all jobs with a given value at the attribute
+        :param attribute:
+        :param value:
+        :return:
+        """
         if self.database is not None:
 
             #Return the count of all jobs if not given search parameters
-            if key_name == "" and value == "":
+            if attribute == "" and value == "":
                 return self.jobs.count()
 
             #Return number of results of the query given the search parameters
             else:
-                return self.jobs.find(({key_name: value})).count()
+                return self.jobs.find(({attribute: value})).count()
 
         else:
             Console.error("Please connect to the database first")
