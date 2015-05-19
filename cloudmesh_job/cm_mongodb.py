@@ -10,17 +10,12 @@ class db:
     jobs = None
 
     # BUG not a good location for  the data /data
-    # BUG not a good location for logpath as we run thi sin user mode
+    # BUG not a good location for logpath as we run this in user mode
     def startMongo(self, db_path="/data/db/", port="27017", log_path="/var/log/mongod"):
 
-        #Create the data path in case it does not already exist
-        subprocess.call(["mkdir", "/data"])
-        # try:
-        #   r = Shell.mkdir("/data")
-        # except:
-        #   print " could not cretae"
-        # BUG / is not a good location for data and will not work on some systems
-        subprocess.call(["mkdir", db_path])
+        #Create the data path and log path in case they do not exist
+        self.createPath(db_path, True)
+        self.createPath(log_path, False)
 
         #Deploy the mongoDB
         # use Shell
@@ -135,3 +130,51 @@ class db:
 
             print "Please connect to a cloudmesh_job before running this function"
             return -1
+
+    #Create a directory and all of its sub directories
+    def createPath(self, completePath, lastPathIsADirectory):
+
+        #Split the full path on all slashes
+        paths = completePath.split("/")
+
+        #Build the string of the base directory and all sub directories to the current one
+        currentPath = ""
+
+        index = 0
+
+        #Loop through all paths
+        for path in paths:
+
+            #Path is blank so do not create a directory
+            if path == "":
+
+                #Current path is not the last path
+                if index != len(paths) - 1:
+
+                    #Add a slash
+                    currentPath = currentPath + "/"
+
+            #Path exists, create the path and add it to the string tracking the complete path
+            else:
+
+                #Current path is the last path
+                if index == len(paths) - 1:
+
+                    #Do not add a slash on the end
+                    currentPath = currentPath + path
+
+                else:
+                    currentPath = currentPath + path + "/"
+
+                #Only create the directory if the current path is not the last path or
+                #   the path is the last path and it has been flagged as a directory
+                if index != len(paths) - 1 or (index == len(paths) - 1 and lastPathIsADirectory):
+
+                    #Attempt to create the directories
+                    try:
+                        error = subprocess.call(["mkdir", currentPath])
+
+                    except:
+                        print "The directory " + currentPath + " already exists"
+
+            index += 1
