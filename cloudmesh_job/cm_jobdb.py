@@ -71,15 +71,19 @@ class JobDB(object):
     def start(self):
         try:
 
-            subprocess.call([
-                "mongod",
+            mongod = Shell.which("mongod")
+            command = [
+                mongod,
                 "--dbpath", str(self.db_path),
                 "--port", str(self.port),
                 "--fork",
                 "--logpath", str(self.log_file),
                 "--bind_ip", "127.0.0.1"
-            ])
-
+            ]
+            print(" ".join(command))
+            #a = subprocess.call(command)
+            os.system(" ".join(command))
+            os.system ("ps aux | fgrep mongod")
             Console.ok("MongoDB has been deployed at path {:} on port {:} with log {:}"
                        .format(self.db_path, self.port, self.log_file))
 
@@ -115,6 +119,17 @@ class JobDB(object):
         self.jobs = client.jobs
 
         Console.info("Connecting to the Mongo Database")
+
+
+        #from pymongo import Connection
+        #connection = Connection()
+        #connection = Connection('localhost', 27017)
+        #db = connection.testdb
+        #collection = db.testcollection
+        #for post in collection.find():
+        #    print post
+
+#Connect to cloudmesh_job
 
     def insert(self,
                job_name,
