@@ -1,12 +1,15 @@
-import cm_jobdb
+from __future__ import print_function
+
+# from cloudmesh_job.cm_jobdb import JobDB
+from cmd3.console import Console
+from cmd3.shell import command
 
 
 class cm_shell_job:
-
     database = None
 
     def activate_cm_shell_job(self):
-        self.register_command_topic('hbc', 'job')
+        self.register_command_topic('HPC', 'job')
 
     @command
     def do_job(self, args, arguments):
@@ -46,12 +49,12 @@ class cm_shell_job:
 
                 job server kill
 
-                    kills just the job server, but does not delete the jobs from the scheudlers.
+                    kills just the job server, but does not delete the jobs from the schedulers.
                     this command should not be called in normal circumstances.
 
                 job set GROUP
 
-                    sets the defualt job group
+                    sets the default job group
 
                 job add  GROUP TODO
 
@@ -120,7 +123,7 @@ class cm_shell_job:
 
                 job status [ID | GROUP]
 
-                    list the status of a single job or the status of all jobe sin the group
+                    list the status of a single job or the status of all jobs in the group
 
                 job status statistics
 
@@ -132,33 +135,33 @@ class cm_shell_job:
 
         if arguments["server"] and arguments["start"]:
 
-            print ("job server start")
+            Console.ok("job server start")
 
         elif arguments["server"] and arguments["stop"]:
 
-            print ("job server stop")
+            Console.ok("job server stop")
 
         elif arguments["server"] and arguments["clean"]:
 
-            print ("job server clean")
+            Console.ok("job server clean")
 
-        elif arguments["server"] and arguments["kell"]:
+        elif arguments["server"] and arguments["kill"]:
 
-            print ("job server kill")
+            Console.ok("job server kill")
 
         elif arguments["server"] and arguments["deploy"]:
 
-            print ("job server deploy")
+            Console.ok("job server deploy")
 
         elif arguments["stat"]:
 
-            print ("job stat")
+            Console.ok("job stat")
 
         elif arguments["list"]:
 
             output = arguments["--output"]
 
-            print ("lists the jobs in the format specified")
+            Console.ok("lists the jobs in the format specified")
 
         elif arguments["insert"]:
 
@@ -168,13 +171,13 @@ class cm_shell_job:
             input_files = arguments["INPUT_FILES"]
             output_file = arguments["OUTPUT_FILES"]
 
-            print ("insert")
+            Console.ok("insert")
 
         elif arguments["find"] and arguments["--name"]:
 
             name = arguments["NAME"]
 
-            print("find the job with the given name")
+            Console.ok("find the job with the given name")
 
         elif arguments["find"] and arguments["--attribute"] and arguments["--value"]:
 
@@ -182,17 +185,17 @@ class cm_shell_job:
             attribute = arguments["--attribute"]
             value = arguments["--value"]
 
-            print ("job find --attribute=ATTRIBUTE --value=VALUE")
+            Console.ok("job find --attribute=ATTRIBUTE --value=VALUE")
 
-        elif arguments["delete"] and attribute["NAME"]:
+        elif arguments["delete"] and arguments["NAME"]:
 
             name = arguments["NAME"]
 
-            print("delete the job with the given name")
+            Console.ok("delete the job with the given name")
 
         pass
 
 
 if __name__ == '__main__':
-    command = cm_shell_jobs()
-    command.do_jobs()
+    command = cm_shell_job()
+    command.do_job()

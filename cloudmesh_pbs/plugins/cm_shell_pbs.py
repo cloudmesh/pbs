@@ -9,7 +9,6 @@ from cloudmesh_base.tables import dict_printer
 
 
 class cm_shell_pbs:
-
     def activate_cm_shell_pbs(self):
         self.register_command_topic('mycommands', 'pbs')
         self.register_command_topic('mycommands', 'queue')
@@ -141,8 +140,8 @@ class cm_shell_pbs:
 
             if len(arguments['ATTRIBUTES']) == 0 and not arguments['--view']:
                 arguments['--view'] = True
-                arguments['VIEW'] = 'default'                
-            # pprint(arguments)
+                arguments['VIEW'] = 'default'
+                # pprint(arguments)
 
             r = {}
             try:
@@ -159,10 +158,10 @@ class cm_shell_pbs:
                     view = arguments['VIEW']
                     attributes = pbs.data.get("cloudmesh.pbsview.{0}".format(view))
                     r = OpenPBS.list(r, attributes)
-                
+
             except Exception, e:
                 Console.error("machine " + host + " not reachable. error.")
-                print (e)
+                print(e)
             if len(r.keys()) == 0:
                 Console.info("No jobs found")
             else:
