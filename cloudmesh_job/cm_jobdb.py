@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import subprocess
 from cloudmesh_base.ConfigDict import ConfigDict
 from cloudmesh_base.tables import dict_printer
 from cloudmesh_base.Shell import Shell
@@ -58,19 +59,15 @@ class JobDB(object):
 
     def start(self):
         try:
-#            import sh
-#            r = sh.Command("mongod", --dbpath", self.db_path,
-#                           "--port", self.port,
-#                           "--fork",
-#                           "--logpath", self.log_file,
-#                           "--bind_ip", "127.0.0.1", _bg=True)
 
-            process = Shell.mongod("--dbpath", self.db_path,
-                             "--port", self.port,
-                             "--fork",
-                             "--logpath", self.log_file,
-                             "--bind_ip", "127.0.0.1", _bg=True)
-            process.wait()
+            subprocess.call([
+                "mongod",
+                "--dbpath", str(self.db_path),
+                "--port", str(self.port),
+                "--fork",
+                "--logpath", str(self.log_file),
+                "--bind_ip", "127.0.0.1"
+            ])
 
             Console.ok("MongoDB has been deployed at path {:} on port {:} with log {:}"
                        .format(self.db_path, self.port, self.log_file))
