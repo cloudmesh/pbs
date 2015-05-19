@@ -1,18 +1,18 @@
-# TODO instead of using subprocess, we like to use cloudmesh_base.Shell
-import subprocess
+from __future__ import print_function
+
 from cloudmesh_base.Shell import _execute
 from cloudmesh_base.Shell import mkdir
 from cloudmesh_base.tables import dict_printer
 from cloudmesh_base.Shell import Shell
 from cloudmesh_base.util import banner
 from cloudmesh_base.util import path_expand
+from cmd3.console import Console
 
 import pymongo
 from pymongo import MongoClient
 import datetime
 
 class job_db (object):
-
 
     database = None
     jobs = None
@@ -32,16 +32,21 @@ class job_db (object):
         self.id_file = config_file("/pbs/id.txt")
         self.db_file = config_file("/pbs/job.db")
 
-        if deploy:
-            self.deploy()
-        self.load()
-        self.id = self.jobid
+        ## TODO see DbPBS
+        # if deploy:
+        #    self.deploy()
+        #self.load()
+        #self.id = self.jobid
 
-        self.pbs_nodes_data = None
+        #self.pbs_nodes_data = None
 
+    # TODO COMBINE WITH __INIT__ ???
     # BUG not a good location for  the data /data
     # BUG not a good location for logpath as we run this in user mode
-    def startMongo(self, db_path="/data/db/", port="27017", log_path="/var/log/mongod"):
+    def start(self,
+              db_path="/pbs/",  # will be in ~/.cloudmesh/pbs
+              port="27018",  # will be in ~/.cloudmesh/pbs/lob
+              log_path="/pbs/log/"):
 
         #Create the data path and log path in case they do not exist
         Shell.mkdir(db_path)
@@ -49,15 +54,37 @@ class job_db (object):
 
         #Deploy the mongoDB
         # use Shell
-        r = Shell._execute("mongod", "--dbpath", db_path, "--port", port, "--fork", "--logpath", log_path)
+        try:
 
-        print "MongoDB has been deployed at path " + db_path + " on port " + port + " with log " + log_path
+            r = Shell._execute("mongod",
+                               "--dbpath", db_path,
+                               "--port", port,
+                               "--fork",
+                               "--logpath", log_path)
 
-    def stopMongo(self):
+        except Exception, e:
+            Console.error("we had a problem starting the  mongo daemon")
+            print(e)
 
-        r = Shell.execute("mongod", "--shutdown")
+        Console.ok("MongoDB has stopped")
 
-        print "MongoDB has stopped"
+        Console.ok("MongoDB has been deployed at path {:} on port {:} with log {:}".format(db_path, port, log_path))
+
+    def stop(self):
+        try:
+            r = Shell.execute("mongod", "--shutdown")
+        except Exception, e:
+            Console.error("we had a problem shutting the mongo daemon down")
+            print(e)
+
+        Console.ok("MongoDB has stopped")
+
+    def info(self):
+        # TODO: implement self. dbath, self.port, self.logpath
+        Console.ok("Mongo parameters")
+        Console.ok("  dbpath:", self.dbpath)
+        Console.ok("  port:", self.port)
+        Console.ok("  port:", self.logpath)
 
     def connect(self, db_name):
 
@@ -65,6 +92,8 @@ class job_db (object):
 
         self.database = client[db_name]
         self.jobs = self.database.jobs
+
+        Console.info("Connecting to the Mongo Database")
 
     def insertJob(self,
                   job_name,
@@ -99,7 +128,7 @@ class job_db (object):
 
         else:
 
-            print "Please connect to a cloudmesh_job before running this function"
+            Console.error("Please connect to the database first")
             return -1
 
     def insertJobObject(self, job):
@@ -111,8 +140,7 @@ class job_db (object):
             return job_id
 
         else:
-
-            print "Please connect to a cloudmesh_job before running this function"
+            Console.error("Please connect to the database first")
             return -1
 
     def findJobs(self, key_name="", value=""):
@@ -128,8 +156,7 @@ class job_db (object):
                 return self.jobs.find({key_name: value})
 
         else:
-
-            print "Please connect to a cloudmesh_job before running this function"
+            Console.error("Please connect to the database first")
             return -1
 
     def deleteJobs(self, key_name="", value=""):
@@ -145,8 +172,7 @@ class job_db (object):
                 self.jobs.remove({key_name: value})
 
         else:
-
-            print "Please connect to a cloudmesh_job before running this function"
+            Console.error("Please connect to the database first")
             return -1
 
     def numJobs(self, key_name="", value=""):
@@ -162,8 +188,7 @@ class job_db (object):
                 return self.jobs.find(({key_name: value})).count()
 
         else:
-
-            print "Please connect to a cloudmesh_job before running this function"
+            Console.error("Please connect to the database first")
             return -1
 
     def updateJobEndTime(self, job_id, end_time=str(datetime.datetime.now())):
@@ -173,8 +198,7 @@ class job_db (object):
             self.jobs.update({"_id" : job_id}, {"$set": {"end_time" : end_time}}, upsert=False)
 
         else:
-
-            print "Please connect to a cloudmesh_job before running this function"
+            Console.error("Please connect to the database first")
             return -1
 
     # TODO: not needed as implemented in cloudmesh_base
