@@ -97,7 +97,7 @@ class JobDB(object):
 
     def stop(self):
         try:
-            r = Shell.execute("mongod", "--shutdown")
+            os.system("mongod --shutdown")
         except Exception, e:
             Console.error("we had a problem shutting the mongo daemon down")
             print(e)
@@ -139,7 +139,9 @@ class JobDB(object):
 
         if self.database is not None:
 
-            job = {"job_name": job_name,
+            job = {
+                   "_id": job_name,
+                   "job_name": job_name,
                    "job_id": job_name,
                    "job_group": job_group,
                    "job_label": job_label,
@@ -156,12 +158,12 @@ class JobDB(object):
             pprint(job)
             banner("insert")
 
-            db_job_object = self.jobs.insert(job)
-            print (db_job_object)
-            db_job_id = db_job_object
-            print (db_job_id)
+            db_job_object = self.jobs.save(job)
+            # print (db_job_object)
+            # db_job_id = db_job_object
+            # print (db_job_id)
 
-            return job_id
+            return db_job_object
 
         else:
 
