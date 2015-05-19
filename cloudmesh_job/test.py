@@ -45,4 +45,4 @@ print db.count()
 #Print out count of jobs given query parameters
 print db.count("job_name", "job1")
 
-db.stopMongo()
+db.stop()

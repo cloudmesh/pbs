@@ -117,13 +117,26 @@ class JobDB(object):
         client = MongoClient('localhost', self.port)
         self.database = client["jobsdb"]
         self.jobs = self.database["jobs"]
+        self.id = self.database["id"]  # manages the counter for the job
 
         Console.info("Connecting to the Mongo Database")
+
+    def getid(self):
+        pass
+
+    def setid(self):
+        pass
+
+    def incrid(self):
+        pass
+
+    # job-name is unique
 
     def insert(self,
                job_name,
                input_filename="",
                output_filename="",
+               parameters="",
                job_group=None,
                job_label=None,
                job_id=None,  # possibly same as job_name ?
@@ -139,14 +152,16 @@ class JobDB(object):
 
         if self.database is not None:
 
-            job = {"job_name": job_name,
-                   "job_id": job_name,
-                   "job_group": job_group,
-                   "job_label": job_label,
-                   "job_status": job_status,
-                   "host": host,
+            job = {"_id": job_name,
+                   "job_name": job_name,
+                   "job_group": job_group, # group like experiment
+                   "job_label": job_label, # a tag
                    "input_filename": input_filename,  # must be array
                    "output_filename": output_filename,  # must be array
+                   #
+                   "host": host,
+                   "job_id": job_name, # comes from sheduler on host
+                   "job_status": job_status,
                    "start_time": start_time,
                    "end_time": end_time,
                    "update_time": update_time,
@@ -156,12 +171,13 @@ class JobDB(object):
             pprint(job)
             banner("insert")
 
-            db_job_object = self.jobs.insert(job)
-            print (db_job_object)
-            db_job_id = db_job_object
-            print (db_job_id)
+            db_job_curser = self.jobs.insert(job, upsert=True)
+            print (db_job_curser)
 
-            return job_id
+            #db_job_id = db_job_curser[0]
+            #print (db_job_id)
+
+            return job_name
 
         else:
 
