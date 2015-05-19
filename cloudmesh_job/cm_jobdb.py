@@ -102,6 +102,7 @@ class JobDB(object):
             print(" ".join(command))
             os.system(" ".join(command))
             Console.ok("MongoDB has been shutdown")
+            #os.system("mongod --shutdown")
         except Exception, e:
             Console.error("we had a problem shutting the mongo daemon down")
             print(e)
@@ -155,10 +156,14 @@ class JobDB(object):
 
         if self.database is not None:
 
-            job = {"_id": job_name,
+            job = {
+                   "_id": job_name,
                    "job_name": job_name,
-                   "job_group": job_group, # group like experiment
-                   "job_label": job_label, # a tag
+                   "job_id": job_name,
+                   "job_group": job_group,
+                   "job_label": job_label,
+                   "job_status": job_status,
+                   "host": host,
                    "input_filename": input_filename,  # must be array
                    "output_filename": output_filename,  # must be array
                    #
@@ -174,13 +179,12 @@ class JobDB(object):
             pprint(job)
             banner("insert")
 
-            db_job_curser = self.jobs.save(job)
-            print (db_job_curser)
+            db_job_object = self.jobs.save(job)
+            # print (db_job_object)
+            # db_job_id = db_job_object
+            # print (db_job_id)
 
-            #db_job_id = db_job_curser[0]
-            #print (db_job_id)
-
-            return job_name
+            return db_job_object
 
         else:
 

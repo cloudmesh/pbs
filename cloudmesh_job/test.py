@@ -6,6 +6,7 @@
 
 from cloudmesh_job.cm_jobdb import JobDB
 from cloudmesh_base.util import banner
+from bson.objectid import ObjectId
 
 db = JobDB()
 
@@ -40,8 +41,9 @@ for job in jobs:
     print job
 
 #Query by job ID to return a single job
-singleJob = db.find_jobs("_id", job0_id)
+singleJob = list(db.find_jobs("_id", job0_id))
 
+print singleJob
 #Print out the first job in the list
 print singleJob[0]
 
