@@ -156,7 +156,10 @@ class JobDB(object):
             pprint(job)
             banner("insert")
 
-            job_id = self.jobs.insert_one(job).inserted_id
+            db_job_object = self.jobs.insert(job)
+            print (db_job_object)
+            db_job_id = db_job_object
+            print (db_job_id)
 
             return job_id
 
