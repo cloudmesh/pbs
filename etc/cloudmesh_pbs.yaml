@@ -18,7 +18,6 @@ cloudmesh:
     jobdatabase:
        db_path: ~/.cloudmesh/pbs/db
        port: 27109
-       log_path: ~/.cloudmesh/pbs/db/log
        dbname: pbs
     pbs:
       india:

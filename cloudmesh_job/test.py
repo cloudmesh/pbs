@@ -8,8 +8,17 @@ db.info()
 
 db.start()
 
+
+#from pymongo import Connection
+#connection = Connection()
+#connection = Connection('localhost', 27017)
+#db = connection.testdb
+#collection = db.testcollection
+#for post in collection.find():
+#    print post
+
 #Connect to cloudmesh_job
-db.connect("test")
+db.connect()
 
 #Insert two jobs - one with only a name and one with input and output files
 job0_id = db.insert("job0")

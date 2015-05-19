@@ -24,7 +24,7 @@ class JobDB(object):
 
         self.port = self.data["cloudmesh"]["jobdatabase"]["port"]
         self.db_path = self.data["cloudmesh"]["jobdatabase"]["db_path"]
-        self.log_path = self.data["cloudmesh"]["jobdatabase"]["log_path"]
+        self.log_file = self.db_path + "/dbjobs.log"
         self.dbname = self.data["cloudmesh"]["jobdatabase"]["dbname"]
 
     def __init__(self, yaml_filename="/cloudmesh_pbs.yaml"):
@@ -46,9 +46,7 @@ class JobDB(object):
         """
         banner("CREATE DIRS")
         try:
-            for file in [self.db_path, self.log_path]:
-                r = Shell.mkdir(file)
-                banner(str(r))
+            r = Shell.mkdir(self.db_path)
         except Exception, e:
             Console.error("Problem creating the database directory {:}".format(file))
             print(e)
@@ -60,14 +58,22 @@ class JobDB(object):
 
     def start(self):
         try:
+#            import sh
+#            r = sh.Command("mongod", --dbpath", self.db_path,
+#                           "--port", self.port,
+#                           "--fork",
+#                           "--logpath", self.log_file,
+#                           "--bind_ip", "127.0.0.1", _bg=True)
+
             process = Shell.mongod("--dbpath", self.db_path,
                              "--port", self.port,
                              "--fork",
-                             "--logpath", self.log_path,
+                             "--logpath", self.log_file,
                              "--bind_ip", "127.0.0.1", _bg=True)
+            process.wait()
 
             Console.ok("MongoDB has been deployed at path {:} on port {:} with log {:}"
-                       .format(self.db_path, self.port, self.log_path))
+                       .format(self.db_path, self.port, self.log_file))
 
         except Exception, e:
             Console.error("we had a problem starting the  mongo daemon")
@@ -91,15 +97,14 @@ class JobDB(object):
         Console.ok("Mongo parameters")
         Console.ok("  dbpath:  {:}".format(self.db_path))
         Console.ok("  port:    {:}".format(self.port))
-        Console.ok("  logfile: {:}".format(self.log_path))
+        Console.ok("  logfile: {:}".format(self.log_file))
         Console.ok("  dbname:  {:}".format(self.dbname))
 
-    def connect(self, db_name):
+    def connect(self):
 
         client = MongoClient()
 
-        self.database = client[db_name]
-        self.jobs = self.database.jobs
+        self.jobs = client.jobs
 
         Console.info("Connecting to the Mongo Database")
 
