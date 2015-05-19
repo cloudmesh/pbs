@@ -1,13 +1,12 @@
 import cm_jobdb
 
+
 class cm_shell_job:
 
     database = None
 
     def activate_cm_shell_job(self):
         self.register_command_topic('hbc', 'job')
-
-
 
     @command
     def do_job(self, args, arguments):
@@ -129,71 +128,69 @@ class cm_shell_job:
 
 
 
-            """
+        """
 
-            if arguments["server"] and arguments["start"]:
+        if arguments["server"] and arguments["start"]:
 
-                print ("job server start")
+            print ("job server start")
 
-            elif arguments["server"] and arguments["stop"]:
+        elif arguments["server"] and arguments["stop"]:
 
-                print ("job server stop")
+            print ("job server stop")
 
-            elif arguments["server"] and arguments["clean"]:
+        elif arguments["server"] and arguments["clean"]:
 
-                print ("job server clean")
+            print ("job server clean")
 
-            elif arguments["server"] and arguments["kell"]:
+        elif arguments["server"] and arguments["kell"]:
 
-                print ("job server kill")
+            print ("job server kill")
 
-            elif arguments["server"] and arguments["deploy"]:
+        elif arguments["server"] and arguments["deploy"]:
 
-                print ("job server deploy")
+            print ("job server deploy")
 
-            elif arguments["stat"]:
+        elif arguments["stat"]:
 
-                print ("job stat")
+            print ("job stat")
 
-           elif arguments["list"]:
+        elif arguments["list"]:
 
-                output = arguments["--output"]
+            output = arguments["--output"]
 
-                print ("lists the jobs in the format specified")
+            print ("lists the jobs in the format specified")
 
-            elif arguments["insert"]:
+        elif arguments["insert"]:
 
-                name = arguments["NAME"]
-                host = arguments["HOST"]
-                options = arguments["OPTIONS"]
-                input_files = arguments["INPUT_FILES"]
-                output_file = arguments["OUTPUT_FILES"]
+            name = arguments["NAME"]
+            host = arguments["HOST"]
+            options = arguments["OPTIONS"]
+            input_files = arguments["INPUT_FILES"]
+            output_file = arguments["OUTPUT_FILES"]
 
-                print ("insert")
+            print ("insert")
 
-            elif arguments["find"] and arguments["--name"]:
+        elif arguments["find"] and arguments["--name"]:
 
-                name = arguments["NAME"]
+            name = arguments["NAME"]
 
-                print("find the job with the given name")
+            print("find the job with the given name")
 
-            elif arguments["find"] and arguments["--attribute"] and arguments["--value"]:
+        elif arguments["find"] and arguments["--attribute"] and arguments["--value"]:
 
-                name = arguments["NAME"]
-                attribute = arguments["--attribute"]
-                value = arguments["--value"]
+            name = arguments["NAME"]
+            attribute = arguments["--attribute"]
+            value = arguments["--value"]
 
-                print ("job find --attribute=ATTRIBUTE --value=VALUE")
+            print ("job find --attribute=ATTRIBUTE --value=VALUE")
 
-            elif arguments["delete"] and attribute["NAME"]:
+        elif arguments["delete"] and attribute["NAME"]:
 
-                name = arguments["NAME"]
+            name = arguments["NAME"]
 
-                print("delete the job with the given name")
+            print("delete the job with the given name")
 
-
-            pass
-
+        pass
 
 
 if __name__ == '__main__':
