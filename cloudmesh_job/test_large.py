@@ -1,13 +1,17 @@
+#
+# run with
+#
+# rm -rf ~/.cloudmesh/pbs/db/; killall mongod; python setup.py install; python cloudmesh_job/test_large.py 
 import cm_jobdb
 
 db = cm_jobdb.JobDB()
 
-db.startMongo()
+db.start()
 
 #Connect to test cloudmesh_job
 print "Connecting to local cloudmesh_job"
 
-db.connect("newdb")
+db.connect()
 
 #Insert 20 jobs
 #   Use different job names but identical input and output filenames for later queries

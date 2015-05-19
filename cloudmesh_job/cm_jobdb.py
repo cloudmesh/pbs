@@ -16,6 +16,7 @@ from pprint import pprint
 import sys
 
 class JobDB(object):
+
     database = None
     jobs = None
 
