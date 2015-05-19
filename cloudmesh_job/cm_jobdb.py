@@ -49,13 +49,24 @@ class JobDB(object):
         try:
             r = Shell.mkdir(self.db_path)
         except Exception, e:
-            Console.error("Problem creating the database directory {:}".format(file))
+            Console.error("Problem creating the database directory {:}".format(self.db_path))
             print(e)
+        try:
+            file = open(self.log_file, 'a+')
+            file.close()
+        except Exception, e:
+            Console.error("Problem creating the log file {:}".format(self.log_file))
+            print(e)
+
 
     # TODO COMBINE WITH __INIT__ ???
     # BUG not a good location for  the data /data
     # BUG not a good location for logpath as we run this in user mode
     # port and location should probably read from cloudmesh_pbs.yaml and values here set to None.see load function
+
+    def ps(self):
+        r = Shell.fgrep(Shell.ps("aux", _tty_out=False), "mongod", _tty_in=False)
+        print(r)
 
     def start(self):
         try:

@@ -8,6 +8,7 @@ db.info()
 
 db.start()
 
+# db.ps()
 
 #from pymongo import Connection
 #connection = Connection()
