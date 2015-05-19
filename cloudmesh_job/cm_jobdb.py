@@ -19,7 +19,7 @@ class JobDB(object):
 
     def load(self, filename="/cloudmesh_pbs.yaml"):
         self.filename = config_file(filename)
-        self.data = ConfigDict(filename=filename)
+        self.data = ConfigDict(filename=self.filename)
 
         self.port = self.data["cloudmesh"]["jobdatabase"]["port"]
         self.log_file = self.data["cloudmesh"]["jobdatabase"]["log"]
