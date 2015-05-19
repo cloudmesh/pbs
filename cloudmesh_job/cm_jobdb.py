@@ -97,12 +97,15 @@ class JobDB(object):
 
     def stop(self):
         try:
-            r = Shell.execute("mongod", "--shutdown")
+            #command = ["mongod", "--shutdown"]
+            command = ["killall", "mongod"]
+            print(" ".join(command))
+            os.system(" ".join(command))
+            Console.ok("MongoDB has been shutdown")
         except Exception, e:
             Console.error("we had a problem shutting the mongo daemon down")
             print(e)
 
-        Console.ok("MongoDB has stopped")
 
     def info(self):
         # TODO: implement self. dbath, self.port, self.logpath
@@ -171,7 +174,7 @@ class JobDB(object):
             pprint(job)
             banner("insert")
 
-            db_job_curser = self.jobs.insert(job, upsert=True)
+            db_job_curser = self.jobs.save(job)
             print (db_job_curser)
 
             #db_job_id = db_job_curser[0]

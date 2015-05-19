@@ -1,3 +1,9 @@
+#
+# use as follows
+# cd to the cloudmesh_pbs dir
+# rm -rf ~/.cloudmesh/pbs/db/; killall mongod; python setup.py install; python cloudmesh_job/test.py
+#
+
 from cloudmesh_job.cm_jobdb import JobDB
 from cloudmesh_base.util import banner
 
