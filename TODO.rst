@@ -62,6 +62,12 @@ Task 5: use of hostlist for defining jobs
     we like to modify the code to use multiple files, and also make sure we
     can use hostlist for specifying them. This needs to be implemented at cm
     command and as API that is called by the cm command
+    
+        cm job add job[1-100] --input=a[1-100],b[101-200] --output=c[1-100],d[1-100],e[1-100]
+        
+    creates 100 jobs with univqe gob names
+    
+        cm job delete job[1-100] deletes the appropriate jobs
 
 Task 6: REST service for client commands
     priority: medium
