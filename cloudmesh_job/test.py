@@ -1,6 +1,10 @@
 from cloudmesh_job.cm_jobdb import JobDB
+from cloudmesh_base.util import banner
 
 db = JobDB()
+
+banner("info")
+db.info()
 
 db.start()
 

@@ -16,9 +16,10 @@ cloudmesh:
        port: 27108
        log: ~/.cloudmesh/pbs/pbs.log
     jobdatabase:
-       filename: ~/.cloudmesh/pbs/job.db
+       db_path: ~/.cloudmesh/pbs/db
        port: 27109
-       log: ~/.cloudmesh/pbs/job.log
+       log_path: ~/.cloudmesh/pbs/db/log
+       dbname: pbs
     pbs:
       india:
         manager: india
