@@ -44,9 +44,11 @@ class JobDB(object):
         creates the directories if they do not exist
         :return:
         """
+        banner("CREATE DIRS")
         try:
             for file in [self.db_path, self.log_path]:
                 r = Shell.mkdir(file)
+                banner(str(r))
         except Exception, e:
             Console.error("Problem creating the database directory {:}".format(file))
             print(e)
@@ -58,10 +60,12 @@ class JobDB(object):
 
     def start(self):
         try:
-            r = Shell.mongod("--dbpath", self.db_path,
+            process = Shell.mongod("--dbpath", self.db_path,
                              "--port", self.port,
                              "--fork",
-                             "--logpath", self.log_path)
+                             "--logpath", self.log_path,
+                             "--bind_ip", "127.0.0.1", _bg=True)
+
             Console.ok("MongoDB has been deployed at path {:} on port {:} with log {:}"
                        .format(self.db_path, self.port, self.log_path))
 
