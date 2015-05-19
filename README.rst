@@ -29,7 +29,25 @@ following commands::
   pip install cloudmesh_base
   pip install cloudmesh_database   (not yet needed in this release)
   pip install cloudmesh_pbs
-  
+
+Development installation
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+  mkdir github
+  cd github
+  git clone git@github.com:cloudmesh/pbs.git
+  cd pbs
+  python setup.py install
+
+Any change in the program requires a new setup.
+
+Tests::
+
+    python setup.py install; python cloudmesh_job/test.py
+
+
 Github repository
 ----------------------------------------------------------------------
 
