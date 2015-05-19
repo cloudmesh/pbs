@@ -13,6 +13,12 @@ cloudmesh:
       - exit_status
     pbsdatabase:
        filename: ~/.cloudmesh/pbs/pbs.db
+       port: 27108
+       log: ~/.cloudmesh/pbs/pbs.log
+    jobdatabase:
+       filename: ~/.cloudmesh/pbs/job.db
+       port: 27109
+       log: ~/.cloudmesh/pbs/job.log
     pbs:
       india:
         manager: india
