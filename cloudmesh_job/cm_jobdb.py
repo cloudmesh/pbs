@@ -114,22 +114,11 @@ class JobDB(object):
 
     def connect(self):
 
-        client = MongoClient()
-
-        self.jobs = client.jobs
+        client = MongoClient('localhost', self.port)
+        self.database = client["jobsdb"]
+        self.jobs = self.database["jobs"]
 
         Console.info("Connecting to the Mongo Database")
-
-
-        #from pymongo import Connection
-        #connection = Connection()
-        #connection = Connection('localhost', 27017)
-        #db = connection.testdb
-        #collection = db.testcollection
-        #for post in collection.find():
-        #    print post
-
-#Connect to cloudmesh_job
 
     def insert(self,
                job_name,
