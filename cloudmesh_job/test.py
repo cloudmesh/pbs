@@ -2,7 +2,7 @@ from cloudmesh_job.cm_jobdb import JobDB
 
 db = JobDB()
 
-db.startMongo()
+db.start()
 
 #Connect to cloudmesh_job
 db.connect("test")

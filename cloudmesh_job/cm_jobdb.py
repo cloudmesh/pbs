@@ -24,6 +24,7 @@ class JobDB(object):
         self.port = self.data["cloudmesh"]["jobdatabase"]["port"]
         self.log_file = self.data["cloudmesh"]["jobdatabase"]["log"]
         self.db_file = self.data["cloudmesh"]["jobdatabase"]["filename"]
+        self.job_dir = os.path.dirname(self.db_file)
 
     def __init__(self, deploy=True, yaml_filename="/cloudmesh_pbs.yaml"):
         """
@@ -34,11 +35,6 @@ class JobDB(object):
                               cloudmesh_pbs.yaml
         :return: an object for manageing jobs in the database
         """
-
-        self.id_file = config_file("/pbs/id.txt")
-        self.db_file = config_file("/pbs/job.db")
-        self.job_dir = os.path.dirname(self.db_file)
-
         self.load(filename=yaml_filename)
 
         if deploy:
@@ -50,7 +46,7 @@ class JobDB(object):
         :return:
         """
         try:
-            for file in [self.db_path, self.log_path]:
+            for file in [self.db_file, self.log_file]:
                 r = Shell.mkdir(os.path.dirname(file))
         except Exception, e:
             Console.error("Problem creationg the database directory")
@@ -64,10 +60,10 @@ class JobDB(object):
     def start(self):
         try:
             r = Shell._execute("mongod",
-                               "--dbpath", self.db_path,
+                               "--dbpath", self.db_file,
                                "--port", self.port,
                                "--fork",
-                               "--logpath", self.log_path)
+                               "--logpath", self.log_file)
 
         except Exception, e:
             Console.error("we had a problem starting the  mongo daemon")
@@ -76,7 +72,7 @@ class JobDB(object):
         Console.ok("MongoDB has stopped")
 
         Console.ok("MongoDB has been deployed at path {:} on port {:} with log {:}"
-                   .format(db_path, port, log_path))
+                   .format(db_file, port, log_file))
 
     def stop(self):
         try:
@@ -90,9 +86,9 @@ class JobDB(object):
     def info(self):
         # TODO: implement self. dbath, self.port, self.logpath
         Console.ok("Mongo parameters")
-        Console.ok("  dbpath:", self.dbpath)
+        Console.ok("  dbpath:", self.db_file)
         Console.ok("  port:", self.port)
-        Console.ok("  port:", self.logpath)
+        Console.ok("  port:", self.log_file)
 
     def connect(self, db_name):
 
@@ -217,51 +213,3 @@ class JobDB(object):
             Console.error("Please connect to the database first")
             return -1
 
-            # TODO: not needed as implemented in cloudmesh_base
-            # Create a directory and all of its sub directories
-            # def createPath(self, completePath, lastPathIsADirectory):
-            #
-            # #Split the full path on all slashes
-            #   paths = completePath.split("/")
-            #
-            #    #Build the string of the base directory and all sub directories to the current one
-            #    currentPath = ""
-            #
-            #    index = 0
-            #
-            #    #Loop through all paths
-            #    for path in paths:
-            #
-            #        #Path is blank so do not create a directory
-            #        if path == "":
-            #
-            #            #Current path is not the last path
-            #            if index != len(paths) - 1:
-            #
-            #               #Add a slash
-            #               currentPath = currentPath + "/"
-            #
-            #        #Path exists, create the path and add it to the string tracking the complete path
-            #        else:
-            #
-            #            #Current path is the last path
-            #            if index == len(paths) - 1:
-            #
-            #                #Do not add a slash on the end
-            #                currentPath = currentPath + path
-            #
-            #            else:
-            #                currentPath = currentPath + path + "/"
-            #
-            #            #Only create the directory if the current path is not the last path or
-            #            #   the path is the last path and it has been flagged as a directory
-            #            if index != len(paths) - 1 or (index == len(paths) - 1 and lastPathIsADirectory):
-            #
-            #                #Attempt to create the directories
-            #                try:
-            #                    error = subprocess.call(["mkdir", currentPath])
-            #
-            #                except:
-            #                    print "The directory " + currentPath + " already exists"
-            #
-            #        index += 1
