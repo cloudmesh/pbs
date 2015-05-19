@@ -24,8 +24,8 @@ class JobDB(object):
         self.data = ConfigDict(filename=self.filename)
 
         self.port = self.data["cloudmesh"]["jobdatabase"]["port"]
-        self.db_path = self.data["cloudmesh"]["jobdatabase"]["db_path"]
-        self.log_file = self.db_path + "/dbjobs.log"
+        self.db_path = path_expand(self.data["cloudmesh"]["jobdatabase"]["db_path"])
+        self.log_file = path_expand(self.db_path + "/dbjobs.log")
         self.dbname = self.data["cloudmesh"]["jobdatabase"]["dbname"]
 
     def __init__(self, yaml_filename="/cloudmesh_pbs.yaml"):
@@ -84,8 +84,8 @@ class JobDB(object):
             #a = subprocess.call(command)
             os.system(" ".join(command))
             os.system ("ps aux | fgrep mongod")
-            Console.ok("MongoDB has been deployed at path {:} on port {:} with log {:}"
-                       .format(self.db_path, self.port, self.log_file))
+            Console.ok("MongoDB has been deployed")
+            self.info()
 
         except Exception, e:
             Console.error("we had a problem starting the  mongo daemon")
