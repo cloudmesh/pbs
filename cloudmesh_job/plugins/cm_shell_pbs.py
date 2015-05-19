@@ -1,4 +1,4 @@
-#BUG: this import statement must be in the class wrapped in a boolean to see if the command was
+# TODO: this import statement must be in the class wrapped in a boolean to see if the command was
 # initialized. this allows the shellto start without dependency on mongo
 import cm_jobdb
 
