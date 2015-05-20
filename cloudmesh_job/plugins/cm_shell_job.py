@@ -5,7 +5,7 @@ from cmd3.console import Console
 from cmd3.shell import command
 import hostlist
 from pprint import pprint
-
+from cloudmesh_base.util import banner
 
 class cm_shell_job:
     database = None
@@ -26,7 +26,7 @@ class cm_shell_job:
                 job server deploy
                 job stat
                 job list
-                job insert NAME [HOST] [OPTIONS] [INPUTS] [OUTPUTS]
+                job add JOBLIST [--host=HOST] [--options=OPTIONS] [--inputs=INPUTS] [--outputs=OUTPUTS]
                 job find --name=NAME
                 job find --attribute=ATTRIBUTE --value=VALUE
                 job delete JOBLIST
@@ -83,6 +83,10 @@ class cm_shell_job:
                 job stat
 
                     prints a simple statistics of the jobs
+
+                job add NAMES [--host=HOST] [--option=OPTIONS] [--inputs=INPUTS] [--outputs=OUTPUTS]
+
+                    adds a number of jobs
 
                 job list [--output=OUTPUT]
 
@@ -170,7 +174,6 @@ class cm_shell_job:
 
         elif arguments["delete"] and arguments["JOBLIST"]:
 
-            name = arguments["NAME"]
             joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
 
             # debug msg
@@ -179,6 +182,60 @@ class cm_shell_job:
             for job in joblist:
                 # if job exists:
                 Console.ok("delete job {:}".format(job))
+
+        elif arguments["add"]:
+
+            joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
+            host = arguments["--host"]
+            options = arguments["--options"]
+            inputs = [None]
+            outputs = [None]
+            if arguments["--inputs"]:
+                inputs = hostlist.expand_hostlist(arguments["--inputs"])
+            if arguments["--outputs"]:
+                outputs = hostlist.expand_hostlist(arguments["--outputs"])
+
+            # check if inputs are either 0, 1 or the length of joblist
+
+
+
+            if len(inputs) == 1:
+                inputs = inputs * len(joblist)
+            elif len(inputs) == len(joblist):
+                pass
+            else:
+                Console.error("the number of input files do not match the hostlist")
+                print("joblist count:", len(joblist))
+                print("inputs count: ", len(inputs))
+
+            # check if outputs are either 0, 1 or the length of joblist
+
+            if len(outputs) == 1:
+                outputs = outputs * len(joblist)
+            elif len(outputs) == len(joblist):
+                pass
+            else:
+                Console.error("the number of input files do not match the hostlist")
+                print("joblist count:", len(joblist))
+                print("outputs count:", len(outputs))
+
+            pprint(joblist)
+            pprint(inputs)
+            pprint(outputs)
+
+            # dependent on if 0, 1, or length of joblist handle that
+
+            # debug msg
+            print(joblist)
+
+            for i in range(len(joblist)):
+                banner(i)
+
+                Console.ok("add job : {:} ".format(joblist[i]))
+                Console.ok("  input : {:} ".format(inputs[i]))
+                Console.ok("  output: {:} ".format(outputs[i]))
+
+
 
 
         elif arguments["stat"]:
