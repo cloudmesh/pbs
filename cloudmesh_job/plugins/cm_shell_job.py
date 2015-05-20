@@ -200,37 +200,40 @@ class cm_shell_job:
 
             joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
             host = arguments["--host"]
-            options = arguments["--options"]
+
             inputs = [None]
             outputs = [None]
+            options = [None]
+
             if arguments["--inputs"]:
                 inputs = hostlist.expand_hostlist(arguments["--inputs"])
             if arguments["--outputs"]:
                 outputs = hostlist.expand_hostlist(arguments["--outputs"])
-
+            if arguments["--options"]:
+                options = hostlist.expand_hostlist(arguments["--options"])
             # check if inputs are either 0, 1 or the length of joblist
 
+            def expand_parameter(parameter, label):
+                """
 
+                :param parameter:
+                :param label:
+                :return: list of strings
+                """
+                _parameter = parameter
+                if len(_parameter) == 1:
+                    _parameter = _parameter * len(joblist)
+                elif len(_parameter) == len(joblist):
+                    pass
+                else:
+                    Console.error("the number of input files do not match the hostlist")
+                    print("joblist count:", len(joblist))
+                    print(label, "count: ", len(_parameter))
+                return _parameter
 
-            if len(inputs) == 1:
-                inputs = inputs * len(joblist)
-            elif len(inputs) == len(joblist):
-                pass
-            else:
-                Console.error("the number of input files do not match the hostlist")
-                print("joblist count:", len(joblist))
-                print("inputs count: ", len(inputs))
-
-            # check if outputs are either 0, 1 or the length of joblist
-
-            if len(outputs) == 1:
-                outputs = outputs * len(joblist)
-            elif len(outputs) == len(joblist):
-                pass
-            else:
-                Console.error("the number of input files do not match the hostlist")
-                print("joblist count:", len(joblist))
-                print("outputs count:", len(outputs))
+            options = expand_parameter(options, "options")
+            inputs = expand_parameter(inputs, "inputs")
+            outputs = expand_parameter(inputs, "outputs")
 
             pprint(joblist)
             pprint(inputs)
