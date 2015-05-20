@@ -27,6 +27,8 @@ class cm_shell_job:
                 job stat
                 job list
                 job add JOBLIST [--host=HOST] [--options=OPTIONS] [--inputs=INPUTS] [--outputs=OUTPUTS]
+                job add --file=filename
+                job write --file=filename
                 job find --name=NAME
                 job find --attribute=ATTRIBUTE --value=VALUE
                 job delete JOBLIST
@@ -87,6 +89,17 @@ class cm_shell_job:
                 job add NAMES [--host=HOST] [--option=OPTIONS] [--inputs=INPUTS] [--outputs=OUTPUTS]
 
                     adds a number of jobs
+
+                job add --file=filename
+
+                    adds the job from the file. The postfix of the file deterimnes which
+                    format it is. The formats supported are .csv, .yaml, .json
+
+                job write --file=filename
+
+                    writes the jobs to a file. The postfix of the file deterimnes which
+                    format it is. The formats supported are .csv, .yaml, .json
+
 
                 job list [--output=OUTPUT]
 
