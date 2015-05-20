@@ -3,6 +3,8 @@ from __future__ import print_function
 # from cloudmesh_job.cm_jobdb import JobDB
 from cmd3.console import Console
 from cmd3.shell import command
+import hostlist
+from pprint import pprint
 
 
 class cm_shell_job:
@@ -17,7 +19,6 @@ class cm_shell_job:
         ::
 
             Usage:
-
                 job server start
                 job server stop
                 job server clean
@@ -25,15 +26,26 @@ class cm_shell_job:
                 job server deploy
                 job stat
                 job list
-                job insert NAME [HOST] [OPTIONS] [INPUT_FILES] [OUTPUT_FILES]
+                job insert NAME [HOST] [OPTIONS] [INPUTS] [OUTPUTS]
                 job find --name=NAME
                 job find --attribute=ATTRIBUTE --value=VALUE
-                job delete --name=NAME
+                job delete JOBLIST
 
+            Arguments:
 
-            manages a job catalog to submit them to a computation cloud or Grid.
+                NAME       the name of the job
+                HOST       the host on which the job should run
+                OPTIONS    options passed to the command
+                INPUTS     input files
+                OUTPUTS    output files
+                ATTRIBUTE  an attribute
+                VALUE      a value
+                JOBLIST    the job list
 
             Description:
+
+                manages a job catalog to submit them to a computation cloud
+                or Grid.
 
                 job server start
 
@@ -89,9 +101,9 @@ class cm_shell_job:
 
                     find jobs that match the given attribute.
 
-                job delete --name=NAME
+                job delete JOBLIST
 
-                    delete the job with the specified name.
+                    delete the job with the specified names in the joblist.
 
                 THE FOLLOWING IS NOT YET DEFINED OR MAY CHANGE
 
@@ -132,26 +144,42 @@ class cm_shell_job:
 
 
         """
+        pprint(arguments)
 
-        if arguments["server"] and arguments["start"]:
+        if arguments.get("server"):
 
-            Console.ok("job server start")
+            if arguments["start"]:
 
-        elif arguments["server"] and arguments["stop"]:
+                Console.ok("job server start")
 
-            Console.ok("job server stop")
+            elif arguments["stop"]:
 
-        elif arguments["server"] and arguments["clean"]:
+                Console.ok("job server stop")
 
-            Console.ok("job server clean")
+            elif arguments["clean"]:
 
-        elif arguments["server"] and arguments["kill"]:
+                Console.ok("job server clean")
 
-            Console.ok("job server kill")
+            elif arguments["kill"]:
 
-        elif arguments["server"] and arguments["deploy"]:
+                Console.ok("job server kill")
 
-            Console.ok("job server deploy")
+            elif arguments["deploy"]:
+
+                Console.ok("job server deploy")
+
+        elif arguments["delete"] and arguments["JOBLIST"]:
+
+            name = arguments["NAME"]
+            joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
+
+            # debug msg
+            print(joblist)
+
+            for job in joblist:
+                # if job exists:
+                Console.ok("delete job {:}".format(job))
+
 
         elif arguments["stat"]:
 
@@ -187,11 +215,7 @@ class cm_shell_job:
 
             Console.ok("job find --attribute=ATTRIBUTE --value=VALUE")
 
-        elif arguments["delete"] and arguments["NAME"]:
 
-            name = arguments["NAME"]
-
-            Console.ok("delete the job with the given name")
 
         pass
 
