@@ -162,7 +162,7 @@ class cm_shell_job:
 
 
         """
-        pprint(arguments)
+        # pprint(arguments)
 
         if arguments.get("server"):
 
@@ -175,6 +175,9 @@ class cm_shell_job:
 
 
             elif arguments["stop"]:
+
+                db = JobDB()
+                db.start()
 
                 Console.ok("job server stop")
 
