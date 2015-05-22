@@ -4,12 +4,12 @@ from cmd3.console import Console
 from cmd3.shell import command
 
 from cloudmesh_yamlplugin.command_yamlplugin import command_yamlplugin
-
+from pprint import pprint
 
 class cm_shell_yamlplugin:
 
     def activate_cm_shell_yamlplugin(self):
-        self.register_command_topic('mycommands', 'yamlplugin')
+        self.register_command_topic('cmd3', 'yamlplugin')
 
     @command
     def do_yamlplugin(self, args, arguments):
@@ -17,19 +17,10 @@ class cm_shell_yamlplugin:
         ::
 
             Usage:
-
-                yamlplugin add --command COMMAND
-                yamlplugin add --package PACKAGE
-
-                yamlplugin delete --command COMMAND
-                yamlplugin delete --package PACKAGE
-
-                yamlplugin disable --command COMMAND
-                yamlplugin disable --package PACKAGE
-
-                yamlplugin list
-
-                yamlplugin view
+                yamlplugin add COMMAND [--dryrun]
+                yamlplugin delete COMMAND [--dryrun]
+                yamlplugin disable COMMAND [--dryrun]
+                yamlplugin list [--output=FORMAT]
 
             Description:
 
@@ -40,12 +31,8 @@ class cm_shell_yamlplugin:
 
                     lists the plugins in the yaml file
 
-                yamlplugin list
-
-                    lists the plugins in the yaml file
-
-                yamlplugin --command add/delete COMMAND
-                yamlplugin delete --command COMMAND
+                yamlplugin add/delete COMMAND
+                yamlplugin delete COMMAND
 
                     cmd3 contains a ~/.cloudmesh/cmd3.yaml file.
                     This command will add/delete a plugin for a given command
@@ -58,21 +45,11 @@ class cm_shell_yamlplugin:
                     a command and the command is out commented the comment
                     will be removed so the command is enabled.
 
-                yamlplugin add --package PACKAGE
-                yamlplugin delete --package PACKAGE
-
-                    This command adds/delete the package name
-
-                        - PACKAGE.plugins
-
-                    To the cmd3.yaml file
-
-                yamlplugin disable --command COMMAND
-                yamlplugin disable --package PACKAGE
+                yamlplugin disable COMMAND
 
                     sometimes it is beneficial to actually not delete the module
-                    from the yaml file but out comment. THis way it can using add
-                    will first check if it it out commended and remove the comment
+                    from the yaml file but out-comment. This way it can using add
+                    will first check if it it out commented and remove the comment
                     to enable it
 
             Example:
@@ -81,16 +58,31 @@ class cm_shell_yamlplugin:
         """
         # pprint(arguments)
 
-        if arguments["NAME"] is None:
-            Console.error("Please specify a host name")
+        if arguments["list"]:
+
+            if arguments["--output"] == "yaml":
+                plugins_object = command_yamlplugin()
+                print(plugins_object.config.yaml())
+            elif arguments["--output"] == "json":
+                plugins_object = command_yamlplugin()
+                print(plugins_object.config)
+            if arguments["--output"] is None:
+                plugins_object = command_yamlplugin()
+                print(plugins_object)
+
+        elif arguments["add"]:
+
+            plugins_object = command_yamlplugin()
+            plugins_object.add(arguments["COMMAND"],
+                               dryrun=arguments["--dryrun"])
+
+
+        elif arguments["disable"]:
+            print("disable")
+        elif arguments["enable"]:
+            print("disable")
         else:
-            host = arguments["NAME"]
-            Console.info("trying to reach {0}".format(host))
-            status = command_yamlplugin.status(host)
-            if status:
-                Console.info("machine " + host + " has been found. ok.")
-            else:
-                Console.error("machine " + host + " not reachable. error.")
+            Console.error("unkown option.")
         pass
 
 if __name__ == '__main__':
