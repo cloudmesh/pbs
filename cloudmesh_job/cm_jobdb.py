@@ -20,6 +20,15 @@ class JobDB(object):
     database = None
     jobs = None
 
+    def isup(self):
+        """
+        returns True is mongod is up
+
+        TODO: implement
+        :return:
+        """
+        return True
+
     def load(self, filename="/cloudmesh_pbs.yaml"):
         self.filename = config_file(filename)
         self.data = ConfigDict(filename=self.filename)
@@ -249,6 +258,9 @@ class JobDB(object):
             Console.error("Please connect to the database first")
             return -1
 
+    def delete(self, jobname):
+        self.delete_jobs(attribute='name', value=jobname)
+
     def delete_jobs(self, attribute="", value=""):
 
         if self.database is not None:
@@ -264,6 +276,14 @@ class JobDB(object):
         else:
             Console.error("Please connect to the database first")
             return -1
+
+    def __len__(self):
+        """
+        returns the number of elemenst in the database
+        :return:
+        """
+        # TODO implement
+        return 0
 
     def count(self, attribute="", value=""):
         """
