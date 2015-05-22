@@ -6,6 +6,7 @@ from cmd3.shell import command
 import hostlist
 from pprint import pprint
 from cloudmesh_base.util import banner
+from cloudmesh_job.cm_jobdb import JobDB
 
 class cm_shell_job:
     database = None
@@ -167,7 +168,11 @@ class cm_shell_job:
 
             if arguments["start"]:
 
+                db = JobDB()
+                db.start()
+
                 Console.ok("job server start")
+
 
             elif arguments["stop"]:
 

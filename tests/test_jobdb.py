@@ -20,8 +20,6 @@ class TestJobDB:
         # HEADING()
         self.db = JobDB()
 
-
-
     def teardown(self):
         # HEADING()
         pass
