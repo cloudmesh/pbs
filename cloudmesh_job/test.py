@@ -43,7 +43,6 @@ for job in jobs:
 #Query by job ID to return a single job
 singleJob = list(db.find_jobs("_id", job0_id))
 
-print singleJob
 #Print out the first job in the list
 print singleJob[0]
 
@@ -52,5 +51,18 @@ print db.count()
 
 #Print out count of jobs given query parameters
 print db.count("job_name", "job1")
+
+#Show updating a job attribute - note this is untested
+print "\nORIGINAL JOB:"
+singleJob = list(db.find_jobs("_id", job1_id))
+print singleJob[0]
+
+#Update the input filename
+db.updateJobAttribute(job1_id, "input_filename", "new_input_file")
+
+#Print out the updated job
+print "\nUPDATED JOB:"
+singleJob = list(db.find_jobs("_id", job1_id))
+print singleJob[0]
 
 db.stop()
