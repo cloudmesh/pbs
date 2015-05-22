@@ -55,7 +55,6 @@ class JobDB(object):
         creates the directories if they do not exist
         :return:
         """
-        banner("CREATE DIRS")
         try:
             r = Shell.mkdir(self.db_path)
         except Exception, e:
@@ -78,6 +77,12 @@ class JobDB(object):
         r = Shell.fgrep(Shell.ps("aux", _tty_out=False), "mongod", _tty_in=False)
         print(r)
 
+    def ps(self):
+        """
+        issue a ps to see which mongod services run
+        """
+        os.system ("ps aux | fgrep mongod |fgrep -v fgrep")
+
     def start(self):
         try:
 
@@ -93,7 +98,7 @@ class JobDB(object):
             print(" ".join(command))
             #a = subprocess.call(command)
             os.system(" ".join(command))
-            os.system ("ps aux | fgrep mongod")
+            os.system ("ps aux | fgrep mongod |fgrep -v fgrep")
             Console.ok("MongoDB has been deployed")
             self.info()
 

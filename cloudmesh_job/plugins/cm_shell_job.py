@@ -25,6 +25,7 @@ class cm_shell_job:
                 job server clean
                 job server kill
                 job server deploy
+                job server ps
                 job stat
                 job list
                 job add JOBLIST [--host=HOST] [--options=OPTIONS] [--inputs=INPUTS] [--outputs=OUTPUTS]
@@ -173,13 +174,17 @@ class cm_shell_job:
 
                 Console.ok("job server start")
 
-
             elif arguments["stop"]:
 
                 db = JobDB()
-                db.start()
+                db.stop()
 
                 Console.ok("job server stop")
+
+            elif arguments["ps"]:
+
+                db = JobDB()
+                db.ps()
 
             elif arguments["clean"]:
 
