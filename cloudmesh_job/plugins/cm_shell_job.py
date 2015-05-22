@@ -192,9 +192,15 @@ class cm_shell_job:
             # debug msg
             print(joblist)
 
+            db = JobDB()
+            db.connect()
+
             for job in joblist:
                 # if job exists:
                 Console.ok("delete job {:}".format(job))
+
+                db.delete_jobs(attribute="name", value=job)
+
 
         elif arguments["add"]:
 
