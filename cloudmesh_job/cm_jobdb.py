@@ -278,6 +278,64 @@ class JobDB(object):
         else:
 
             print "Please connect to the database first"
-            return -1        
+            return -1   
+            
+    def jobStatusStats(self, printOutAllJobs=False):
+
+        #Array of different job statuses
+        jobStatuses = []
+
+        #Parallel array of counts of each job status
+        jobStatusCounts = []
+
+        #Loop through all jobs
+        for job in self.findJobs():
+
+            jobStatusFound = False
+
+            index = 0
+
+            #Loop through all existing job statuses
+            for jobStatus in jobStatuses:
+
+                #Job status match
+                if job["job_status"] == jobStatus:
+
+                    #Increment the counter for this job status
+                    jobStatusCounts[index] += 1
+                    jobStatusFound = True
+                    break
+
+                index += 1
+
+            #New job status
+            if jobStatusFound == False:
+
+                #Add new job status and new counter to arrays
+                jobStatuses.append(job["job_status"])
+                jobStatusCounts.append(1)
+
+        index = 0
+
+        #Print out all job statuses and counts
+        for jobStatus in jobStatuses:
+
+            print "JOB STATUS: " + jobStatus + " COUNT: " + str(jobStatusCounts[index])
+
+            #Print out all jobs for this status if flagged to do so
+            if printOutAllJobs:
+
+                #Loop through all jobs
+                for job in self.findJobs():
+
+                    #Matching job status
+                    if job["job_status"] == jobStatus:
+
+                        print job
+                
+                #Print an blank line to make the output more pleasing
+                print ""
+
+            index += 1
     
 
