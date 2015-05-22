@@ -282,8 +282,7 @@ class JobDB(object):
         returns the number of elemenst in the database
         :return:
         """
-        # TODO implement
-        return 0
+        return self.count()
 
     def count(self, attribute="", value=""):
         """
