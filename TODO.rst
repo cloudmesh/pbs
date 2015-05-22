@@ -20,7 +20,7 @@ Task 1: [DONE] finish the yaml pluging command.
 
 Task 2: implement the server commands of cm_shell_job.py
     priority: high
-    Who: Ryan, Gregor
+    Who: Drew, Gregor
     Date:
 
     This includes start, stop, kill, clean, and stat and deploy
@@ -37,16 +37,22 @@ Task 2: implement the server commands of cm_shell_job.py
 Task 3: implement and test logic for modifying a job object in the database
     priority: high
     Who: Ryan
-    Date:
+    Date: Completed on 5/21
+    
+    Ability to edit any attribute of any job object besides the unique identifier for that object.
 
 Task 4: implement a simple statistic of the database showing jobs in states
     priority: high
     Who: Ryan
-    Date:
+    Date: Completed on 5/21
+    
+    Ability to print out all job statuses and the count of jobs with each job status by default.
+    
+    If passed a value of true, all jobs will be printed out beneath their matching status.
 
 Task 5: use of hostlist for defining jobs
     priority: high
-    Who: Drew, Gregor did the hostlist portion
+    Who: Ryan, Gregor did the hostlist portion
     Date:
     the input and out put may include multiple files of similar syntax
     we like to modify the code to use multiple files, and also make sure we
