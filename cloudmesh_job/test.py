@@ -65,4 +65,10 @@ print "\nUPDATED JOB:"
 singleJob = list(db.find_jobs("_id", job1_id))
 print singleJob[0]
 
+print "\nJOB STATUSES:"
+db.jobStatusStats()
+
+print "\nJOB STATUSES WITH JOBS PRINTED:"
+db.jobStatusStats(True)
+
 db.stop()
