@@ -4,33 +4,23 @@ TODO
 This page contains a summary of tasks to be done with people assignments to do them
 It also includes anticipated deadlines
 
-Task 1: finish the yaml pluging command.
+Task 1: [DONE] finish the yaml pluging command.
     priority: high
-    Who:
-    Date:
+    Who: Gregor
+    Date: 22 May, 2015
+    Status: completd. The implementation is now in cmd3
+
+       cm plugin add ..
+       cm plugin delete ..
 
     Description: cmd3 contains a cmd3.yaml file that can be created with
     cm setup_yaml. However we do not have a method that easily adds a new
     plugin to the yaml file or lists the plugins that are defined in the
     yaml file
 
-    You will be implementing the classes
-
-    cm_shell_yamlplugin.py
-    command_yamlplugin.py
-
-    To implement this command. This is relatively easy. We suggest to read in the yaml
-    file with ConfigDict and add the plugin to the dict. Than write the dict out.
-    Important is that the meta data is written first.
-
-    details about the command is documented in cm_shell_yamlplugin.py
-
-    as usual the shell command should call out the real logic in
-    command_yamlplugin.py
-
 Task 2: implement the server commands of cm_shell_job.py
     priority: high
-    Who:
+    Who: Ryan, Gregor
     Date:
 
     This includes start, stop, kill, clean, and stat and deploy
@@ -46,17 +36,17 @@ Task 2: implement the server commands of cm_shell_job.py
 
 Task 3: implement and test logic for modifying a job object in the database
     priority: high
-    Who:
+    Who: Ryan
     Date:
 
 Task 4: implement a simple statistic of the database showing jobs in states
     priority: high
-    Who:
+    Who: Ryan
     Date:
 
 Task 5: use of hostlist for defining jobs
     priority: high
-    Who:
+    Who: Drew, Gregor did the hostlist portion
     Date:
     the input and out put may include multiple files of similar syntax
     we like to modify the code to use multiple files, and also make sure we
@@ -69,6 +59,15 @@ Task 5: use of hostlist for defining jobs
     
         cm job delete job[1-100] deletes the appropriate jobs
 
+Task 5.a: complede the job command
+    priority: high
+    Who: Drew, Gregor did the docopt (in part)
+    Date:
+
+    complete the docops and the call to the methods Ryan defined. If
+    methods are missing communicate with Ryan
+
+	
 Task 6: REST service for client commands
     priority: medium
     Who:
@@ -77,12 +76,25 @@ Task 6: REST service for client commands
     replace the backend API implementations with rest calls so that a server is
     contacted and the client can be installed without dependcies.
     We assume that a configuration file such as cloudmesh_pbs.yaml
-    includes the endpoint for the rest service. Insetead of just overwriting teh existing
+    includes the endpoint for the rest service. Insetead of just overwriting the existing
     api we want to write a new one and introduce a provider model that allows us to switch
     between the c2 -tier and the rest model
 
     before implementation, make proposal.
 
+    take a look at whet is done for 5. look at the commands replace
+    most " " cleverly with / and you have routes
+
+    fore example
+
+    /job/add/<name>/....
+    /job/delete/<name>/...
+
+    figure out how options/arguments should be passed
+
+    you can use flask restful
+    or python eve/flask eve
+    
 Task 6: performance study
     priority: low
     Who:
