@@ -167,10 +167,6 @@ class JobDB(object):
                    "host": host,
                    "input_filename": input_filename,  # must be array
                    "output_filename": output_filename,  # must be array
-                   #
-                   "host": host,
-                   "job_id": job_name, # comes from sheduler on host
-                   "job_status": job_status,
                    "start_time": start_time,
                    "end_time": end_time,
                    "update_time": update_time,
