@@ -17,10 +17,17 @@ class cm_shell_yamlplugin:
         ::
 
             Usage:
-                yamlplugin add COMMAND [--dryrun]
-                yamlplugin delete COMMAND [--dryrun]
-                yamlplugin disable COMMAND [--dryrun]
-                yamlplugin list [--output=FORMAT]
+                yamlplugin add COMMAND [--dryrun] [-q]
+                yamlplugin delete COMMAND [--dryrun] [-q]
+                yamlplugin list [--output=FORMAT] [-q]
+
+            Arguments:
+
+                FORMAT   format is either yaml, json, or list [default=yaml]
+
+            Options:
+
+                -q        stands for quiet and suppresses additional messages
 
             Description:
 
@@ -31,7 +38,7 @@ class cm_shell_yamlplugin:
 
                     lists the plugins in the yaml file
 
-                yamlplugin add/delete COMMAND
+                yamlplugin add COMMAND
                 yamlplugin delete COMMAND
 
                     cmd3 contains a ~/.cloudmesh/cmd3.yaml file.
@@ -45,12 +52,6 @@ class cm_shell_yamlplugin:
                     a command and the command is out commented the comment
                     will be removed so the command is enabled.
 
-                yamlplugin disable COMMAND
-
-                    sometimes it is beneficial to actually not delete the module
-                    from the yaml file but out-comment. This way it can using add
-                    will first check if it it out commented and remove the comment
-                    to enable it
 
             Example:
 
@@ -58,16 +59,21 @@ class cm_shell_yamlplugin:
         """
         # pprint(arguments)
 
+        quiet = arguments["-q"]
+
         if arguments["list"]:
 
             if arguments["--output"] == "yaml":
-                plugins_object = command_yamlplugin()
+                plugins_object = command_yamlplugin(quiet=quiet)
                 print(plugins_object.config.yaml())
             elif arguments["--output"] == "json":
-                plugins_object = command_yamlplugin()
+                plugins_object = command_yamlplugin(quiet=quiet)
                 print(plugins_object.config)
+            elif arguments["--output"] == "list":
+                plugins_object = command_yamlplugin(quiet=quiet)
+                print(plugins_object.config["cmd3"]["modules"])
             if arguments["--output"] is None:
-                plugins_object = command_yamlplugin()
+                plugins_object = command_yamlplugin(quiet=quiet)
                 print(plugins_object)
 
         elif arguments["add"]:
@@ -77,13 +83,15 @@ class cm_shell_yamlplugin:
                                dryrun=arguments["--dryrun"])
 
 
-        elif arguments["disable"]:
-            print("disable")
-        elif arguments["enable"]:
-            print("disable")
+        elif arguments["delete"]:
+
+            plugins_object = command_yamlplugin()
+            plugins_object.delete(arguments["COMMAND"],
+                               dryrun=arguments["--dryrun"])
+
         else:
-            Console.error("unkown option.")
-        pass
+            Console.error("unknown option.")
+
 
 if __name__ == '__main__':
     command = cm_shell_yamlplugin()
