@@ -7,7 +7,8 @@
 #
 #
 
-
+from flask.ext.bootstrap import Bootstrap
+from eve_docs import eve_docs
 from cloudmesh_job.cm_jobdb import JobDB
 
 db = JobDB()
@@ -23,7 +24,10 @@ my_settings = {
 
 from eve import Eve
 app = Eve(settings=my_settings)
+Bootstrap(app)
+app.register_blueprint(eve_docs, url_prefix='/docs')
 
 if __name__ == '__main__':
     app.run()
+
 
