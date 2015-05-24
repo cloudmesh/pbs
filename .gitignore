@@ -1,3 +1,6 @@
+# ignore pycharm
+.idea
+
 # Emacs
 *~
 # Byte-compiled / optimized / DLL files
