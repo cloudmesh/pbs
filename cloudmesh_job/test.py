@@ -70,6 +70,24 @@ job = {"job_name": "job25"}
 
 db.add(job)
 
+#Show modify() functionality
+job = {"job_name": "job30", "input_filename":"file1"}
+
+db.modify(job)
+
+print "\nORIGINAL JOB"
+for job in db.findJobs():
+    print job
+
+job = {"job_name": "job30", "input_filename":"file2"}
+
+db.modify(job)
+
+print "MODIFIED JOB"
+for job in db.findJobs():
+    print job
+
+#Show job statuses functionality
 print "\nJOB STATUSES:"
 db.jobStatusStats()
 
