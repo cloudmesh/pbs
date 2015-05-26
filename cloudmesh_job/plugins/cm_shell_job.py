@@ -224,12 +224,17 @@ class cm_shell_job:
         elif arguments["add"]:
 
             joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
-            host = arguments["--host"]
 
+            host = [None]
             inputs = [None]
             outputs = [None]
             options = [None]
+            
+            db = JobDB()
+            db.connect()
 
+            if arguments["--host"]:
+            	host = arguments["--host"]
             if arguments["--inputs"]:
                 inputs = hostlist.expand_hostlist(arguments["--inputs"])
             if arguments["--outputs"]:
@@ -258,16 +263,9 @@ class cm_shell_job:
 
             options = expand_parameter(options, "options")
             inputs = expand_parameter(inputs, "inputs")
-            outputs = expand_parameter(inputs, "outputs")
-
-            pprint(joblist)
-            pprint(inputs)
-            pprint(outputs)
+            outputs = expand_parameter(outputs, "outputs")
 
             # dependent on if 0, 1, or length of joblist handle that
-
-            # debug msg
-            print(joblist)
 
             for i in range(len(joblist)):
                 banner(i)
@@ -275,8 +273,14 @@ class cm_shell_job:
                 Console.ok("add job : {:} ".format(joblist[i]))
                 Console.ok("  input : {:} ".format(inputs[i]))
                 Console.ok("  output: {:} ".format(outputs[i]))
-		
+                
+                #Build the dictionary for the job to be added
+                job = {"job_name" : joblist[i],
+                       "input"    : inputs[i],
+                       "output"   : outputs[i]}
 
+                #Add the job
+                db.add(job)
 
         elif arguments["stat"]:
 
