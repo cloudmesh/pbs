@@ -211,9 +211,6 @@ class cm_shell_job:
 
             joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
 
-            # debug msg
-            print(joblist)
-
             db = JobDB()
             db.connect()
 
