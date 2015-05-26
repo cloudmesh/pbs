@@ -177,7 +177,7 @@ class JobDB(object):
         #A job with this job name already exists
         if matchingJobs.count() != 0:
 
-            print "A job with this job name already exists in the database"
+            Console.error("A job with this job name already exists in the database")
 
         #A job with this job name does not exist so insert it
         else:
