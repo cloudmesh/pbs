@@ -34,14 +34,14 @@ Task 2: implement the server commands of cm_shell_job.py
     we suggest to use the name self.hpc_jobdb as a prefix as we know its
     not used by other cloudmesh commands.
 
-Task 3: implement and test logic for modifying a job object in the database
+Task 3: [DONE] implement and test logic for modifying a job object in the database
     priority: high
     Who: Ryan
     Date: Completed on 5/21
     
     Ability to edit any attribute of any job object besides the unique identifier for that object.
 
-Task 4: implement a simple statistic of the database showing jobs in states
+Task 4: [DONE] implement a simple statistic of the database showing jobs in states
     priority: high
     Who: Ryan
     Date: Completed on 5/21
@@ -50,10 +50,16 @@ Task 4: implement a simple statistic of the database showing jobs in states
     
     If passed a value of true, all jobs will be printed out beneath their matching status.
 
-Task 5: use of hostlist for defining jobs
+Task 5: [FIRST PASS DONE] use of hostlist for defining jobs
     priority: high
     Who: Ryan, Gregor did the hostlist portion
-    Date:
+    Date: First pass completed on 5/26
+    
+    delete JOBLIST fully implemented
+    
+    add JOBLIST implemented to handle a job list and input and output
+    host and options not implemented as the functionality of these has not been identified
+    
     the input and out put may include multiple files of similar syntax
     we like to modify the code to use multiple files, and also make sure we
     can use hostlist for specifying them. This needs to be implemented at cm
