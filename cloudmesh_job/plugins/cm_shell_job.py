@@ -221,7 +221,7 @@ class cm_shell_job:
                 # if job exists:
                 Console.ok("delete job {:}".format(job))
 
-                db.delete_jobs(attribute="name", value=job)
+                db.delete_jobs("job_name", job)
 
 
         elif arguments["add"]:
