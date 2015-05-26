@@ -158,11 +158,40 @@ class JobDB(object):
         specified in the dict. If overwrite is True all other
         previously defined attributes are overwritten. if the
         job does not exists it will be added.
-
         :param element:
         :return:
         """
-        print("TODO: Ryan")
+        matchingJobs = self.findJobs("job_name", job["job_name"])
+
+        #A job with this job name does not exist
+        if matchingJobs.count() == 0:
+
+            #Add a new job
+            self.add(job)
+
+        #A job with this job name exists so modify it
+        else:
+
+            matchingJob = matchingJobs[0]
+
+            #Overwrite all values
+            if overwrite:
+
+                #Clear out the entire dictionary except for ID and job name
+                matchingJob.clear()
+
+                #Set the ID and job name of the dictionary to be the same
+                matchingJob["_id"] = job["job_name"]
+                matchingJob["job_name"] = job["job_name"]
+
+            #Modify all attributes in the dictionary that are not ID or job name
+            for key in job:
+
+                if key != "_id" and key != "job_name":
+
+                    matchingJob[key] = job[key]
+
+            self.jobs.save(matchingJob)
 
     def add(self, job):
         """
