@@ -220,7 +220,6 @@ class cm_shell_job:
 
                 db.delete_jobs("job_name", job)
 
-
         elif arguments["add"]:
 
             joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
