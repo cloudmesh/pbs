@@ -226,8 +226,8 @@ class JobDB(object):
 
     def insert(self,
                job_name,
-               input_filename="",
-               output_filename="",
+               input="",
+               output="",
                parameters="",
                job_group=None,
                job_label=None,
@@ -252,8 +252,8 @@ class JobDB(object):
                    "job_label": job_label,
                    "job_status": job_status,
                    "host": host,
-                   "input_filename": input_filename,  # must be array
-                   "output_filename": output_filename,  # must be array
+                   "input": input,  # must be array
+                   "output": output,  # must be array
                    "start_time": start_time,
                    "end_time": end_time,
                    "update_time": update_time,
