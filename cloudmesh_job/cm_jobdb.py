@@ -168,21 +168,32 @@ class JobDB(object):
         """
         job is a dictionary. one of its attributes is 'jobname'.
         The element is inserted into the db with the id 'jobname'
-
         :param element:
         :return:
         """
-        print("TODO: Ryan")
 
-        # TODO: check if jobname exists and print error if it does.
+        matchingJobs = self.findJobs("job_name", job["job_name"])
 
-        update = str(datetime.datetime.now())
-        job["update_time"] = update
-        print("not yet implemented")
-        if self.database is not None:
-            db_job_object = self.jobs.save(job)
+        #A job with this job name already exists
+        if matchingJobs.count() != 0:
 
-        return db_job_object
+            print "A job with this job name already exists in the database"
+
+        #A job with this job name does not exist so insert it
+        else:
+
+            #Set the ID of this job to be the job name
+            job["_id"] = job["job_name"]
+
+            #Set the update time
+            update = str(datetime.datetime.now())
+            job["update_time"] = update
+
+            #Save the job object
+            if self.database is not None:
+                db_job_object = self.jobs.save(job)
+
+            return db_job_object
 
     def insert(self,
                job_name,
