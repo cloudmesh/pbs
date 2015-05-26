@@ -65,6 +65,11 @@ print "\nUPDATED JOB:"
 singleJob = list(db.find_jobs("_id", job1_id))
 print singleJob[0]
 
+#Add a job using add()
+job = {"job_name": "job25"}
+
+db.add(job)
+
 print "\nJOB STATUSES:"
 db.jobStatusStats()
 
