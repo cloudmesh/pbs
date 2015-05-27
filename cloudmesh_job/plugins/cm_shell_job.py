@@ -190,22 +190,22 @@ class cm_shell_job:
 
             elif arguments["clean"]:
 			
-				db = JobDB()
-				db.delete_jobs()
+		db = JobDB()
+		db.delete_jobs()
 
                 Console.ok("job server clean")
 
             elif arguments["kill"]:
 
                 db = JobDB()
-				db.stop()
-				Console.ok("job server kill")
+		db.stop()
+		Console.ok("job server kill")
 
             elif arguments["deploy"]:
 
                 db = JobDB()
-				db.deploy()
-				Console.ok("job server deploy")
+		db.deploy()
+		Console.ok("job server deploy")
 
         elif arguments["delete"] and arguments["JOBLIST"]:
 
@@ -283,44 +283,45 @@ class cm_shell_job:
 
         elif arguments["stat"]:
 
-			db = JobDb()
-			db.jobStatusStats()
+	    db = JobDb()
+	    db.jobStatusStats()
             Console.ok("job stat")
 
         elif arguments["list"]:
 
             output = arguments["--output"]
 			
-			db = JobDB()
-			allJobs = db.find_jobs()
-			'''get a list of all jobs and passes it to PBS class with output parameter'''
-			pbs = DbPBS()
-			pbs.list(allJobs, output)
-			
-			""""gregor please review"""
-			Console.ok("lists the jobs in the format specified")
+	    db = JobDB()
+	    allJobs = db.find_jobs()
+	    '''get a list of all jobs and passes it to PBS class with output parameter'''
+	    pbs = DbPBS()
+	    pbs.list(allJobs, output)
 		
-		elif arguments["write"]:
-			'''call list function and then write output to a file'''
-			filename = arguments["--filename"]
-			target = open(filename)
-			
-			db = JobDB()
-			allJobs = db.find_jobs()
-			pbs = DbPBS()
-			
-			'''review string, determine output format, call PBS class, write to filename'''
-			if filename.endswith("csv")
-				toOutput = pbs.list(allJobs, output="csv")
-				target.write(toOutput)
+	    """"gregor please review"""
+	    Console.ok("lists the jobs in the format specified")
+		
+	elif arguments["write"]:
+	    '''call list function and then write output to a file'''
+	    filename = arguments["--filename"]
+	    target = open(filename)
+		
+	    db = JobDB()
+	    allJobs = db.find_jobs()
+	    pbs = DbPBS()
+		
+	    '''review string, determine output format, call PBS class, write to filename'''
+	    if filename.endswith("csv")
+	    	toOutput = pbs.list(allJobs, output="csv")
+		target.write(toOutput)
 
-			elif filename.endswith("json")
-				toOutput = pbs.list(allJobs, output="json")
-				target.write(toOutput)
-			elif filename.endswith("yaml")
-				toOutput = pbs.list(allJobs, output="yaml")
-				target.write(toOutput)	
-			target.close()		
+	    elif filename.endswith("json")
+		toOutput = pbs.list(allJobs, output="json")
+		target.write(toOutput)
+	    elif filename.endswith("yaml")
+		toOutput = pbs.list(allJobs, output="yaml")
+		target.write(toOutput)	
+	
+	    target.close()		
 		
         elif arguments["insert"]:
 
@@ -330,8 +331,8 @@ class cm_shell_job:
             input_files = arguments["INPUT_FILES"]
             output_file = arguments["OUTPUT_FILES"]
 
-			db = JobDB()
-			db.insert(name, input_files, output_file, options, host)
+	    db = JobDB()
+	    db.insert(name, input_files, output_file, options, host)
             Console.ok("insert")
 
     """"elif arguments["find"] and arguments["--name"]: //no matching monogo code
@@ -350,14 +351,11 @@ class cm_shell_job:
             attribute = arguments["--attribute"]
             value = arguments["--value"]
 			
-			db = JobDB()
-			db.find_jobs(attribute, value)
-			
+	    db = JobDB()
+            db.find_jobs(attribute, value)
 
             Console.ok("job find --attribute=ATTRIBUTE --value=VALUE")
-
-
-
+            
         pass
 
 
