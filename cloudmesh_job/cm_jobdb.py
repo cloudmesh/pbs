@@ -153,7 +153,7 @@ class JobDB(object):
 
     def modify(self, job, overwrite=True):
         """
-        job is a dictionary. one of its attributes is 'jobname'.
+        job is a dictionary. one of its attributes is 'job_name'.
         The job if it exists will be modified, with attributes
         specified in the dict. If overwrite is True all other
         previously defined attributes are overwritten. if the
@@ -195,8 +195,8 @@ class JobDB(object):
 
     def add(self, job):
         """
-        job is a dictionary. one of its attributes is 'jobname'.
-        The element is inserted into the db with the id 'jobname'
+        job is a dictionary. one of its attributes is 'job_name'.
+        The element is inserted into the db with the id 'job_name'
         :param element:
         :return:
         """
