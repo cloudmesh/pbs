@@ -18,7 +18,7 @@ Task 1: [DONE] finish the yaml pluging command.
     plugin to the yaml file or lists the plugins that are defined in the
     yaml file
 
-Task 2: implement the server commands of cm_shell_job.py
+Task 2: [DONE - requires review of PBS list functions by gregor]implement the server commands of cm_shell_job.py
     priority: high
     Who: Drew, Gregor
     Date:
