@@ -98,14 +98,15 @@ db.jobStatusStats(True)
 job = {"job_name": "job35", "input" : "file1"}
 
 db.add(job)
-print db.findJobs("job_name","job35")[0]
+print db.find_jobs("job_name","job35")[0]
 
 #Modify the job
 job = {"job_name": "job35", "input" : "file2"}
 
 db.modify(job)
-print db.findJobs("job_name","job35")[0]
+print db.find_jobs("job_name","job35")[0]
 
-db.delete_jobs()
+#Delete the job
+db.delete("job35")
 
 db.stop()
