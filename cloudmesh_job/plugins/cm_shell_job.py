@@ -335,16 +335,16 @@ class cm_shell_job:
 	    db.insert(name, input_files, output_file, options, host)
             Console.ok("insert")
 
-        """elif arguments["find"] and arguments["--name"]: 
+        elif arguments["find"] and arguments["--name"]: 
 
             name = arguments["NAME"]
 			
 		db = JobDB()
-		db.find_jobs(name)
+		db.find_jobs("job_name", name)
 			
 			
 
-            Console.ok("find the job with the given name")"""
+            Console.ok("find the job with the given name")
 
         elif arguments["find"] and arguments["--attribute"] and arguments["--value"]:
 
