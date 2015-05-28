@@ -102,7 +102,7 @@ class cm_shell_job:
                 job write --file=filename 
 
                     writes the jobs to a file. The postfix of the file deterimnes which
-                    format it is. The formats supported are .csv, .yaml, .json
+                    format it is. Thfe formats supported are .csv, .yaml, .json
 
 
                 job list [--output=OUTPUT]
@@ -284,7 +284,7 @@ class cm_shell_job:
         elif arguments["stat"]:
 
 	    db = JobDb()
-	    db.jobStatusStats()
+	    db.info()
             Console.ok("job stat")
 
         elif arguments["list"]:
@@ -335,11 +335,12 @@ class cm_shell_job:
 	    db.insert(name, input_files, output_file, options, host)
             Console.ok("insert")
 
-    """"elif arguments["find"] and arguments["--name"]: //no matching monogo code
+        """elif arguments["find"] and arguments["--name"]: 
 
             name = arguments["NAME"]
 			
-			db = JobDB()
+		db = JobDB()
+		db.find_jobs(name)
 			
 			
 
