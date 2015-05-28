@@ -94,4 +94,18 @@ db.jobStatusStats()
 print "\nJOB STATUSES WITH JOBS PRINTED:"
 db.jobStatusStats(True)
 
+#Add a job using add()
+job = {"job_name": "job35", "input" : "file1"}
+
+db.add(job)
+print db.findJobs("job_name","job35")[0]
+
+#Modify the job
+job = {"job_name": "job35", "input" : "file2"}
+
+db.modify(job)
+print db.findJobs("job_name","job35")[0]
+
+db.delete_jobs()
+
 db.stop()
