@@ -340,7 +340,7 @@ class cm_shell_job:
             name = arguments["NAME"]
 			
 		db = JobDB()
-		db.find_jobs("job_name", name)
+		db.findJobs("job_name", name)
 			
 			
 
