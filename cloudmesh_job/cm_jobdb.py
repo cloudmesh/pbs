@@ -304,7 +304,7 @@ class JobDB(object):
             return -1
 
     def delete(self, jobname):
-        self.delete_jobs(attribute='name', value=jobname)
+        self.delete_jobs("job_name", jobname)
 
     def delete_jobs(self, attribute="", value=""):
 
