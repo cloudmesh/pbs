@@ -95,7 +95,6 @@ class TestJobDB:
 
         assert(before_count - after_count == 1)
 
-
     def test_008_modify(self):
         """
         tests modifying a single job in the db
