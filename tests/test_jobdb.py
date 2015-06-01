@@ -1,16 +1,10 @@
 """
 run with
-
 python setup.py install; nosetests --nocapture tests/test_jobdb.py
 python setup.py install; nosetests tests/test_jobdb.py
-
-
 """
 
-from cloudmesh_base.util import HEADING
-from cloudmesh_base.util import path_expand
-
-from cloudmesh_job.cm_jobdb import JobDB
+from cm_mongodb import JobDB
 import os
 
 # nosetest --nocapture
@@ -34,7 +28,7 @@ class TestJobDB:
         result = True
         assert result
 
-    def test_100_stop(self):
+    def test_002_stop(self):
         """
         tests if the mongo db can be shutdown
         :return:
@@ -43,45 +37,70 @@ class TestJobDB:
         result = True
         assert result
 
-    def test_002_clear(self):
-        HEADING()
-        # self.db.clear()
-        # assert not os.path.isfile(path_expand("~/.cloudmesh/pbs/pbs.db"))
-        assert True
+    def test_003_connect(self):
 
-    def test_003_init(self):
-        HEADING()
+        self.db.connect()
+
+        result = True
+        assert result
+
+    def test_004_clear(self):
+        #HEADING()
+
+        self.db.deleteJobs()
+
+        # assert not os.path.isfile(path_expand("~/.cloudmesh/pbs/pbs.db"))
+        assert(len(self.db) == 0)
+
+    def test_005_init(self):
+        #HEADING()
         print (self.db)
 
-    def test_004_add(self):
-        HEADING()
+    def test_006_add(self):
+        #HEADING()
         db = self.db
 
         count = 5
 
         db.connect()
-        for id in range(0,count-1):
+
+        db.deleteJobs()
+
+        for id in range(0,count):
             job = db.insert("job" + str(id))
 
-        print ("len", len(db))
         assert len(db) == count
 
-    def test_004_add(self):
-        HEADING()
+    def test_007_delete(self):
+        #HEADING()
         db = self.db
 
         db.connect()
-        job = db.insert("deleteme")
+        job = db.insertJob("deleteme")
         before_count = len(db)
 
-        job = db.delete("deleteme")
+        job = db.deleteJobs("job_name", "deleteme")
         after_count = len(db)
 
         assert(before_count - after_count == 1)
 
 
-    def test_005_update(self):
-        HEADING()
-        # self.db.update(host="india")
-        # self.db.list()
-        assert True
+    def test_008_modify(self):
+        #HEADING()
+        db = self.db
+
+        db.connect()
+
+        job = {"job_name": "modifyme", "input_filename":"file1"}
+
+        db.add(job)
+
+        originalFilename = self.db.findJobs("job_name", "modifyme")[0]["input_filename"]
+
+        job = {"job_name": "modifyme", "input_filename":"file2"}
+
+        db.modify(job)
+
+        newFilename = self.db.findJobs("job_name", "modifyme")[0]["input_filename"]
+
+        assert(originalFilename != newFilename)
