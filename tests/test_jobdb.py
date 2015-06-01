@@ -44,10 +44,10 @@ class TestJobDB:
         result = True
         assert result
 
-    def test_004_clear(self):
+   def test_004_clear(self):
         #HEADING()
 
-        self.db.deleteJobs()
+        self.db.clear()
 
         # assert not os.path.isfile(path_expand("~/.cloudmesh/pbs/pbs.db"))
         assert(len(self.db) == 0)
