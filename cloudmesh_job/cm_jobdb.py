@@ -305,6 +305,10 @@ class JobDB(object):
 
     def delete(self, jobname):
         self.delete_jobs("job_name", jobname)
+        
+    def clear(self):
+
+        self.deleteJobs()
 
     def delete_jobs(self, attribute="", value=""):
 
