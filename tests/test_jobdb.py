@@ -38,15 +38,20 @@ class TestJobDB:
         assert result
 
     def test_003_connect(self):
-
+        """
+        tests if a mongo db can be connected to
+        :return:
+        """
         self.db.connect()
 
         result = True
         assert result
 
-   def test_004_clear(self):
-        #HEADING()
-
+    def test_004_clear(self):
+        """
+        tests clearing all jobs from the db
+        :return:
+        """
         self.db.clear()
 
         # assert not os.path.isfile(path_expand("~/.cloudmesh/pbs/pbs.db"))
@@ -57,7 +62,10 @@ class TestJobDB:
         print (self.db)
 
     def test_006_add(self):
-        #HEADING()
+        """
+        tests adding jobs to the db
+        :return:
+        """
         db = self.db
 
         count = 5
@@ -72,7 +80,10 @@ class TestJobDB:
         assert len(db) == count
 
     def test_007_delete(self):
-        #HEADING()
+        """
+        tests deleting a single job from the db
+        :return:
+        """
         db = self.db
 
         db.connect()
@@ -86,7 +97,10 @@ class TestJobDB:
 
 
     def test_008_modify(self):
-        #HEADING()
+        """
+        tests modifying a single job in the db
+        :return:
+        """
         db = self.db
 
         db.connect()
