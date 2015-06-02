@@ -20,6 +20,8 @@ db.start()
 
 db.connect()
 
+db.clear()
+
 #Insert two jobs - one with only a name and one with input and output files
 job0_id = db.insert("job0")
 job1_id = db.insert("job1", "input1", "output1")
@@ -52,13 +54,13 @@ print db.count()
 #Print out count of jobs given query parameters
 print db.count("job_name", "job1")
 
-#Show updating a job attribute - note this is untested
+#Show updating a job attribute
 print "\nORIGINAL JOB:"
 singleJob = list(db.find_jobs("_id", job1_id))
 print singleJob[0]
 
 #Update the input filename
-db.updateJobAttribute(job1_id, "input_filename", "new_input_file")
+db.update_job_attribute(job1_id, "input_filename", "new_input_file")
 
 #Print out the updated job
 print "\nUPDATED JOB:"
@@ -76,7 +78,7 @@ job = {"job_name": "job30", "input_filename":"file1"}
 db.modify(job)
 
 print "\nORIGINAL JOB"
-for job in db.findJobs():
+for job in db.find_jobs():
     print job
 
 job = {"job_name": "job30", "input_filename":"file2"}
@@ -84,29 +86,19 @@ job = {"job_name": "job30", "input_filename":"file2"}
 db.modify(job)
 
 print "MODIFIED JOB"
-for job in db.findJobs():
+for job in db.find_jobs():
     print job
 
 #Show job statuses functionality
 print "\nJOB STATUSES:"
-db.jobStatusStats()
+db.job_status_stats()
 
 print "\nJOB STATUSES WITH JOBS PRINTED:"
-db.jobStatusStats(True)
+db.job_status_stats(True)
 
-#Add a job using add()
-job = {"job_name": "job35", "input" : "file1"}
-
-db.add(job)
-print db.find_jobs("job_name","job35")[0]
-
-#Modify the job
-job = {"job_name": "job35", "input" : "file2"}
-
-db.modify(job)
-print db.find_jobs("job_name","job35")[0]
-
-#Delete the job
-db.delete("job35")
+#Delete all jobs
+db.clear()
+print "Database cleared."
+print "Job count: " + str(db.count())
 
 db.stop()
