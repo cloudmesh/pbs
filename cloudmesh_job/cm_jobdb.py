@@ -153,7 +153,7 @@ class JobDB(object):
 
     def modify(self, job, overwrite=True):
         """
-        job is a dictionary. one of its attributes is 'job_name'.
+        job is a dictionary. one of its attributes is 'jobname'.
         The job if it exists will be modified, with attributes
         specified in the dict. If overwrite is True all other
         previously defined attributes are overwritten. if the
@@ -161,7 +161,7 @@ class JobDB(object):
         :param element:
         :return:
         """
-        matchingJobs = self.findJobs("job_name", job["job_name"])
+        matchingJobs = self.find_jobs("job_name", job["job_name"])
 
         #A job with this job name does not exist
         if matchingJobs.count() == 0:
@@ -308,7 +308,7 @@ class JobDB(object):
         
     def clear(self):
 
-        self.deleteJobs()
+        self.delete_jobs()
 
     def delete_jobs(self, attribute="", value=""):
 
@@ -364,7 +364,7 @@ class JobDB(object):
             Console.error("Please connect to the database first")
             return -1
             
-    def updateJobAttribute(self, job_id, attribute, value):
+    def update_job_attribute(self, job_id, attribute, value):
 
         if self.database is not None:
 
@@ -381,7 +381,7 @@ class JobDB(object):
             print ("Please connect to the database first")
             return -1   
             
-    def jobStatusStats(self, printOutJobs=False):
+    def job_status_stats(self, printOutJobs=False):
 
         #Array of different job statuses
         #   Start with one value for jobs without a status
@@ -392,7 +392,7 @@ class JobDB(object):
         jobStatusCounts = [0]
 
         #Loop through all jobs
-        for job in self.findJobs():
+        for job in self.find_jobs():
 
             #Job has a status
             if "job_status" in job:
