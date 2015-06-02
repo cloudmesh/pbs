@@ -4,7 +4,7 @@ python setup.py install; nosetests --nocapture tests/test_jobdb.py
 python setup.py install; nosetests tests/test_jobdb.py
 """
 
-from cm_mongodb import JobDB
+from cm_jobdb import JobDB
 import os
 
 # nosetest --nocapture
@@ -72,7 +72,7 @@ class TestJobDB:
 
         db.connect()
 
-        db.deleteJobs()
+        db.delete_jobs()
 
         for id in range(0,count):
             job = db.insert("job" + str(id))
@@ -87,10 +87,10 @@ class TestJobDB:
         db = self.db
 
         db.connect()
-        job = db.insertJob("deleteme")
+        job = db.insert("deleteme")
         before_count = len(db)
 
-        job = db.deleteJobs("job_name", "deleteme")
+        job = db.delete_jobs("job_name", "deleteme")
         after_count = len(db)
 
         assert(before_count - after_count == 1)
@@ -108,12 +108,12 @@ class TestJobDB:
 
         db.add(job)
 
-        originalFilename = self.db.findJobs("job_name", "modifyme")[0]["input_filename"]
+        originalFilename = self.db.find_jobs("job_name", "modifyme")[0]["input_filename"]
 
         job = {"job_name": "modifyme", "input_filename":"file2"}
 
         db.modify(job)
 
-        newFilename = self.db.findJobs("job_name", "modifyme")[0]["input_filename"]
+        newFilename = self.db.find_jobs("job_name", "modifyme")[0]["input_filename"]
 
         assert(originalFilename != newFilename)
