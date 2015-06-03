@@ -24,12 +24,17 @@ class JobDB(object):
         """
         returns True is mongod is up
 
-        TODO: implement
+        TODO: Ryan implement
         :return:
         """
         return True
 
     def load(self, filename="/cloudmesh_pbs.yaml"):
+        """
+        The configuration for the job db is stored in a yaml
+        file. The defualt location is ~/.cloudmesh/cloudmesh_pbs.yaml
+        :param filename: the filename of the yaml file
+        """
         self.filename = config_file(filename)
         self.data = ConfigDict(filename=self.filename)
 
@@ -53,7 +58,6 @@ class JobDB(object):
     def deploy(self):
         """
         creates the directories if they do not exist
-        :return:
         """
         try:
             r = Shell.mkdir(self.db_path)
@@ -73,17 +77,18 @@ class JobDB(object):
     # BUG not a good location for logpath as we run this in user mode
     # port and location should probably read from cloudmesh_pbs.yaml and values here set to None.see load function
 
-    def ps(self):
-        r = Shell.fgrep(Shell.ps("aux", _tty_out=False), "mongod", _tty_in=False)
-        print(r)
 
     def ps(self):
         """
-        issue a ps to see which mongod services run
+        A simple ps command to see if mongodb is running
         """
         os.system ("ps aux | fgrep mongod |fgrep -v fgrep")
 
     def start(self):
+        """
+        starts the database service
+        :return: the pid
+        """
         try:
 
             mongod = Shell.which("mongod")
@@ -98,9 +103,11 @@ class JobDB(object):
             print(" ".join(command))
             #a = subprocess.call(command)
             os.system(" ".join(command))
-            os.system ("ps aux | fgrep mongod |fgrep -v fgrep")
+            self.ps()
             Console.ok("MongoDB has been deployed")
             self.info()
+            return None # implement the return of the pid for the process.
+                        # store the pid in self.pid
 
         except Exception, e:
             Console.error("we had a problem starting the  mongo daemon")
@@ -111,6 +118,10 @@ class JobDB(object):
 
 
     def stop(self):
+        """
+        stops the server
+        """
+        # TODO: Ryoan use the pid to kill the server or use gracefule shutdown.
         try:
             #command = ["mongod", "--shutdown"]
             command = ["killall", "mongod"]
@@ -124,7 +135,9 @@ class JobDB(object):
 
 
     def info(self):
-        # TODO: implement self. dbath, self.port, self.logpath
+        """
+        prints some elementary information about the server
+        """
         Console.ok("Mongo parameters")
         Console.ok("  dbpath:  {:}".format(self.db_path))
         Console.ok("  port:    {:}".format(self.port))
@@ -132,6 +145,9 @@ class JobDB(object):
         Console.ok("  dbname:  {:}".format(self.dbname))
 
     def connect(self):
+        """
+        Creates a connection to the database with the given configuration from the yaml filr
+        """
 
         client = MongoClient('localhost', self.port)
         self.database = client["jobsdb"]
@@ -158,8 +174,11 @@ class JobDB(object):
         specified in the dict. If overwrite is True all other
         previously defined attributes are overwritten. if the
         job does not exists it will be added.
-        :param element:
-        :return:
+
+        :param job: a new job in dict format
+        :param overwrite: if True the element that may already
+                          be in teh database will be overwritten.
+        :return: returns the id of the job in the database
         """
         matchingJobs = self.find_jobs("job_name", job["job_name"])
 
@@ -192,6 +211,7 @@ class JobDB(object):
                     matchingJob[key] = job[key]
 
             self.jobs.save(matchingJob)
+            return "todo" # this should return the database object
 
     def add(self, job):
         """
