@@ -1,3 +1,4 @@
+cloudmesh_base
 cerberus==0.8.1           # via eve
 cloudmesh-base==2.6.2
 cloudmesh-timestring==1.6.2.1  # via cmd3

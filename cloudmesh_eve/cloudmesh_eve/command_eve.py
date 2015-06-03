@@ -1,7 +1,7 @@
 from cloudmesh_base.Shell import Shell
 
 
-class command_{command}(object):
+class command_eve(object):
 
     @classmethod
     def status(cls, host):
