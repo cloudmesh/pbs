@@ -7,7 +7,9 @@ import hostlist
 from pprint import pprint
 from cloudmesh_base.util import banner
 from cloudmesh_job.cm_jobdb import JobDB
-from cloudmesh_pbs.DbPBS import DbPBS'''please review'''
+from cloudmesh_pbs.DbPBS import DbPBS
+
+'''please review'''
 
 
 class cm_shell_job:
@@ -189,57 +191,57 @@ class cm_shell_job:
                 db.ps()
 
             elif arguments["clean"]:
-			
-		db = JobDB()
-		db.delete_jobs()
 
-                Console.ok("job server clean")
+                db = JobDB()
+                db.delete_jobs()
+
+            Console.ok("job server clean")
 
             elif arguments["kill"]:
 
                 db = JobDB()
-		db.stop()
-		Console.ok("job server kill")
+                db.stop()
+                Console.ok("job server kill")
 
-            elif arguments["deploy"]:
+    elif arguments["deploy"]:
 
-                db = JobDB()
-		db.deploy()
-		Console.ok("job server deploy")
+        db = JobDB()
+        db.deploy()
+        Console.ok("job server deploy")
 
-        elif arguments["delete"] and arguments["JOBLIST"]:
+    elif arguments["delete"] and arguments["JOBLIST"]:
 
-            joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
+        joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
 
-            db = JobDB()
-            db.connect()
+        db = JobDB()
+        db.connect()
 
-            for job in joblist:
-                # if job exists:
-                Console.ok("delete job {:}".format(job))
+        for job in joblist:
+            # if job exists:
+            Console.ok("delete job {:}".format(job))
 
-                db.delete_jobs("job_name", job)
+            db.delete_jobs("job_name", job)
 
-        elif arguments["add"]:
+    elif arguments["add"]:
 
-            joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
+        joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
 
-            host = [None]
-            inputs = [None]
-            outputs = [None]
-            options = [None]
-            
-            db = JobDB()
-            db.connect()
+        host = [None]
+        inputs = [None]
+        outputs = [None]
+        options = [None]
 
-            if arguments["--host"]:
-            	host = arguments["--host"]
-            if arguments["--inputs"]:
-                inputs = hostlist.expand_hostlist(arguments["--inputs"])
-            if arguments["--outputs"]:
-                outputs = hostlist.expand_hostlist(arguments["--outputs"])
-            if arguments["--options"]:
-                options = hostlist.expand_hostlist(arguments["--options"])
+        db = JobDB()
+        db.connect()
+
+        if arguments["--host"]:
+            host = arguments["--host"]
+        if arguments["--inputs"]:
+            inputs = hostlist.expand_hostlist(arguments["--inputs"])
+        if arguments["--outputs"]:
+            outputs = hostlist.expand_hostlist(arguments["--outputs"])
+        if arguments["--options"]:
+            options = hostlist.expand_hostlist(arguments["--options"])
             # check if inputs are either 0, 1 or the length of joblist
 
             def expand_parameter(parameter, label):
@@ -260,6 +262,7 @@ class cm_shell_job:
                     print(label, "count: ", len(_parameter))
                 return _parameter
 
+
             options = expand_parameter(options, "options")
             inputs = expand_parameter(inputs, "inputs")
             outputs = expand_parameter(outputs, "outputs")
@@ -269,60 +272,62 @@ class cm_shell_job:
             for i in range(len(joblist)):
                 banner(i)
 
-                Console.ok("add job : {:} ".format(joblist[i]))
-                Console.ok("  input : {:} ".format(inputs[i]))
-                Console.ok("  output: {:} ".format(outputs[i]))
-                
-                #Build the dictionary for the job to be added
-                job = {"job_name" : joblist[i],
-                       "input"    : inputs[i],
-                       "output"   : outputs[i]}
+            Console.ok("add job : {:} ".format(joblist[i]))
+            Console.ok("  input : {:} ".format(inputs[i]))
+            Console.ok("  output: {:} ".format(outputs[i]))
 
-                #Add the job
-                db.add(job)
+            # Build the dictionary for the job to be added
+            job = {
+                "job_name": joblist[i],
+                "input": inputs[i],
+                "output": outputs[i]
+            }
+
+            # Add the job
+            db.add(job)
 
         elif arguments["stat"]:
 
-	    db = JobDb()
-	    db.info()
+            db = JobDb()
+            db.info()
             Console.ok("job stat")
 
         elif arguments["list"]:
 
             output = arguments["--output"]
-			
-	    db = JobDB()
-	    allJobs = db.find_jobs()
-	    '''get a list of all jobs and passes it to PBS class with output parameter'''
-	    pbs = DbPBS()
-	    pbs.list(allJobs, output)
-		
-	    """"gregor please review"""
-	    Console.ok("lists the jobs in the format specified")
-		
-	elif arguments["write"]:
-	    '''call list function and then write output to a file'''
-	    filename = arguments["--filename"]
-	    target = open(filename)
-		
-	    db = JobDB()
-	    allJobs = db.find_jobs()
-	    pbs = DbPBS()
-		
-	    '''review string, determine output format, call PBS class, write to filename'''
-	    if filename.endswith("csv")
-	    	toOutput = pbs.list(allJobs, output="csv")
-		target.write(toOutput)
 
-	    elif filename.endswith("json")
-		toOutput = pbs.list(allJobs, output="json")
-		target.write(toOutput)
-	    elif filename.endswith("yaml")
-		toOutput = pbs.list(allJobs, output="yaml")
-		target.write(toOutput)	
-	
-	    target.close()		
-		
+            db = JobDB()
+            allJobs = db.find_jobs()
+            '''get a list of all jobs and passes it to PBS class with output parameter'''
+            pbs = DbPBS()
+            pbs.list(allJobs, output)
+
+            """"gregor please review"""
+            Console.ok("lists the jobs in the format specified")
+
+        elif arguments["write"]:
+            '''call list function and then write output to a file'''
+            filename = arguments["--filename"]
+            target = open(filename)
+
+            db = JobDB()
+            allJobs = db.find_jobs()
+            pbs = DbPBS()
+
+            '''review string, determine output format, call PBS class, write to filename'''
+            if filename.endswith("csv")
+                toOutput = pbs.list(allJobs, output="csv")
+                target.write(toOutput)
+
+            elif filename.endswith("json")
+                toOutput = pbs.list(allJobs, output="json")
+                target.write(toOutput)
+            elif filename.endswith("yaml")
+                toOutput = pbs.list(allJobs, output="yaml")
+                target.write(toOutput)
+
+            target.close()
+
         elif arguments["insert"]:
 
             name = arguments["NAME"]
@@ -331,18 +336,16 @@ class cm_shell_job:
             input_files = arguments["INPUT_FILES"]
             output_file = arguments["OUTPUT_FILES"]
 
-	    db = JobDB()
-	    db.insert(name, input_files, output_file, options, host)
+            db = JobDB()
+            db.insert(name, input_files, output_file, options, host)
             Console.ok("insert")
 
-        elif arguments["find"] and arguments["--name"]: 
+        elif arguments["find"] and arguments["--name"]:
 
             name = arguments["NAME"]
-			
-		db = JobDB()
-		db.findJobs("job_name", name)
-			
-			
+
+            db = JobDB()
+            db.findJobs("job_name", name)
 
             Console.ok("find the job with the given name")
 
@@ -351,14 +354,13 @@ class cm_shell_job:
             name = arguments["NAME"]
             attribute = arguments["--attribute"]
             value = arguments["--value"]
-			
-	    db = JobDB()
+
+            db = JobDB()
             db.find_jobs(attribute, value)
 
             Console.ok("job find --attribute=ATTRIBUTE --value=VALUE")
-            
-        pass
 
+        pass
 
 if __name__ == '__main__':
     command = cm_shell_job()
