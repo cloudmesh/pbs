@@ -217,7 +217,7 @@ class JobDB(object):
         :return:
         """
 
-        matchingJobs = self.findJobs("job_name", job["job_name"])
+        matchingJobs = self.find_jobs("job_name", job["job_name"])
 
         # A job with this job name already exists
         if matchingJobs.count() != 0:
@@ -517,7 +517,7 @@ class JobDB(object):
                 if printOutJobs:
 
                     #Loop through all jobs
-                    for job in self.findJobs():
+                    for job in self.find_jobs():
 
                         #Matching job status
                         if job["job_status"] == jobStatus:

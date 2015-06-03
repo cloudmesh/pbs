@@ -141,7 +141,7 @@ class TestJobDB:
         db.connect()
         count = len(db)
         print count
-        assert count == 5
+        assert count == 6
 
 
     def test_999_stop(self):
