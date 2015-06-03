@@ -217,7 +217,8 @@ class JobDB(object):
         """
         job is a dictionary. one of its attributes is 'job_name'.
         The element is inserted into the db with the id 'job_name'
-        :param element:
+
+        :param job: the job to be added
         :return:
         """
 
@@ -254,13 +255,27 @@ class JobDB(object):
                job_id=None,  # possibly same as job_name ?
                host=None,
                start_time=str(datetime.datetime.now()),
-               end_time=str(datetime.datetime.now()),
+               end_time=None,
                update_time=str(datetime.datetime.now()),
                job_status="C_DEFINED",  # see what we wrote in paper
-):
-        # TODO: end_time should be None as unlikely
-        # it so short and we need to deal with jobs
-        # that we do not know how long they are
+              ):
+        """
+        inserts a job with specific attributes into the database.
+
+        :param job_name: the name of the job
+        :param input: an array of input files
+        :param output: an array of output files
+        :param parameters: an array of parameters
+        :param job_group: the group of the job
+        :param job_label: a label for the job
+        :param job_id: a unique id for the job
+        :param host: the host on which the job is to be run.
+        :param start_time: the start time when the job is to be run
+        :param end_time: the end time when the job is to be run
+        :param update_time: the time the job record has been updated
+        :param job_status: the status of the job
+        :return: returns the job object
+        """
 
         if self.database is not None:
 
@@ -296,6 +311,11 @@ class JobDB(object):
             return -1
 
     def insert_job_object(self, job):
+        """
+        insert a job object as defined in job.
+        :param job:
+        :return:
+        """
 
         if self.database is not None:
 
@@ -307,7 +327,23 @@ class JobDB(object):
             Console.error("Please connect to the database first")
             return -1
 
+    def check_job_definition(self, jobid):
+        """
+        checks if the job has all attributes defined
+        :param jobid: the id of the job
+        :return: None if the job is valid, a list of attributes that
+        need to be defined.
+        """
+        # TODO: needs to be implemented
+        pass
+
     def find_jobs(self, attribute="", value=""):
+        """
+        finds a job based on if specific attribute has a particular value
+        :param attribute: the name of the attribute
+        :param value:  the value of the attribute
+        :return:
+        """
 
         if self.database is not None:
 
@@ -324,14 +360,25 @@ class JobDB(object):
             return -1
 
     def delete(self, jobname):
+        """
+        delete the job with the given  name
+        :param jobname: the name of the jon
+        :return:
+        """
         self.delete_jobs("job_name", jobname)
         
     def clear(self):
-
+        """
+        clears all jobs from the database
+        """
         self.delete_jobs()
 
     def delete_jobs(self, attribute="", value=""):
-
+        """
+        deletes a job where the attribute is set to a specific value
+        :param attribute: the attribute name
+        :param value: the value
+        """
         if self.database is not None:
 
             # Delete all jobs if no key name or value has been given
@@ -348,17 +395,17 @@ class JobDB(object):
 
     def __len__(self):
         """
-        returns the number of elemenst in the database
-        :return:
+        returns the number of elements in the database
+        :return: the number of elements in the database
         """
         return self.count()
 
     def count(self, attribute="", value=""):
         """
         return the count of all jobs with a given value at the attribute
-        :param attribute:
-        :param value:
-        :return:
+        :param attribute: the attribute we look at
+        :param value: the value the attribute must have
+        :return: the cound of objects in the database where attribute == value
         """
         if self.database is not None:
 
@@ -375,33 +422,49 @@ class JobDB(object):
             return -1
 
     def update_job_end_time(self, job_id, end_time=str(datetime.datetime.now())):
-
+        """
+        updates the job end time
+        :param job_id: the job id
+        :param end_time: the end time
+        :return: returns -1 if not successul
+        """
         if self.database is not None:
-
             self.jobs.update({"_id": job_id}, {"$set": {"end_time": end_time}}, upsert=False)
-
+            return 1
         else:
             Console.error("Please connect to the database first")
             return -1
             
     def update_job_attribute(self, job_id, attribute, value):
+        """
+        updates a specific attribute in the database
+        :param job_id: the job id
+        :param attribute: the attribute
+        :param value: the value
+        :return: 1 if successful , -1 if error # will be changed to true, false
+        """
 
         if self.database is not None:
 
             if attribute == "_id":
 
                 print ('You cannot change the unique Object ID generated by MongoDB')
+                return -1
 
             else:
 
                 self.jobs.update({"_id" : job_id}, {"$set": {attribute : value}}, upsert=False)
-
+                return 1
         else:
 
             print ("Please connect to the database first")
             return -1   
             
     def job_status_stats(self, printOutJobs=False):
+        """
+        prints the status of all jobs
+        :param printOutJobs: if True, prints the detals of the job
+        """
 
         #Array of different job statuses
         #   Start with one value for jobs without a status
