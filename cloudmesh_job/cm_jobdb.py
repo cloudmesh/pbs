@@ -15,8 +15,8 @@ import os
 from pprint import pprint
 import sys
 
-class JobDB(object):
 
+class JobDB(object):
     database = None
     jobs = None
 
@@ -71,7 +71,6 @@ class JobDB(object):
             Console.error("Problem creating the log file {:}".format(self.log_file))
             print(e)
 
-
     # TODO COMBINE WITH __INIT__ ???
     # BUG not a good location for  the data /data
     # BUG not a good location for logpath as we run this in user mode
@@ -82,7 +81,7 @@ class JobDB(object):
         """
         A simple ps command to see if mongodb is running
         """
-        os.system ("ps aux | fgrep mongod |fgrep -v fgrep")
+        os.system("ps aux | fgrep mongod |fgrep -v fgrep")
 
     def start(self):
         """
@@ -101,13 +100,13 @@ class JobDB(object):
                 "--bind_ip", "127.0.0.1"
             ]
             print(" ".join(command))
-            #a = subprocess.call(command)
+            # a = subprocess.call(command)
             os.system(" ".join(command))
             self.ps()
             Console.ok("MongoDB has been deployed")
             self.info()
-            return None # implement the return of the pid for the process.
-                        # store the pid in self.pid
+            return None  # implement the return of the pid for the process.
+            # store the pid in self.pid
 
         except Exception, e:
             Console.error("we had a problem starting the  mongo daemon")
@@ -116,23 +115,21 @@ class JobDB(object):
             # TODO remove the exit in final code, for debugging only
             sys.exit()
 
-
     def stop(self):
         """
         stops the server
         """
         # TODO: Ryoan use the pid to kill the server or use gracefule shutdown.
         try:
-            #command = ["mongod", "--shutdown"]
+            # command = ["mongod", "--shutdown"]
             command = ["killall", "mongod"]
             print(" ".join(command))
             os.system(" ".join(command))
             Console.ok("MongoDB has been shutdown")
-            #os.system("mongod --shutdown")
+            # os.system("mongod --shutdown")
         except Exception, e:
             Console.error("we had a problem shutting the mongo daemon down")
             print(e)
-
 
     def info(self):
         """
@@ -182,36 +179,34 @@ class JobDB(object):
         """
         matchingJobs = self.find_jobs("job_name", job["job_name"])
 
-        #A job with this job name does not exist
+        # A job with this job name does not exist
         if matchingJobs.count() == 0:
 
-            #Add a new job
+            # Add a new job
             self.add(job)
 
-        #A job with this job name exists so modify it
+        # A job with this job name exists so modify it
         else:
 
             matchingJob = matchingJobs[0]
 
-            #Overwrite all values
+            # Overwrite all values
             if overwrite:
-
-                #Clear out the entire dictionary except for ID and job name
+                # Clear out the entire dictionary except for ID and job name
                 matchingJob.clear()
 
-                #Set the ID and job name of the dictionary to be the same
+                # Set the ID and job name of the dictionary to be the same
                 matchingJob["_id"] = job["job_name"]
                 matchingJob["job_name"] = job["job_name"]
 
-            #Modify all attributes in the dictionary that are not ID or job name
+            # Modify all attributes in the dictionary that are not ID or job name
             for key in job:
 
                 if key != "_id" and key != "job_name":
-
                     matchingJob[key] = job[key]
 
             self.jobs.save(matchingJob)
-            return "todo" # this should return the database object
+            return "todo"  # this should return the database object
 
     def add(self, job):
         """
@@ -224,22 +219,22 @@ class JobDB(object):
 
         matchingJobs = self.findJobs("job_name", job["job_name"])
 
-        #A job with this job name already exists
+        # A job with this job name already exists
         if matchingJobs.count() != 0:
 
             Console.error("A job with this job name already exists in the database")
 
-        #A job with this job name does not exist so insert it
+        # A job with this job name does not exist so insert it
         else:
 
-            #Set the ID of this job to be the job name
+            # Set the ID of this job to be the job name
             job["_id"] = job["job_name"]
 
-            #Set the update time
+            # Set the update time
             update = str(datetime.datetime.now())
             job["update_time"] = update
 
-            #Save the job object
+            # Save the job object
             if self.database is not None:
                 db_job_object = self.jobs.save(job)
 
@@ -258,7 +253,7 @@ class JobDB(object):
                end_time=None,
                update_time=str(datetime.datetime.now()),
                job_status="C_DEFINED",  # see what we wrote in paper
-              ):
+               ):
         """
         inserts a job with specific attributes into the database.
 
@@ -280,19 +275,19 @@ class JobDB(object):
         if self.database is not None:
 
             job = {
-                   "_id": job_name,
-                   "job_name": job_name,
-                   "job_id": job_name,
-                   "job_group": job_group,
-                   "job_label": job_label,
-                   "job_status": job_status,
-                   "host": host,
-                   "input": input,  # must be array
-                   "output": output,  # must be array
-                   "start_time": start_time,
-                   "end_time": end_time,
-                   "update_time": update_time,
-                   }
+                "_id": job_name,
+                "job_name": job_name,
+                "job_id": job_name,
+                "job_group": job_group,
+                "job_label": job_label,
+                "job_status": job_status,
+                "host": host,
+                "input": input,  # must be array
+                "output": output,  # must be array
+                "start_time": start_time,
+                "end_time": end_time,
+                "update_time": update_time,
+            }
 
             banner("job")
             pprint(job)
@@ -366,7 +361,7 @@ class JobDB(object):
         :return:
         """
         self.delete_jobs("job_name", jobname)
-        
+
     def clear(self):
         """
         clears all jobs from the database
@@ -434,7 +429,7 @@ class JobDB(object):
         else:
             Console.error("Please connect to the database first")
             return -1
-            
+
     def update_job_attribute(self, job_id, attribute, value):
         """
         updates a specific attribute in the database
@@ -448,33 +443,33 @@ class JobDB(object):
 
             if attribute == "_id":
 
-                print ('You cannot change the unique Object ID generated by MongoDB')
+                print('You cannot change the unique Object ID generated by MongoDB')
                 return -1
 
             else:
 
-                self.jobs.update({"_id" : job_id}, {"$set": {attribute : value}}, upsert=False)
+                self.jobs.update({"_id": job_id}, {"$set": {attribute: value}}, upsert=False)
                 return 1
         else:
 
-            print ("Please connect to the database first")
-            return -1   
-            
+            print("Please connect to the database first")
+            return -1
+
     def job_status_stats(self, printOutJobs=False):
         """
         prints the status of all jobs
         :param printOutJobs: if True, prints the detals of the job
         """
 
-        #Array of different job statuses
-        #   Start with one value for jobs without a status
+        # Array of different job statuses
+        # Start with one value for jobs without a status
         jobStatuses = ["No Status"]
 
-        #Parallel array of counts of each job status
-        #   Start with a counter for jobs with no status
+        # Parallel array of counts of each job status
+        # Start with a counter for jobs with no status
         jobStatusCounts = [0]
 
-        #Loop through all jobs
+        # Loop through all jobs
         for job in self.find_jobs():
 
             #Job has a status
@@ -489,7 +484,6 @@ class JobDB(object):
 
                     #Job status match
                     if job["job_status"] == jobStatus:
-
                         #Increment the counter for this job status
                         jobStatusCounts[index] += 1
                         jobStatusFound = True
@@ -498,8 +492,7 @@ class JobDB(object):
                     index += 1
 
                 #New job status
-                if jobStatusFound == False:
-
+                if not jobStatusFound:
                     #Add new job status and new counter to arrays
                     jobStatuses.append(job["job_status"])
                     jobStatusCounts.append(1)
@@ -518,7 +511,7 @@ class JobDB(object):
             #Only print jobs statuses that exist
             if jobStatusCounts[index] != 0:
 
-                print "JOB STATUS: " + jobStatus + " COUNT: " + str(jobStatusCounts[index])
+                print("JOB STATUS: " + jobStatus + " COUNT: " + str(jobStatusCounts[index]))
 
                 #Print out all jobs for this status if flagged to do so
                 if printOutJobs:
@@ -528,11 +521,10 @@ class JobDB(object):
 
                         #Matching job status
                         if job["job_status"] == jobStatus:
-
-                            print job
+                            print(job)
 
                     #Print an blank line to make the output more pleasing
-                    print ""
+                    print("")
 
             index += 1
     

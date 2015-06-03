@@ -4,7 +4,8 @@ python setup.py install; nosetests --nocapture tests/test_jobdb.py
 python setup.py install; nosetests tests/test_jobdb.py
 """
 
-from cm_jobdb import JobDB
+from cloudmesh_job.cm_jobdb import JobDB
+from cloudmesh_base.util import HEADING
 import os
 
 # nosetest --nocapture
@@ -23,25 +24,19 @@ class TestJobDB:
         tests if the mongo db can be started
         :return:
         """
+        HEADING()
         self.db.start()
         # identify a test to see if mongod is started
         result = True
         assert result
 
-    def test_002_stop(self):
-        """
-        tests if the mongo db can be shutdown
-        :return:
-        """
-        self.db.stop()
-        result = True
-        assert result
 
     def test_003_connect(self):
         """
         tests if a mongo db can be connected to
         :return:
         """
+        HEADING()
         self.db.connect()
 
         result = True
@@ -52,20 +47,22 @@ class TestJobDB:
         tests clearing all jobs from the db
         :return:
         """
-        self.db.clear()
+        HEADING()
+        db = self.db
+        db.connect()
+
+        db.clear()
 
         # assert not os.path.isfile(path_expand("~/.cloudmesh/pbs/pbs.db"))
-        assert(len(self.db) == 0)
+        assert(len(db) == 0)
 
-    def test_005_init(self):
-        #HEADING()
-        print (self.db)
 
     def test_006_add(self):
         """
         tests adding jobs to the db
         :return:
         """
+        HEADING()
         db = self.db
 
         count = 5
@@ -84,6 +81,7 @@ class TestJobDB:
         tests deleting a single job from the db
         :return:
         """
+        HEADING()
         db = self.db
 
         db.connect()
@@ -100,6 +98,7 @@ class TestJobDB:
         tests modifying a single job in the db
         :return:
         """
+        HEADING()
         db = self.db
 
         db.connect()
@@ -117,3 +116,40 @@ class TestJobDB:
         newFilename = self.db.find_jobs("job_name", "modifyme")[0]["input_filename"]
 
         assert(originalFilename != newFilename)
+
+
+    def test_010_info(self):
+        """
+        prints the info about the db
+        :return:
+        """
+        HEADING()
+        db = self.db
+
+        db.connect()
+        db.info()
+        pass
+
+    def test_011_len(self):
+        """
+        tests modifying a single job in the db
+        :return:
+        """
+        HEADING()
+        db = self.db
+
+        db.connect()
+        count = len(db)
+        print count
+        assert count == 5
+
+
+    def test_999_stop(self):
+        """
+        tests if the mongo db can be shutdown
+        :return:
+        """
+        HEADING()
+        self.db.stop()
+        result = True
+        assert result
