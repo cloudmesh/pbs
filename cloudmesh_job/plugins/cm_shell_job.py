@@ -28,6 +28,7 @@ class cm_shell_job:
                 job server clean
                 job server deploy
                 job server ps
+                job info
                 job stat
                 job list
                 job add JOBLIST [--host=HOST] [--options=OPTIONS] [--inputs=INPUTS] [--outputs=OUTPUTS]
@@ -167,7 +168,22 @@ class cm_shell_job:
         """
         # pprint(arguments)
 
-        if arguments.get("server"):
+        def connect():
+            db = JobDB()
+            db.connect()
+            return db
+
+        if arguments["info"]:
+            db = connect()
+            db.info()
+            return
+
+        elif arguments["stat"]:
+            db = connect()
+            db.stat()
+            return
+
+        elif arguments["server"]:
 
             db = JobDB()
 
@@ -178,9 +194,11 @@ class cm_shell_job:
                 db.stop()
                 return
             elif arguments["ps"]:
+                db = connect()
                 db.ps()
                 return
             elif arguments["clean"]:
+                db = connect()
                 db.delete_jobs()
                 return
             elif arguments["deploy"]:
@@ -190,8 +208,7 @@ class cm_shell_job:
 
             joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
 
-            db = JobDB()
-            db.connect()
+            db = connect()
 
             for job in joblist:
                 # if job exists:
@@ -208,8 +225,7 @@ class cm_shell_job:
             outputs = [None]
             options = [None]
 
-            db = JobDB()
-            db.connect()
+            db = connect()
 
             if arguments["--host"]:
                 host = arguments["--host"]
@@ -262,17 +278,13 @@ class cm_shell_job:
                 # Add the job
                 db.add(job)
 
-            elif arguments["stat"]:
-
-                db = JobDb()
-                db.info()
-                Console.ok("job stat")
 
             elif arguments["list"]:
 
                 output = arguments["--output"]
 
-                db = JobDB()
+                db = connect()
+
                 allJobs = db.find_jobs()
                 '''get a list of all jobs and passes it to PBS class with output parameter'''
                 pbs = DbPBS()
@@ -286,7 +298,8 @@ class cm_shell_job:
                 filename = arguments["--filename"]
                 target = open(filename)
 
-                db = JobDB()
+                db = connect()
+
                 allJobs = db.find_jobs()
                 pbs = DbPBS()
 
@@ -312,7 +325,8 @@ class cm_shell_job:
                 input_files = arguments["INPUT_FILES"]
                 output_file = arguments["OUTPUT_FILES"]
 
-                db = JobDB()
+                db = connect()
+
                 db.insert(name, input_files, output_file, options, host)
                 Console.ok("insert")
 
@@ -320,8 +334,8 @@ class cm_shell_job:
 
                 name = arguments["NAME"]
 
-                db = JobDB()
-                db.findJobs("job_name", name)
+                db = connect()
+                db.find_jobs("job_name", name)
 
                 Console.ok("find the job with the given name")
 
@@ -331,7 +345,7 @@ class cm_shell_job:
                 attribute = arguments["--attribute"]
                 value = arguments["--value"]
 
-                db = JobDB()
+                db = connect()
                 db.find_jobs(attribute, value)
 
                 Console.ok("job find --attribute=ATTRIBUTE --value=VALUE")

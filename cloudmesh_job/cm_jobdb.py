@@ -528,4 +528,6 @@ class JobDB(object):
 
             index += 1
     
+    def stat(self):
+        print("Number of elements: ", self.__len__())
 
