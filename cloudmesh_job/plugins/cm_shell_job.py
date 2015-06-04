@@ -110,11 +110,6 @@ class cm_shell_job:
 
                     lists the jobs in the format specified
 
-                job insert NAME [HOST] [OPTIONS] [INPUT_FILES] [OUTPUT_FILES]
-
-                    inserts the job with the name into the job database. Options,
-                    input and output files could be specified
-
                 job find --name=NAME
 
                     find the job with the given name
@@ -166,7 +161,7 @@ class cm_shell_job:
 
 
         """
-        # pprint(arguments)
+        pprint(arguments)
 
         def connect():
             db = JobDB()
@@ -217,6 +212,18 @@ class cm_shell_job:
                 db.delete_jobs("job_name", job)
 
         elif arguments["add"]:
+            '''
+                name = arguments["NAME"]
+                host = arguments["HOST"]
+                options = arguments["OPTIONS"]
+                input_files = arguments["INPUT_FILES"]
+                output_file = arguments["OUTPUT_FILES"]
+
+                db = connect()
+
+                db.insert(name, input_files, output_file, options, host)
+                Console.ok("add")
+            '''
 
             joblist = hostlist.expand_hostlist(arguments["JOBLIST"])
 
@@ -227,7 +234,7 @@ class cm_shell_job:
 
             db = connect()
 
-            if arguments["--host"]:
+            if arguments.get("--host"):
                 host = arguments["--host"]
             if arguments["--inputs"]:
                 inputs = hostlist.expand_hostlist(arguments["--inputs"])
@@ -317,18 +324,7 @@ class cm_shell_job:
 
                 target.close()
 
-            elif arguments["insert"]:
 
-                name = arguments["NAME"]
-                host = arguments["HOST"]
-                options = arguments["OPTIONS"]
-                input_files = arguments["INPUT_FILES"]
-                output_file = arguments["OUTPUT_FILES"]
-
-                db = connect()
-
-                db.insert(name, input_files, output_file, options, host)
-                Console.ok("insert")
 
             elif arguments["find"] and arguments["--name"]:
 
