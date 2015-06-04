@@ -28,6 +28,8 @@ class cm_shell_job:
                 job server clean
                 job server deploy
                 job server ps
+                job server info
+                job server pid
                 job info
                 job stat
                 job list
@@ -161,7 +163,7 @@ class cm_shell_job:
 
 
         """
-        pprint(arguments)
+        # pprint(arguments)
 
         def connect():
             db = JobDB()
@@ -198,6 +200,21 @@ class cm_shell_job:
                 return
             elif arguments["deploy"]:
                 db.deploy()
+            elif arguments["pid"]:
+                try:
+                    db = connect()
+                    print(db.pid())
+                except:
+                    print ("ERROR: connecting to server")
+            elif arguments["info"]:
+                try:
+                    db = connect()
+                    db.info()
+                    print(db.pid())
+                except:
+                    print ("ERROR: connecting to server")
+
+
 
         elif arguments["delete"] and arguments["JOBLIST"]:
 

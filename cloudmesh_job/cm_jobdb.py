@@ -28,10 +28,19 @@ class JobDB(object):
         :return: True if mongod is up
         :rtype: boolean
         """
-        command = "nc -z localhost {:}".format(self.port).split(" ")
-        result = subprocess.check_output(command)
-        return "succeeded" in result
+        try:
+           command = "nc -z localhost {:}".format(self.port).split(" ")
+           result = subprocess.check_output(command)
+           up = "succeeded" in result
+        except:
+            up = False
+        return up
 
+    def wait(self):
+        """
+        waits til the server is up
+        :return:
+        """
     def pid(self):
         """
         finds the pid of the mongod process
@@ -40,8 +49,6 @@ class JobDB(object):
         """
         command = 'ps aux'.split(" ")
         result = subprocess.check_output(command).split('\n')
-        # find line
-        # print (result)
         for line in result:
             if ('mongod' in line) and str(self.port) in line:
                 break
