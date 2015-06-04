@@ -208,7 +208,6 @@ class cm_shell_job:
                     print ("ERROR: connecting to server")
             elif arguments["info"]:
                 try:
-                    db = connect()
                     db.info()
                     print(db.pid())
                 except:

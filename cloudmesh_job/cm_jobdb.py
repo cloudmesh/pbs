@@ -122,9 +122,11 @@ class JobDB(object):
         :return: the pid
         """
         if self.isup():
-            Console.error("A process is already running")
+            _pid = self.pid()
+            Console.error("A mongod process on port {:} is already running with pid {:}".format(self.port, _pid))
             return
-
+        else:
+            Console.ok("STARTING")
         try:
 
             mongod = Shell.which("mongod")
@@ -173,10 +175,14 @@ class JobDB(object):
         prints some elementary information about the server
         """
         Console.ok("Mongo parameters")
-        Console.ok("  dbpath:  {:}".format(self.db_path))
-        Console.ok("  port:    {:}".format(self.port))
-        Console.ok("  logfile: {:}".format(self.log_file))
-        Console.ok("  dbname:  {:}".format(self.dbname))
+        if self.dbpath:
+            Console.ok("  dbpath:  {:}".format(self.db_path))
+        if self.port:
+            Console.ok("  port:    {:}".format(self.port))
+        if self.log_file:
+            Console.ok("  logfile: {:}".format(self.log_file))
+        if self.dbname:
+            Console.ok("  dbname:  {:}".format(self.dbname))
 
     def connect(self):
         """
