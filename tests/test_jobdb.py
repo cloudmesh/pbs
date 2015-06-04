@@ -2,6 +2,8 @@
 run with
 python setup.py install; nosetests --nocapture tests/test_jobdb.py
 python setup.py install; nosetests tests/test_jobdb.py
+python setup.py install; nosetests -v --nocapture tests/test_jobdb.py:TestJobDB.test_001_start
+
 """
 
 from cloudmesh_job.cm_jobdb import JobDB
@@ -26,12 +28,38 @@ class TestJobDB:
         """
         HEADING()
         self.db.start()
-        # identify a test to see if mongod is started
-        result = True
+        up = self.db.isup()
+        result = up
+        sys.exit()
         assert result
 
 
-    def test_003_connect(self):
+
+    def test_002_up(self):
+        """
+        tests if the mongo db can be started
+        :return:
+        """
+        HEADING()
+        up = self.db.isup()
+        print (up)
+        self.db.stop()
+        down = not self.db.isup()
+        self.db.start()
+        assert up and down
+
+    def test_003_pid(self):
+        """
+        tests if the mongo db can be started
+        :return:
+        """
+        HEADING()
+        pid = self.db.pid()
+        print (pid)
+        assert True
+
+
+    def test_004_connect(self):
         """
         tests if a mongo db can be connected to
         :return:
@@ -42,7 +70,7 @@ class TestJobDB:
         result = True
         assert result
 
-    def test_004_clear(self):
+    def test_005_clear(self):
         """
         tests clearing all jobs from the db
         :return:

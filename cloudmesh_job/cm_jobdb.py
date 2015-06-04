@@ -14,6 +14,8 @@ import datetime
 import os
 from pprint import pprint
 import sys
+import subprocess
+
 
 
 class JobDB(object):
@@ -23,17 +25,40 @@ class JobDB(object):
     def isup(self):
         """
         returns True is mongod is up
-
-        TODO: Ryan implement
-        :return:
+        :return: True if mongod is up
+        :rtype: boolean
         """
-        return True
+        command = "nc -z localhost {:}".format(self.port).split(" ")
+        result = subprocess.check_output(command)
+        return "succeeded" in result
+
+    def pid(self):
+        """
+        finds the pid of the mongod process
+        :return: the pid number or None if not found
+        :rtype: int or None
+        """
+        command = 'ps aux'.split(" ")
+        result = subprocess.check_output(command).split('\n')
+        # find line
+        # print (result)
+        for line in result:
+            if ('mongod' in line) and str(self.port) in line:
+                break
+        line = " ".join(line.split())
+        columns = line.split(" ")
+        try:
+            pid = columns[1]
+        except:
+            pid = None
+        return pid
 
     def load(self, filename="/cloudmesh_pbs.yaml"):
         """
         The configuration for the job db is stored in a yaml
         file. The defualt location is ~/.cloudmesh/cloudmesh_pbs.yaml
         :param filename: the filename of the yaml file
+        :type filename: str
         """
         self.filename = config_file(filename)
         self.data = ConfigDict(filename=self.filename)
@@ -89,6 +114,10 @@ class JobDB(object):
         starts the database service
         :return: the pid
         """
+        if self.isup():
+            Console.error("A process is already running")
+            return
+
         try:
 
             mongod = Shell.which("mongod")

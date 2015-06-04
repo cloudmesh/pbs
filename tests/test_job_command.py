@@ -1,7 +1,7 @@
 """
 run with
-python setup.py install; nosetests --nocapture tests/test_jobdb.py
-python setup.py install; nosetests tests/test_jobdb.py
+python setup.py install; nosetests -v --nocapture tests/test_job_command.py
+python setup.py install; nosetests tests/test_job_command.py
 """
 
 import subprocess
