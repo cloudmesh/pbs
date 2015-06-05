@@ -95,6 +95,20 @@ db.job_status_stats()
 print "\nJOB STATUSES WITH JOBS PRINTED:"
 db.job_status_stats(True)
 
+job100_id = db.insert("job100")
+job101_id = db.insert("job101", "file100", "file200")
+job102_id = db.insert("job102", "file200", "file300")
+
+inputs, outputs = db.find_jobs_with_file("file200")
+
+print("\nJobs with matching file in input:")
+for job in inputs:
+    print job
+
+print("\nJobs with matching file in output:")
+for job in outputs:
+    print job
+
 #Delete all jobs
 db.clear()
 print "Database cleared."
