@@ -398,6 +398,41 @@ class JobDB(object):
             Console.error("Please connect to the database first")
             return -1
 
+    def find_jobs_with_file(self, filename):
+        """
+        filename is the file to be searched for in input and output of all jobs
+        :param element:
+        :return: two lists are returned where the first is a list of job_names with the given file as input and
+                 the second is a list of job_names with the given file as output
+        """
+
+        #Empty list of job_names that contain the given file in input an
+        matchingInputJobs = []
+        matchingOutputJobs = []
+
+        for job in self.find_jobs():
+
+            #Be sure the job has input associated with it
+            if "input" in job:
+
+                input = job["input"]
+
+                if filename in input:
+
+                    matchingInputJobs.append(job["job_name"])
+
+            #Be sure the job has output associated with it
+            if "output" in job:
+
+                output = job["output"]
+
+                if filename in output:
+
+                    matchingOutputJobs.append(job["job_name"])
+
+
+        return matchingInputJobs, matchingOutputJobs
+    
     def delete(self, jobname):
         """
         delete the job with the given  name
