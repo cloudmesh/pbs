@@ -95,6 +95,7 @@ db.job_status_stats()
 print "\nJOB STATUSES WITH JOBS PRINTED:"
 db.job_status_stats(True)
 
+#SHOW FIND_JOBS_WITH_FILE
 job100_id = db.insert("job100")
 job101_id = db.insert("job101", "file100", "file200")
 job102_id = db.insert("job102", "file200", "file300")
