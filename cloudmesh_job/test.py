@@ -109,6 +109,15 @@ for job in inputs:
 print("\nJobs with matching file in output:")
 for job in outputs:
     print job
+    
+#Delete all jobs
+db.clear()
+    
+#SHOW ADD_FROM_YAML
+db.add_from_yaml("job_example.yaml")
+
+for job in db.find_jobs():
+    print job
 
 #Delete all jobs
 db.clear()
