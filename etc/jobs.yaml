@@ -1,0 +1,25 @@
+job1:
+    parameters: -a -l
+    input:
+    - in1.txt
+    - in2.txt
+    output:
+    - out1.txt
+    - out2.txt
+    group: experiment1
+    label: job1
+    host: None
+    start: +1h
+job2:
+    parameters: -a -l
+    input:
+    - in1.txt
+    - in2.txt
+    output:
+    - out1.txt
+    - out2.txt
+    group: experiment1
+    label: job2
+    host: None
+    start: +2h
+

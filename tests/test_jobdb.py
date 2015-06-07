@@ -5,7 +5,6 @@ python setup.py install; nosetests tests/test_jobdb.py
 python setup.py install; nosetests -v --nocapture tests/test_jobdb.py:TestJobDB.test_001_start
 
 """
-
 from cloudmesh_job.cm_jobdb import JobDB
 from cloudmesh_base.util import HEADING
 import os
@@ -170,6 +169,17 @@ class TestJobDB:
         count = len(db)
         print count
         assert count == 6
+
+    def test_012_yaml_load(self):
+        """
+        tests modifying a single job in the db
+        :return:
+        """
+        HEADING()
+        db = self.db
+        db.yaml_load('etc/jobs.yaml')
+
+
 
 
     def test_999_stop(self):

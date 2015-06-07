@@ -15,6 +15,7 @@ import os
 from pprint import pprint
 import sys
 import subprocess
+import yaml
 
 
 
@@ -196,6 +197,24 @@ class JobDB(object):
 
         if self.info:
            Console.info("Connecting to the Mongo Database")
+
+    def yaml_load(self, filename):
+
+        d = None
+        print(filename)
+        f = path_expand(filename)
+        print("FFF", f)
+        stream = file(f, 'r')
+        # if f does not exists error
+        try:
+            d = yaml.load(stream)
+        except Exception, e:
+            print (e)
+        for jobname in d:
+            job = d[jobname]
+            job['name'] = jobname
+            pprint(job)
+
 
     def getid(self):
         pass
