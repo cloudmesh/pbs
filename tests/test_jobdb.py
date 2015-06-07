@@ -172,15 +172,42 @@ class TestJobDB:
 
     def test_012_yaml_load(self):
         """
-        tests modifying a single job in the db
+        tests adding jobs from a YAML file
         :return:
         """
-        HEADING()
         db = self.db
-        db.yaml_load('etc/jobs.yaml')
 
+        db.connect()
 
+        #Clear all jobs currently in the database to ensure a correct final assertion
+        db.clear()
 
+        #Add the jobs outlined in the YAML file
+        db.add_from_yaml("../cloudmesh_job/job_example.yaml")
+
+        #Assert that the correct number jobs have been added
+        assert(db.count() == 3)
+
+    def test_013_find_files(self):
+        """
+        tests searching for a file
+            the file being searched for exists in 3 files: twice as input and twice as output
+        :return:
+        """
+        db = self.db
+
+        db.connect()
+
+        #Clear all jobs currently in the database to ensure a correct final assertion
+        db.clear()
+
+        #Add the jobs outlined in the YAML file
+        db.add_from_yaml("../cloudmesh_job/job_example.yaml")
+
+        inputs, outputs = db.find_jobs_with_file("file200.txt")
+
+        #Assert that the lengths of the inputs and outputs arrays are correct
+        assert(len(inputs) == 2 and len(outputs) == 2)
 
     def test_999_stop(self):
         """
