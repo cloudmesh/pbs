@@ -15,8 +15,7 @@ import os
 from pprint import pprint
 import sys
 import subprocess
-
-
+import yaml
 
 class JobDB(object):
     database = None
@@ -284,6 +283,18 @@ class JobDB(object):
 
             return db_job_object
 
+    def add_from_yaml(self, filename):
+
+        #Open and read the YAML file
+        file = open(filename, 'r')
+
+        jobDict = yaml.load_all(file)
+
+        #Add every job listed in the YAML file
+        for job in jobDict:
+
+            self.add(job)
+    
     def insert(self,
                job_name,
                input="",
