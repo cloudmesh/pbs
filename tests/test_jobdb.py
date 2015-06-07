@@ -31,9 +31,7 @@ class TestJobDB:
         result = up
         sys.exit()
         assert result
-
-
-
+        
     def test_002_up(self):
         """
         tests if the mongo db can be started
@@ -56,7 +54,6 @@ class TestJobDB:
         pid = self.db.pid()
         print (pid)
         assert True
-
 
     def test_004_connect(self):
         """
@@ -82,7 +79,6 @@ class TestJobDB:
 
         # assert not os.path.isfile(path_expand("~/.cloudmesh/pbs/pbs.db"))
         assert(len(db) == 0)
-
 
     def test_006_add(self):
         """
