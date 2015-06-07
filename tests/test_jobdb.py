@@ -140,7 +140,6 @@ class TestJobDB:
 
         assert(originalFilename != newFilename)
 
-
     def test_010_info(self):
         """
         prints the info about the db
