@@ -18,7 +18,6 @@ import subprocess
 import yaml
 
 
-
 class JobDB(object):
     database = None
     jobs = None
@@ -85,9 +84,10 @@ class JobDB(object):
                               cloudmesh_pbs.yaml
         :return: an object for manageing jobs in the database
         """
-        self.load(filename=yaml_filename)
+        self.load_yaml(filename=yaml_filename)
         self.deploy()
         self.info = info
+        
 
     def deploy(self):
         """
@@ -202,20 +202,19 @@ class JobDB(object):
 
         d = None
         print(filename)
-        f = path_expand(filename)
-        print("FFF", f)
-        stream = file(f, 'r')
+        stream = file(path_expand(filename), 'r')
         # if f does not exists error
         try:
             d = yaml.load(stream)
+            for jobname in d:
+                job = d[jobname]
+                job['name'] = jobname
+                pprint(job)
+                self.add(job)
         except Exception, e:
             print (e)
-        for jobname in d:
-            job = d[jobname]
-            job['name'] = jobname
-            pprint(job)
-
-
+        
+        
     def getid(self):
         pass
 
@@ -303,6 +302,18 @@ class JobDB(object):
 
             return db_job_object
 
+    def add_from_yaml(self, filename):
+
+        #Open and read the YAML file
+        file = open(filename, 'r')
+
+        jobDict = yaml.load_all(file)
+
+        #Add every job listed in the YAML file
+        for job in jobDict:
+
+            self.add(job)
+    
     def insert(self,
                job_name,
                input="",
@@ -417,6 +428,41 @@ class JobDB(object):
             Console.error("Please connect to the database first")
             return -1
 
+    def find_jobs_with_file(self, filename):
+        """
+        filename is the file to be searched for in input and output of all jobs
+        :param element:
+        :return: two lists are returned where the first is a list of job_names with the given file as input and
+                 the second is a list of job_names with the given file as output
+        """
+
+        #Empty list of job_names that contain the given file in input an
+        matchingInputJobs = []
+        matchingOutputJobs = []
+
+        for job in self.find_jobs():
+
+            #Be sure the job has input associated with it
+            if "input" in job:
+
+                input = job["input"]
+
+                if filename in input:
+
+                    matchingInputJobs.append(job["job_name"])
+
+            #Be sure the job has output associated with it
+            if "output" in job:
+
+                output = job["output"]
+
+                if filename in output:
+
+                    matchingOutputJobs.append(job["job_name"])
+
+
+        return matchingInputJobs, matchingOutputJobs
+    
     def delete(self, jobname):
         """
         delete the job with the given  name
