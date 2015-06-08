@@ -16,7 +16,7 @@ from pprint import pprint
 import sys
 import subprocess
 import yaml
-
+import time
 
 class JobDB(object):
     database = None
@@ -36,11 +36,17 @@ class JobDB(object):
             up = False
         return up
 
-    def wait(self):
+    def wait(self, max_wait_time=60, delta=5):
         """
         waits til the server is up
         :return:
         """
+        for i in range (0, max_wait_time, delta):
+            if self.isup():
+                return
+            time.sleep(5)
+        raise Exception("server not up")
+
     def pid(self):
         """
         finds the pid of the mongod process
@@ -128,6 +134,7 @@ class JobDB(object):
             return
         else:
             Console.ok("STARTING")
+
         try:
 
             mongod = Shell.which("mongod")
@@ -159,14 +166,12 @@ class JobDB(object):
         """
         stops the server
         """
-        # TODO: Ryoan use the pid to kill the server or use gracefule shutdown.
         try:
-            # command = ["mongod", "--shutdown"]
-            command = ["killall", "mongod"]
+            process_id = self.pid()
+            command = ["kill", "-9", str(process_id)]
             print(" ".join(command))
             os.system(" ".join(command))
             Console.ok("MongoDB has been shutdown")
-            # os.system("mongod --shutdown")
         except Exception, e:
             Console.error("we had a problem shutting the mongo daemon down")
             print(e)
@@ -188,7 +193,11 @@ class JobDB(object):
             Console.ok("  pid:     {:}".format(self.pid()))
         except:
             pass
-
+        try:
+            db = self.connect()
+            Console.ok("  Objects: {:}".format(len(db)))
+        except:
+            pass
 
     def connect(self):
         """
@@ -203,21 +212,29 @@ class JobDB(object):
         if self.debug:
             Console.info("Connecting to the Mongo Database")
 
-    def yaml_load(self, filename):
 
+    def add_from_yaml(self, filename):
         d = None
         print(filename)
         stream = file(path_expand(filename), 'r')
         # if f does not exists error
         try:
-            d = yaml.load(stream)
-            for jobname in d:
-                job = d[jobname]
-                job['name'] = jobname
-                pprint(job)
-                self.add(job)
+            jobs = yaml.load(stream)
         except Exception, e:
+            print ("ERROR: loading file", filename)
             print (e)
+            return
+
+        for name in jobs:
+            job = jobs[name]
+            job['job_name'] = name
+            pprint(job)
+            try:
+                self.add(job)
+            except Exception, e:
+                print ("ERROR: adding", name)
+                print (e)
+        return
 
     def getid(self):
         pass
@@ -276,8 +293,8 @@ class JobDB(object):
 
     def add(self, job):
         """
-        job is a dictionary. one of its attributes is 'job_name'.
-        The element is inserted into the db with the id 'job_name'
+        job is a dictionary. One of its attributes is 'name'.
+        The element is inserted into the db with the id 'name'
 
         :param job: the job to be added
         :return:
@@ -306,18 +323,6 @@ class JobDB(object):
 
             return db_job_object
 
-    def add_from_yaml(self, filename):
-
-        # Open and read the YAML file
-        file = open(filename, 'r')
-
-        jobDict = yaml.load_all(file)
-
-        # Add every job listed in the YAML file
-        for job in jobDict:
-
-            self.add(job)
-    
     def insert(self,
                job_name,
                input="",
@@ -325,7 +330,7 @@ class JobDB(object):
                parameters="",
                job_group=None,
                job_label=None,
-               job_id=None,  # possibly same as job_name ?
+               job_id=None,  # possibly same as name ?
                host=None,
                start_time=str(datetime.datetime.now()),
                end_time=None,
@@ -335,7 +340,7 @@ class JobDB(object):
         """
         inserts a job with specific attributes into the database.
 
-        :param job_name: the name of the job
+        :param name: the name of the job
         :param input: an array of input files
         :param output: an array of output files
         :param parameters: an array of parameters
@@ -367,9 +372,8 @@ class JobDB(object):
                 "update_time": update_time,
             }
 
-            banner("job")
+            banner("insert job", c=".")
             pprint(job)
-            banner("insert")
 
             db_job_object = self.jobs.save(job)
             # print (db_job_object)
@@ -436,11 +440,11 @@ class JobDB(object):
         """
         filename is the file to be searched for in input and output of all jobs
         :param element:
-        :return: two lists are returned where the first is a list of job_names with the given file as input and
-                 the second is a list of job_names with the given file as output
+        :return: two lists are returned where the first is a list of job names with the given file as input and
+                 the second is a list of job names with the given file as output
         """
 
-        # Empty list of job_names that contain the given file in input an
+        # Empty list of job names that contain the given file in input an
         matchingInputJobs = []
         matchingOutputJobs = []
 

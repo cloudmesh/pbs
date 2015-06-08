@@ -5,8 +5,11 @@ python setup.py install; nosetests tests/test_jobdb.py
 python setup.py install; nosetests -v --nocapture tests/test_jobdb.py:TestJobDB.test_001_start
 
 """
+from __future__ import print_function
+
 from cloudmesh_job.cm_jobdb import JobDB
 from cloudmesh_base.util import HEADING
+from cloudmesh_base.Shell import Shell
 import os
 
 # nosetest --nocapture
@@ -29,7 +32,6 @@ class TestJobDB:
         self.db.start()
         up = self.db.isup()
         result = up
-        sys.exit()
         assert result
         
     def test_002_up(self):
@@ -108,13 +110,17 @@ class TestJobDB:
         db = self.db
 
         db.connect()
-        job = db.insert("deleteme")
+        print ("AAA")
         before_count = len(db)
+        print ("CCC", len(db))
+        job = db.insert("deleteme")
+        print ("DDD", len(db))
 
         job = db.delete_jobs("job_name", "deleteme")
+        print ("EEE")
         after_count = len(db)
-
-        assert(before_count - after_count == 1)
+        print ("FFF", len(db))
+        assert(before_count - after_count == 0)
 
     def test_008_modify(self):
         """
@@ -162,7 +168,7 @@ class TestJobDB:
 
         db.connect()
         count = len(db)
-        print count
+        print (count)
         assert count == 6
 
     def test_012_yaml_load(self):
@@ -170,22 +176,20 @@ class TestJobDB:
         tests adding jobs from a YAML file
         :return:
         """
+        HEADING()
         db = self.db
-        #db.yaml_load('etc/jobs.yaml')
-        #count = len(db)
-        #print count
-        #db.info()
-
         db.connect()
 
-        #Clear all jobs currently in the database to ensure a correct final assertion
+        # Clear all jobs currently in the database to ensure a correct final assertion
         db.clear()
 
-        #Add the jobs outlined in the YAML file
-        db.add_from_yaml("../cloudmesh_job/job_example.yaml")
+        # Add the jobs outlined in the YAML file
+        db.add_from_yaml("etc/jobs.yaml")
 
-        #Assert that the correct number jobs have been added
-        assert(db.count() == 3)
+        count_fgrep = len(Shell.fgrep("input:", "etc/jobs.yaml").split("\n"))
+
+        # Assert that the correct number jobs have been added
+        assert(db.count() == count_fgrep)
 
     def test_013_find_files(self):
         """
@@ -193,20 +197,21 @@ class TestJobDB:
             the file being searched for exists in 3 files: twice as input and twice as output
         :return:
         """
+        HEADING()
         db = self.db
 
         db.connect()
 
-        #Clear all jobs currently in the database to ensure a correct final assertion
+        # Clear all jobs currently in the database to ensure a correct final assertion
         db.clear()
 
-        #Add the jobs outlined in the YAML file
-        db.add_from_yaml("../cloudmesh_job/job_example.yaml")
+        # Add the jobs outlined in the YAML file
+        db.add_from_yaml("etc/jobs.yaml")
+        inputs, outputs = db.find_jobs_with_file("in1.txt")
 
-        inputs, outputs = db.find_jobs_with_file("file200.txt")
-
-        #Assert that the lengths of the inputs and outputs arrays are correct
-        assert(len(inputs) == 2 and len(outputs) == 2)
+        # Assert that the lengths of the inputs and outputs arrays are correct
+        count_fgrep = len(Shell.fgrep("in1.txt", "etc/jobs.yaml").strip().split("\n"))
+        assert(len(inputs) == count_fgrep)
 
     def test_999_stop(self):
         """

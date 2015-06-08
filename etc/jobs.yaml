@@ -22,4 +22,16 @@ job2:
     label: job2
     host: None
     start: +2h
+job3:
+    parameters: -a -l
+    input:
+    - in4.txt
+    - in5.txt
+    output:
+    - out4.txt
+    - out5.txt
+    group: experiment1
+    label: job2
+    host: None
+    start: +2h
 
