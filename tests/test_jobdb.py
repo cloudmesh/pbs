@@ -1,6 +1,6 @@
 """
 run with
-python setup.py install; nosetests --nocapture tests/test_jobdb.py
+python setup.py install; nosetests --nocapture -v tests/test_jobdb.py
 python setup.py install; nosetests tests/test_jobdb.py
 python setup.py install; nosetests -v --nocapture tests/test_jobdb.py:TestJobDB.test_001_start
 
@@ -178,8 +178,10 @@ class TestJobDB:
         HEADING()
         db = self.db
         db.yaml_load('etc/jobs.yaml')
-
-
+        count = len(db)
+        print count
+        db.info()
+        
 
 
     def test_999_stop(self):

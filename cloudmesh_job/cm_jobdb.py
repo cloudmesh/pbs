@@ -84,7 +84,7 @@ class JobDB(object):
                               cloudmesh_pbs.yaml
         :return: an object for manageing jobs in the database
         """
-        self.load_yaml(filename=yaml_filename)
+        self.yaml_load(filename=yaml_filename)
         self.deploy()
         self.info = info
         
