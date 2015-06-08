@@ -1,7 +1,7 @@
 from cloudmesh_job.cm_jobdb import JobDB
 
-class CommandJob(object):
 
+class CommandJob(object):
     @classmethod
     def start(cls):
         db = JobDB()

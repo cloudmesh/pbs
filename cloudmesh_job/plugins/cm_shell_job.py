@@ -159,9 +159,6 @@ class cm_shell_job:
                 job status statistics
 
                     list the statistics of the jobs in the job server (e.g. for the states)
-
-
-
         """
         # pprint(arguments)
 
@@ -205,15 +202,13 @@ class cm_shell_job:
                     db = connect()
                     print(db.pid())
                 except:
-                    print ("ERROR: connecting to server")
+                    print("ERROR: connecting to server")
             elif arguments["info"]:
                 try:
                     db.info()
                     print(db.pid())
                 except:
-                    print ("ERROR: connecting to server")
-
-
+                    print("ERROR: connecting to server")
 
         elif arguments["delete"] and arguments["JOBLIST"]:
 
@@ -285,22 +280,21 @@ class cm_shell_job:
                 # dependent on if 0, 1, or length of joblist handle that
 
                 for i in range(len(joblist)):
-                    banner(i)
+                    banner(str(i))
 
-                Console.ok("add job : {:} ".format(joblist[i]))
-                Console.ok("  input : {:} ".format(inputs[i]))
-                Console.ok("  output: {:} ".format(outputs[i]))
+                    Console.ok("add job : {:} ".format(joblist[i]))
+                    Console.ok("  input : {:} ".format(inputs[i]))
+                    Console.ok("  output: {:} ".format(outputs[i]))
 
-                # Build the dictionary for the job to be added
-                job = {
-                    "job_name": joblist[i],
-                    "input": inputs[i],
-                    "output": outputs[i]
-                }
+                    # Build the dictionary for the job to be added
+                    job = {
+                        "job_name": joblist[i],
+                        "input": inputs[i],
+                        "output": outputs[i]
+                    }
 
-                # Add the job
-                db.add(job)
-
+                    # Add the job
+                    db.add(job)
 
             elif arguments["list"]:
 
@@ -340,8 +334,6 @@ class cm_shell_job:
 
                 target.close()
 
-
-
             elif arguments["find"] and arguments["--name"]:
 
                 name = arguments["NAME"]
@@ -363,6 +355,7 @@ class cm_shell_job:
                 Console.ok("job find --attribute=ATTRIBUTE --value=VALUE")
 
             pass
+
 
 if __name__ == '__main__':
     command = cm_shell_job()

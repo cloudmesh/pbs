@@ -5,7 +5,13 @@ output : file201.txt
 ---
 job_name : job300
 input:
-    - file300.txt
+    - file200.txt
     - file301.txt
     - file302.txt
-output : file303.txt
+output : file200.txt
+---
+job_name : job400
+input: file400.txt
+output:
+    - file200.txt
+    - file401.txt

@@ -29,9 +29,9 @@ class JobDB(object):
         :rtype: boolean
         """
         try:
-           command = "nc -z localhost {:}".format(self.port).split(" ")
-           result = subprocess.check_output(command)
-           up = "succeeded" in result
+            command = "nc -z localhost {:}".format(self.port).split(" ")
+            result = subprocess.check_output(command)
+            up = "succeeded" in result
         except:
             up = False
         return up
@@ -75,7 +75,9 @@ class JobDB(object):
         self.log_file = path_expand(self.db_path + "/dbjobs.log")
         self.dbname = self.data["cloudmesh"]["jobdatabase"]["dbname"]
 
-    def __init__(self, yaml_filename="/cloudmesh_pbs.yaml", info=False):
+    def __init__(self,
+                 filename="/cloudmesh_pbs.yaml",
+                 info=False):
         """
         Creates an object instance of a job database as defined in the cloudmesh_pbs yaml file
 
@@ -84,10 +86,9 @@ class JobDB(object):
                               cloudmesh_pbs.yaml
         :return: an object for manageing jobs in the database
         """
-        self.yaml_load(filename=yaml_filename)
+        self.load(filename=filename)
         self.deploy()
         self.info = info
-        
 
     def deploy(self):
         """
@@ -109,7 +110,6 @@ class JobDB(object):
     # BUG not a good location for  the data /data
     # BUG not a good location for logpath as we run this in user mode
     # port and location should probably read from cloudmesh_pbs.yaml and values here set to None.see load function
-
 
     def ps(self):
         """
@@ -196,7 +196,7 @@ class JobDB(object):
         self.id = self.database["id"]  # manages the counter for the job
 
         if self.info:
-           Console.info("Connecting to the Mongo Database")
+            Console.info("Connecting to the Mongo Database")
 
     def yaml_load(self, filename):
 
@@ -213,8 +213,7 @@ class JobDB(object):
                 self.add(job)
         except Exception, e:
             print (e)
-        
-        
+
     def getid(self):
         pass
 
@@ -304,12 +303,12 @@ class JobDB(object):
 
     def add_from_yaml(self, filename):
 
-        #Open and read the YAML file
+        # Open and read the YAML file
         file = open(filename, 'r')
 
         jobDict = yaml.load_all(file)
 
-        #Add every job listed in the YAML file
+        # Add every job listed in the YAML file
         for job in jobDict:
 
             self.add(job)
@@ -436,13 +435,13 @@ class JobDB(object):
                  the second is a list of job_names with the given file as output
         """
 
-        #Empty list of job_names that contain the given file in input an
+        # Empty list of job_names that contain the given file in input an
         matchingInputJobs = []
         matchingOutputJobs = []
 
         for job in self.find_jobs():
 
-            #Be sure the job has input associated with it
+            # Be sure the job has input associated with it
             if "input" in job:
 
                 input = job["input"]
@@ -451,7 +450,7 @@ class JobDB(object):
 
                     matchingInputJobs.append(job["job_name"])
 
-            #Be sure the job has output associated with it
+            # Be sure the job has output associated with it
             if "output" in job:
 
                 output = job["output"]
@@ -459,7 +458,6 @@ class JobDB(object):
                 if filename in output:
 
                     matchingOutputJobs.append(job["job_name"])
-
 
         return matchingInputJobs, matchingOutputJobs
     
@@ -581,58 +579,58 @@ class JobDB(object):
         # Loop through all jobs
         for job in self.find_jobs():
 
-            #Job has a status
+            # Job has a status
             if "job_status" in job:
 
                 jobStatusFound = False
 
                 index = 0
 
-                #Loop through all existing job statuses
+                # Loop through all existing job statuses
                 for jobStatus in jobStatuses:
 
-                    #Job status match
+                    # Job status match
                     if job["job_status"] == jobStatus:
-                        #Increment the counter for this job status
+                        # Increment the counter for this job status
                         jobStatusCounts[index] += 1
                         jobStatusFound = True
                         break
 
                     index += 1
 
-                #New job status
+                # New job status
                 if not jobStatusFound:
-                    #Add new job status and new counter to arrays
+                    # Add new job status and new counter to arrays
                     jobStatuses.append(job["job_status"])
                     jobStatusCounts.append(1)
 
-            #Job does not have a status
+            # Job does not have a status
             else:
 
-                #Increment counter
+                # Increment counter
                 jobStatusCounts[0] += 1
 
         index = 0
 
-        #Print out all job statuses and counts
+        # Print out all job statuses and counts
         for jobStatus in jobStatuses:
 
-            #Only print jobs statuses that exist
+            # Only print jobs statuses that exist
             if jobStatusCounts[index] != 0:
 
                 print("JOB STATUS: " + jobStatus + " COUNT: " + str(jobStatusCounts[index]))
 
-                #Print out all jobs for this status if flagged to do so
+                # Print out all jobs for this status if flagged to do so
                 if printOutJobs:
 
-                    #Loop through all jobs
+                    # Loop through all jobs
                     for job in self.find_jobs():
 
-                        #Matching job status
+                        # Matching job status
                         if job["job_status"] == jobStatus:
                             print(job)
 
-                    #Print an blank line to make the output more pleasing
+                    # Print an blank line to make the output more pleasing
                     print("")
 
             index += 1
