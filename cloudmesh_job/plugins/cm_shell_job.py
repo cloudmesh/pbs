@@ -167,24 +167,15 @@ class cm_shell_job:
             db.connect()
             return db
 
-        if arguments["info"]:
-            db = connect()
-            db.info()
-            return
 
-        elif arguments["stat"]:
-            db = connect()
-            db.stat()
-            return
-
-        elif arguments["server"]:
-
-            db = JobDB()
+        if arguments["server"]:
 
             if arguments["start"]:
+                db = JobDB()
                 db.start()
                 return
             elif arguments["stop"]:
+                db = JobDB()
                 db.stop()
                 return
             elif arguments["ps"]:
@@ -196,19 +187,33 @@ class cm_shell_job:
                 db.delete_jobs()
                 return
             elif arguments["deploy"]:
+                db = JobDB()
                 db.deploy()
+                return
             elif arguments["pid"]:
                 try:
                     db = connect()
                     print(db.pid())
                 except:
                     print("ERROR: connecting to server")
+                return
             elif arguments["info"]:
                 try:
+                    db = connect()
                     db.info()
-                    print(db.pid())
-                except:
+                except Exception, e:
                     print("ERROR: connecting to server")
+                    print (e)
+                return
+        elif arguments["info"]:
+            db = connect()
+            db.info()
+            return
+
+        elif arguments["stat"]:
+            db = connect()
+            db.stat()
+            return
 
         elif arguments["delete"] and arguments["JOBLIST"]:
 

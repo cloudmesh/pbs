@@ -77,7 +77,7 @@ class JobDB(object):
 
     def __init__(self,
                  filename="/cloudmesh_pbs.yaml",
-                 info=False):
+                 debug=False):
         """
         Creates an object instance of a job database as defined in the cloudmesh_pbs yaml file
 
@@ -88,7 +88,7 @@ class JobDB(object):
         """
         self.load(filename=filename)
         self.deploy()
-        self.info = info
+        self.debug = debug
 
     def deploy(self):
         """
@@ -176,7 +176,7 @@ class JobDB(object):
         prints some elementary information about the server
         """
         Console.ok("Mongo parameters")
-        if self.dbpath:
+        if self.db_path:
             Console.ok("  dbpath:  {:}".format(self.db_path))
         if self.port:
             Console.ok("  port:    {:}".format(self.port))
@@ -184,6 +184,11 @@ class JobDB(object):
             Console.ok("  logfile: {:}".format(self.log_file))
         if self.dbname:
             Console.ok("  dbname:  {:}".format(self.dbname))
+        try:
+            Console.ok("  pid:     {:}".format(self.pid()))
+        except:
+            pass
+
 
     def connect(self):
         """
@@ -195,7 +200,7 @@ class JobDB(object):
         self.jobs = self.database["jobs"]
         self.id = self.database["id"]  # manages the counter for the job
 
-        if self.info:
+        if self.debug:
             Console.info("Connecting to the Mongo Database")
 
     def yaml_load(self, filename):
