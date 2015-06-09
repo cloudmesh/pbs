@@ -283,24 +283,6 @@ pbs code is under development, this is not yet completed, but it shows
 you a simple way on how to get a documentation from a running REST
 service via swagger.
 
-Development setup
-=====================
-
-::
-
-  mkdir -p ~/github
-  cd ~/github
-
-  git clone https://github.com/cloudmesh/cmd3.git
-  cd cloudmesh_base
-  python setup.py install
-
-  cd ~/github
-  git clone https://github.com/cloudmesh/cmd3.git
-  cd cmd3
-  python setup.py install
-
-
 Excersises
 ================
 
@@ -333,9 +315,69 @@ D. 1. password authentication via https
 D. 2. tokenbased authentication
 
    
-   
+Cloudmesh Job
+===============
 
-   
+Job management
+
+Job Server
+-----------
+
+Start job server::
+
+    cm job server start
+
+Get information::
+
+    cm job server info
+
+Get pid::
+
+    cm job server pid
+
+Terminate the server::
+
+    cm job server stop
+
+Job Management
+---------------
+
+Add jobs::
+
+    cm job add ...
+
+Delete job::
+
+    cm job delete ...
+
+List jobs::
+
+    cm job list
+
+List job in json format::
+
+    cm job list --output=json
+
+TODO Update jobs::
+
+    cm job update ID
+    cm job update
+
+TODO: Submit a job
+
+    cm job submit job HOST
+    cm job submit joblist HOST
+
+Statistics::
+
+    cm job statistics
+
+Exercises:
+
+1. create a number of jobs and submit them to a supercomputer
+2. manage the lifecycle of a job
+
+
    
    
    
