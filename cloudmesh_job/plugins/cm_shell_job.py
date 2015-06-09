@@ -9,6 +9,84 @@ from cloudmesh_base.util import banner
 from cloudmesh_job.cm_jobdb import JobDB
 from cloudmesh_pbs.DbPBS import DbPBS
 from cloudmesh_job.command_job import CommandJob
+from cloudmesh_base.tables import row_table
+from prettytable import PrettyTable
+
+def job_table(d, order=None, labels=None):
+    """prints a pretty table from data in the dict.
+    :param d: A dict to be printed
+    :param order: The order in which the columns are printed.
+                  The order is specified by the key names of the dict.
+    """
+    # header
+
+    x = PrettyTable(labels)
+
+    # get attributes from firts element
+    attributes = d[d.keys()[0]].keys()
+
+    if order is None:
+        order = attributes
+    for key in d:
+        value = d[key]
+        if type(value) == list:
+            x.add_row([key, value[0]])
+            for element in value[1:]:
+                x.add_row(["", element])
+        elif type(value) == dict:
+            value_keys = value.keys()
+            first_key = value_keys[0]
+            rest_keys = value_keys[1:]
+            x.add_row([key, "{0} : {1}".format(first_key, value[first_key])])
+            for element in rest_keys:
+                x.add_row(["", "{0} : {1}".format(element, value[element])])
+        else:
+            x.add_row([key, value])
+
+    x.align = "l"
+    return x
+
+
+def job_table_2(d, order=None, labels=None):
+    """prints a pretty table from data in the dict.
+    :param d: A dict to be printed
+    :param order: The order in which the columns are printed.
+                  The order is specified by the key names of the dict.
+    """
+    # header
+
+
+    # get attributes from firts element
+    attributes = d[d.keys()[0]].keys()
+    x = PrettyTable(attributes)
+
+    if order is None:
+        order = attributes
+    for key in d:
+        element = d[key]
+        l = []
+        for attribute in attributes:
+            l.append(str(element[attribute]))
+        x.add_row(l)
+
+        '''
+        if type(value) == list:
+            x.add_row([key, value[0]])
+            for element in value[1:]:
+                x.add_row(["", element])
+        elif type(value) == dict:
+            value_keys = value.keys()
+            first_key = value_keys[0]
+            rest_keys = value_keys[1:]
+            x.add_row([key, "{0} : {1}".format(first_key, value[first_key])])
+            for element in rest_keys:
+                x.add_row(["", "{0} : {1}".format(element, value[element])])
+        else:
+            x.add_row([key, value])
+        '''
+
+    x.align = "l"
+    return x
 
 
 class cm_shell_job:
@@ -32,9 +110,9 @@ class cm_shell_job:
                 job server pid
                 job info
                 job stat
-                job list
+                job list [--output=FORMAT]
                 job add JOBLIST [--host=HOST] [--options=OPTIONS] [--inputs=INPUTS] [--outputs=OUTPUTS]
-                job add --file=filename
+                job load FILE
                 job write --file=filename
                 job find --name=NAME
                 job find --attribute=ATTRIBUTE --value=VALUE
@@ -163,8 +241,12 @@ class cm_shell_job:
         # pprint(arguments)
 
         def connect():
-            db = JobDB()
-            db.connect()
+            try:
+                db = JobDB()
+                db.connect()
+            except Exception, e:
+                print(e)
+                raise Exception("connection error")
             return db
 
 
@@ -203,9 +285,10 @@ class cm_shell_job:
                     db.info()
                 except Exception, e:
                     print("ERROR: connecting to server")
-                    print (e)
+                    print(e)
                 return
-        elif arguments["info"]:
+
+        if arguments["info"]:
             db = connect()
             db.info()
             return
@@ -226,6 +309,13 @@ class cm_shell_job:
                 Console.ok("delete job {:}".format(job))
 
                 db.delete_jobs("job_name", job)
+
+        elif arguments["load"] and arguments["FILE"]:
+            filename = arguments["FILE"]
+            print("load", filename)
+            db = connect()
+            db.add_from_yaml(filename)
+            return
 
         elif arguments["add"]:
             '''
@@ -301,65 +391,91 @@ class cm_shell_job:
                     # Add the job
                     db.add(job)
 
-            elif arguments["list"]:
+        elif arguments["list"]:
 
-                output = arguments["--output"]
+            output = arguments["--output"]
+            db = connect()
 
-                db = connect()
+            jobs = db.find_jobs()
 
-                allJobs = db.find_jobs()
-                '''get a list of all jobs and passes it to PBS class with output parameter'''
-                pbs = DbPBS()
-                pbs.list(allJobs, output)
+            d = {}
+            for job in jobs:
+                name = job["job_name"]
+                d[name] = job
 
-                """"gregor please review"""
-                Console.ok("lists the jobs in the format specified")
+            if output is None:
+                output = 'table'
 
-            elif arguments["write"]:
-                '''call list function and then write output to a file'''
-                filename = arguments["--filename"]
-                target = open(filename)
+            if 'json' in output:
+                pprint (d)
+            elif 'table' in output:
+                print(
+                    job_table_2(d)
+                    #job_table_2(d,
+                    #         order=['job_name','group'],
+                    #         labels=['Job','Attributes'])
+                )
+            elif 'yaml' in ouptut:
+                pprint (d)
+            elif 'csv' in ouptut:
+                pprint (d)
 
-                db = connect()
+            # wrong:
+            # get a list of all jobs and passes it to PBS class with output parameter
+            # pbs = DbPBS()
+            #pbs.list(allJobs, output)
 
-                allJobs = db.find_jobs()
-                pbs = DbPBS()
+            Console.ok("lists the jobs in the format specified")
+            return
 
-                '''review string, determine output format, call PBS class, write to filename'''
-                if filename.endswith("csv"):
-                    toOutput = pbs.list(allJobs, output="csv")
-                    target.write(toOutput)
+        elif arguments["write"]:
+            '''call list function and then write output to a file'''
+            filename = arguments["--filename"]
 
-                elif filename.endswith("json"):
-                    toOutput = pbs.list(allJobs, output="json")
-                    target.write(toOutput)
-                elif filename.endswith("yaml"):
-                    toOutput = pbs.list(allJobs, output="yaml")
-                    target.write(toOutput)
+            # check if file exists
+            # if it does ask if you want to overwrite
+            # -f force
 
-                target.close()
+            target = open(filename)
 
-            elif arguments["find"] and arguments["--name"]:
+            db = connect()
 
-                name = arguments["NAME"]
+            allJobs = db.find_jobs()
+            pbs = DbPBS()
 
-                db = connect()
-                db.find_jobs("job_name", name)
+            '''review string, determine output format, call PBS class, write to filename'''
+            if filename.endswith("csv"):
+                toOutput = pbs.list(allJobs, output="csv")
+            elif filename.endswith("json"):
+                toOutput = pbs.list(allJobs, output="json")
+            elif filename.endswith("yaml"):
+                toOutput = pbs.list(allJobs, output="yaml")
 
-                Console.ok("find the job with the given name")
+            target.write(toOutput)
 
-            elif arguments["find"] and arguments["--attribute"] and arguments["--value"]:
+            target.close()
 
-                name = arguments["NAME"]
-                attribute = arguments["--attribute"]
-                value = arguments["--value"]
+        elif arguments["find"] and arguments["--name"]:
 
-                db = connect()
-                db.find_jobs(attribute, value)
+            name = arguments["NAME"]
 
-                Console.ok("job find --attribute=ATTRIBUTE --value=VALUE")
+            db = connect()
+            db.find_jobs("job_name", name)
 
-            pass
+            Console.ok("find the job with the given name")
+
+        elif arguments["find"] and arguments["--attribute"] and arguments["--value"]:
+
+            name = arguments["NAME"]
+            attribute = arguments["--attribute"]
+            value = arguments["--value"]
+
+            db = connect()
+            db.find_jobs(attribute, value)
+
+            Console.ok("job find --attribute=ATTRIBUTE --value=VALUE")
+
+        pass
 
 
 if __name__ == '__main__':
