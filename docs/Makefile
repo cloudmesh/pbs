@@ -183,4 +183,4 @@ manualpages:
 	cm man pbs | tail -n+3 > source/man/pbs.rst
 	cm man queue | tail -n+3 > source/man/queue.rst
 	cm man qstat | tail -n+3 > source/man/qstat.rst
-	sphinx-apidoc -H "Modules and Classes" -o source/modules ../../pbs
+	sphinx-apidoc -H "Modules and Classes" -o source/modules ../../pbs ../../pbs/tests

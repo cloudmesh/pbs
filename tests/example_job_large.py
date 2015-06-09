@@ -1,7 +1,7 @@
 #
 # run with
 #
-# rm -rf ~/.cloudmesh/pbs/db/; killall mongod; python setup.py install; python cloudmesh_job/test_large.py
+# rm -rf ~/.cloudmesh/pbs/db/; killall mongod; python setup.py install; python cloudmesh_job/example_job_large.py
 import cm_jobdb
 
 db = cm_jobdb.JobDB()
