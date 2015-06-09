@@ -179,6 +179,8 @@ pseudoxml:
 manualpages:
 	# TODO wix the tail issue to remove args and color coding
 	mkdir -p source/man
-	cm man pbs | tail -n+4 > source/man/pbs.rst
-	cm man queue | tail -n+4 > source/man/queue.rst
-	cm man qstat | tail -n+4 > source/man/qstat.rst
+	cm man job | tail -n+3 > source/man/job.rst
+	cm man pbs | tail -n+3 > source/man/pbs.rst
+	cm man queue | tail -n+3 > source/man/queue.rst
+	cm man qstat | tail -n+3 > source/man/qstat.rst
+	sphinx-apidoc -H "Modules and Classes" -o source/modules ../../pbs

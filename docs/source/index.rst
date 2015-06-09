@@ -9,11 +9,11 @@ Manualpages
 ===========
 
 .. toctree::
-   :glob:
 
    man/pbs
    man/qstat
    man/queue
+   man/job   
 
 Indices and tables
 ==================

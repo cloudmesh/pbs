@@ -2,51 +2,19 @@ Cloudmesh PBS
 ======================================================================
 
 Cloudmesh PBS provides an easy mechanism to interface with queuing
-systems. It is based on cloudmesh version 2 that uses separate packages
-instead of one big cloudmesh package. The packages are named
-cloudmesh_*, where * is a placeholder for the package names.
+systems. It integrates nicely with cmd3 and therefore provides a
+convenient shell and commandline interface.
 
-The advantage of cloudmesh_pbs is that it can start pbs jobs on remote
-machines while using some simple templates. These jobs are entered in
-a local database and their status on the remote machines can be
-monitored. At this time we provide a simple API, but will soon add
-also a command interface as well as a secure rest interface.
+The advantage of Cloudmesh PBS is that it can start pbs jobs on remote
+machines while using some simple templates. Jobs submitted with it are
+entered in a local database and their status on the remote machines can be
+monitored. We provide a simple python API. A REST interface is being developed.
 
 Project requirements:
 ----------------------------------------------------------------------
 
+* cmd3
 * cloudmesh_base
-  
-Instalation (pending)
-----------------------------------------------------------------------
-
-The easiest way to install cloudmesh PBS is with pip. We recommend
-that you do it in a virtual environment. Once you have created and
-activated a virtualenv you can install cloudmesh_pbs with the
-following commands::
-
-  pip install cmd3
-  pip install cloudmesh_base
-  pip install cloudmesh_database   (not yet needed in this release)
-  pip install cloudmesh_pbs
-
-Development installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-::
-
-  mkdir github
-  cd github
-  git clone git@github.com:cloudmesh/pbs.git
-  cd pbs
-  python setup.py install
-
-Any change in the program requires a new setup.
-
-Tests::
-
-    python setup.py install; python cloudmesh_job/test.py
-
 
 Github repository
 ----------------------------------------------------------------------
@@ -54,6 +22,50 @@ Github repository
 The source code can be found at:
 
 * https://github.com/cloudmesh/pbs
+
+Installation
+----------------------------------------------------------------------
+
+Installation from pypi
+^^^^^^^^^^^^^^^^^^^^^^^
+
+(not yet supported)
+
+The easiest way to install Cloudmesh PBS is with pip. We recommend
+that you do it in a virtual environment. Once you have created and
+activated a virtualenv you can install cloudmesh_pbs with the
+following commands::
+
+  pip install cloudmesh_pbs
+
+
+Development Installation
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+
+  mkdir github
+  cd github
+  git clone git@github.com:cloudmesh/base.git
+  git clone git@github.com:cloudmesh/cmd3.git
+  git clone git@github.com:cloudmesh/pbs.git
+  cd base
+  python setup.py install
+  cd ../cmd3
+  python setup.py install
+  cd ../pbs
+  python setup.py install
+
+Any change in the program requires a new setup.
+
+Tests::
+
+    python setup.py install; python cloudmesh_job/test_jobdb.py
+
+TODO: other tests to be defined
+
+
 
 Usage
 ----------------------------------------------------------------------
