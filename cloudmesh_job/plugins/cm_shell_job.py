@@ -11,6 +11,7 @@ from cloudmesh_pbs.DbPBS import DbPBS
 from cloudmesh_job.command_job import CommandJob
 from cloudmesh_base.tables import row_table
 from prettytable import PrettyTable
+import yaml
 
 def job_table(d, order=None, labels=None):
     """prints a pretty table from data in the dict.
@@ -415,10 +416,8 @@ class cm_shell_job:
                     #         order=['job_name','group'],
                     #         labels=['Job','Attributes'])
                 )
-            elif 'yaml' in ouptut:
-                pprint (d)
-            elif 'csv' in ouptut:
-                pprint (d)
+            elif 'yaml' in output:
+                print(yaml.safe_dump(d))
 
             # wrong:
             # get a list of all jobs and passes it to PBS class with output parameter
