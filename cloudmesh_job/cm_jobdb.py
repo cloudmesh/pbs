@@ -18,6 +18,7 @@ import subprocess
 import yaml
 import time
 
+
 class JobDB(object):
     database = None
     jobs = None
@@ -41,7 +42,7 @@ class JobDB(object):
         waits til the server is up
         :return:
         """
-        for i in range (0, max_wait_time, delta):
+        for i in range(0, max_wait_time, delta):
             if self.isup():
                 return
             time.sleep(5)
@@ -201,11 +202,13 @@ class JobDB(object):
 
     def connect(self):
         """
-        Creates a connection to the database with the given configuration from the yaml filr
+        Creates a connection to the database with the given configuration
+        from the yaml file
         """
 
         client = MongoClient('localhost', self.port)
         self.database = client["jobsdb"]
+        self.jobid = self.database["jobsid"]
         self.jobs = self.database["jobs"]
         self.id = self.database["id"]  # manages the counter for the job
 
@@ -221,8 +224,8 @@ class JobDB(object):
         try:
             jobs = yaml.load(stream)
         except Exception, e:
-            print ("ERROR: loading file", filename)
-            print (e)
+            print("ERROR: loading file", filename)
+            print(e)
             return
 
         for name in jobs:
@@ -232,20 +235,32 @@ class JobDB(object):
             try:
                 self.add(job)
             except Exception, e:
-                print ("ERROR: adding", name)
-                print (e)
+                print("ERROR: adding", name)
+                print(e)
         return
 
-    def getid(self):
-        pass
+    def get_jobid(self):
+        """returns the next job id"""
+        result = {'value': 0}
+        try:
+            result = self.jobid.find({'_id': 'jobid'})[0]
+        except:
+            pass
+        return int(result['value'])
 
-    def setid(self):
-        pass
+    def set_jobid(self, value):
+        """sets the current job id to the given value"""
+        # delete the id
 
-    def incrid(self):
-        pass
+        id_dict = {'_id': 'jobid', 'value': int(value)}
 
-    # job-name is unique
+        self.jobid.save(id_dict)
+
+    def incr_jobid(self):
+        """increments the job id"""
+        job_id = self.get_jobid()
+        job_id = job_id + 1
+        self.set_jobid(job_id)
 
     def modify(self, job, overwrite=True):
         """
@@ -327,6 +342,7 @@ class JobDB(object):
                job_name,
                input="",
                output="",
+               program="",
                parameters="",
                job_group=None,
                job_label=None,
@@ -343,6 +359,7 @@ class JobDB(object):
         :param name: the name of the job
         :param input: an array of input files
         :param output: an array of output files
+        :param program: the executable
         :param parameters: an array of parameters
         :param job_group: the group of the job
         :param job_label: a label for the job
@@ -360,6 +377,7 @@ class JobDB(object):
             job = {
                 "_id": job_name,
                 "job_name": job_name,
+                "program": program,
                 "job_id": job_name,
                 "job_group": job_group,
                 "job_label": job_label,
@@ -456,7 +474,6 @@ class JobDB(object):
                 input = job["input"]
 
                 if filename in input:
-
                     matchingInputJobs.append(job["job_name"])
 
             # Be sure the job has output associated with it
@@ -465,11 +482,10 @@ class JobDB(object):
                 output = job["output"]
 
                 if filename in output:
-
                     matchingOutputJobs.append(job["job_name"])
 
         return matchingInputJobs, matchingOutputJobs
-    
+
     def delete(self, jobname):
         """
         delete the job with the given  name
@@ -643,7 +659,7 @@ class JobDB(object):
                     print("")
 
             index += 1
-    
+
     def stat(self):
         print("Number of elements: ", self.__len__())
 

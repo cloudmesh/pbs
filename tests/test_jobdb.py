@@ -213,6 +213,23 @@ class TestJobDB:
         count_fgrep = len(Shell.fgrep("in1.txt", "etc/jobs.yaml").strip().split("\n"))
         assert(len(inputs) == count_fgrep)
 
+
+    def test_14_jobid(self):
+        HEADING()
+        db = self.db
+
+        db.connect()
+
+        db.set_jobid(11)
+
+        a = db.get_jobid()
+        db.incr_jobid()
+        b = db.get_jobid()
+
+        print (a, b)
+        assert b == a + 1
+
+
     def test_999_stop(self):
         """
         tests if the mongo db can be shutdown

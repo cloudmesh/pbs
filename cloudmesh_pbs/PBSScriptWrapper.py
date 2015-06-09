@@ -24,13 +24,13 @@ class PBSScriptParser(object):
         #
         # do not set the default to a string: this is an important
         # part of the script and if we make a bad assumption then
-        # wierd and hard-to-track-down errors will likely crop up.
+        # hard-to-track errors will by likely.
         # instead, better to fail upfront if no shebang is provided.
         self._shebang = None
 
         # directives is a list of the qsub directives embedded in the script:
         # eg:
-        #  #PBS -l nodes=1:ppn=1
+        # #PBS -l nodes=1:ppn=1
         self._directives = list()
 
         # these are the rest of the contents of the script
@@ -39,10 +39,23 @@ class PBSScriptParser(object):
         # position
         self._line_counter = 1
 
+
     def is_shebang(self, line):
+        """
+        # TODO unclear why two different vars are used and not just line
+        # TODO why not classmethod?
+        test if the line starts with #!
+
+        :param line: the line to test
+        :return: True if it starts with #!
+        """
         return self._line_counter == 1 and line.startswith('#!')
 
     def handle_shebang(self, line):
+        """
+        strips liading and trailing spaces from the line and assigns it internally
+        :param line:  the line
+        """
         self._shebang = line.strip()
 
     def handle_directive(self, line, prefix='#PBS'):
@@ -55,18 +68,32 @@ class PBSScriptParser(object):
         self._directives.extend(directives)
 
     def is_directive(self, line):
+        """
+        verifies if the line starts with #PBS
+
+        :param line: the line
+        :return: True if it starts with #PBS
+        """
         return line.startswith('#PBS')
 
     def handle_script(self, line):
+        """
+        TODO: name unclear
+
+        appends the line to the script
+
+        :param line: the line
+        """
         self._lines.append(line)
 
     def result(self):
         # see comment in __init__ for why
         assert self._shebang is not None
         script = ''.join(self._lines)
-        return PBSScriptParserResult(shebang=self._shebang,
-                                     directives=self._directives,
-                                     script=script)
+        return PBSScriptParserResult(
+            shebang=self._shebang,
+            directives=self._directives,
+            script=script)
 
     def _parse_line(self, line):
         if self.is_shebang(line):
@@ -88,6 +115,11 @@ class PBSScriptParser(object):
         return self._parse_lines(fd)
 
     def _parse_path(self, path):
+        """
+        TODO why not simply rename this to load
+        :param path:
+        :return:
+        """
         with open(path, 'r') as fd:
             return self._parse_file(fd)
 
@@ -102,10 +134,16 @@ class PBSScriptParser(object):
         else:
             raise ValueError('Unsupport type {}'.format(path_or_file))
 
+    # TODO lots of parsing functions, but which wone do we realy need,
+    # which once are internal. rename internal with _
+
 
 class Script(object):
-    def __init__(self, name, contents,
-                 mode=stat.S_IRWXU|stat.S_IRGRP|stat.S_IXGRP|stat.S_IROTH):
+
+    def __init__(self,
+                 name,
+                 contents,
+                 mode=stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH):
         self._name = name
         self._contents = contents
         self._mode = mode
@@ -134,7 +172,7 @@ class Script(object):
         with open(os.path.join(directory, self.name), 'w') as fd:
             fd.write(self.script)
             os.chmod(fd.name, self.mode)
-
+        # TODO improve mode passing in open call as to avoid wrong permissions
 
 class Status(object):
     "The various states of a job"
@@ -143,9 +181,15 @@ class Status(object):
     success = 'success'
     failure = 'failure'
 
+    # TODO: this does not follow our states we defined in paper
 
 class WrappedScript(object):
-    def __init__(self, entrypoint, wrapped,
+
+    # TODO Rename to CloudmeshHPCscript?
+
+    def __init__(self,
+                 entrypoint,
+                 wrapped,
                  status='STATUS.txt',
                  stdout='STDOUT.txt',
                  stderr='STDERR.txt'):
@@ -157,15 +201,20 @@ class WrappedScript(object):
 
     @property
     def entrypoint(self):
-        "The :class:`Script` that is the main entrypoint (the wrapper)"
+        """The :class:`Script` that is the main entrypoint (the wrapper)"""
         return self._entrypoint
 
     @property
     def wrapped(self):
-        "The wrapped script"
+        """The wrapped script"""
         return self._wrapped
 
     def write(self, directory):
+        """
+        TODO documentation
+        :param directory:
+        :return:
+        """
         self.entrypoint.write(directory)
         self.wrapped.write(directory)
         return [os.path.join(directory, name)
@@ -174,7 +223,13 @@ class WrappedScript(object):
 
 
 class Wrapper(object):
+
     def __init__(self, bash_location='/bin/bash'):
+        """
+        TODO documentation
+        :param bash_location:
+        :return:
+        """
         # sometimes /usr/bin may not exist on grids
         self.shebang = '#!' + bash_location
         self.stdout = 'STDOUT.txt'
@@ -182,6 +237,12 @@ class Wrapper(object):
         self.status = 'STATUS.txt'
 
     def wrap(self, path_to_script, arguments=None):
+        """
+        TODO documentation
+        :param path_to_script:
+        :param arguments:
+        :return:
+        """
         name = os.path.basename(path_to_script)
         name_wrapped = 'wrapped-{}'.format(name)
 
