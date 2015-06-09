@@ -9,7 +9,7 @@ from setuptools.command.install import install
 try:
     from cloudmesh_base.util import banner
 except:
-    os.system("pip install cloudmesh_pbs")
+    os.system("pip install cloudmesh_base")
 
 from cloudmesh_base.util import banner
 from cloudmesh_base.util import auto_create_version
