@@ -12,6 +12,7 @@ from cloudmesh_job.command_job import CommandJob
 from cloudmesh_base.tables import row_table
 from prettytable import PrettyTable
 import yaml
+import os
 
 def job_table(d, order=None, labels=None):
     """prints a pretty table from data in the dict.
@@ -239,20 +240,21 @@ class cm_shell_job:
         if arguments["script"]:
 
             if arguments["add"]:
-                pprint (arguments)
+
                 # job script add FILENAME [--name=NAME]
                 filename = arguments["FILENAME"]
-                if "." in filename:
-                    name = filename.split(".")[0]
+
+                base=os.path.basename(filename)
+
+                if "." in base:
+                    name = base.split(".")[0]
                 else:
-                    name = filename
+                    name = base
 
                 if arguments["--name"] is not None:
                     name =arguments["--name"]
 
-                print (name)
-                print (filename)
-                Console.ok("add script")
+                print ("Adding script {:} <- {:}".format(name, filename))
 
                 db = connect()
                 db.add_script_from_file(name, filename)
@@ -292,7 +294,7 @@ class cm_shell_job:
                     print (script)
 
                 return
-            
+
             elif arguments["list"]:
 
                 db = connect()
