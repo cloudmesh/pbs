@@ -51,6 +51,7 @@ class JobDB(object):
     def pid(self):
         """
         finds the pid of the mongod process
+
         :return: the pid number or None if not found
         :rtype: int or None
         """
@@ -71,6 +72,7 @@ class JobDB(object):
         """
         The configuration for the job db is stored in a yaml
         file. The defualt location is ~/.cloudmesh/cloudmesh_pbs.yaml
+
         :param filename: the filename of the yaml file
         :type filename: str
         """
@@ -127,6 +129,7 @@ class JobDB(object):
     def start(self):
         """
         starts the database service
+
         :return: the pid
         """
         if self.isup():
@@ -217,6 +220,27 @@ class JobDB(object):
 
 
     def add_from_yaml(self, filename):
+        """
+        adds jobs of the following form to the database
+
+        ::
+
+            job2:
+                program: myprg
+                parameters: -a -l
+                input:
+                - in1.txt
+                - in2.txt
+                output:
+                - out1.txt
+                - out2.txt
+                group: experiment1
+                label: job2
+                host: None
+                start: +2h
+
+        :param filename: the yaml filename
+        """
         d = None
         print(filename)
         stream = file(path_expand(filename), 'r')
@@ -408,6 +432,7 @@ class JobDB(object):
     def insert_job_object(self, job):
         """
         insert a job object as defined in job.
+
         :param job:
         :return:
         """
@@ -425,6 +450,7 @@ class JobDB(object):
     def check_job_definition(self, jobid):
         """
         checks if the job has all attributes defined
+
         :param jobid: the id of the job
         :return: None if the job is valid, a list of attributes that
         need to be defined.
@@ -435,6 +461,7 @@ class JobDB(object):
     def find_jobs(self, attribute="", value=""):
         """
         finds a job based on if specific attribute has a particular value
+
         :param attribute: the name of the attribute
         :param value:  the value of the attribute
         :return:
@@ -457,6 +484,7 @@ class JobDB(object):
     def find_jobs_with_file(self, filename):
         """
         filename is the file to be searched for in input and output of all jobs
+
         :param element:
         :return: two lists are returned where the first is a list of job names with the given file as input and
                  the second is a list of job names with the given file as output
@@ -489,6 +517,7 @@ class JobDB(object):
     def delete(self, jobname):
         """
         delete the job with the given  name
+
         :param jobname: the name of the jon
         :return:
         """
@@ -503,6 +532,7 @@ class JobDB(object):
     def delete_jobs(self, attribute="", value=""):
         """
         deletes a job where the attribute is set to a specific value
+
         :param attribute: the attribute name
         :param value: the value
         """
@@ -523,6 +553,7 @@ class JobDB(object):
     def __len__(self):
         """
         returns the number of elements in the database
+
         :return: the number of elements in the database
         """
         return self.count()
@@ -530,6 +561,7 @@ class JobDB(object):
     def count(self, attribute="", value=""):
         """
         return the count of all jobs with a given value at the attribute
+
         :param attribute: the attribute we look at
         :param value: the value the attribute must have
         :return: the cound of objects in the database where attribute == value
@@ -551,6 +583,7 @@ class JobDB(object):
     def update_job_end_time(self, job_id, end_time=str(datetime.datetime.now())):
         """
         updates the job end time
+
         :param job_id: the job id
         :param end_time: the end time
         :return: returns -1 if not successul
@@ -565,6 +598,7 @@ class JobDB(object):
     def update_job_attribute(self, job_id, attribute, value):
         """
         updates a specific attribute in the database
+
         :param job_id: the job id
         :param attribute: the attribute
         :param value: the value

@@ -14,8 +14,8 @@
 
 import sys
 import os
-from cloudmesh_pbs.DbPBS import OpenPBS
-from cloudmesh_job.cm_jobdb import JobDB
+#from cloudmesh_pbs.DbPBS import OpenPBS
+#from cloudmesh_job.cm_jobdb import JobDB
 
 import sphinx_rtd_theme
 
@@ -80,7 +80,7 @@ copyright = u'2015, The Cloudmesh Team'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['tests/*', 'tests', 'tests/*.py']
+exclude_patterns = ['tests/*', '**/tests', 'tests/*.py', '../../tests']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
