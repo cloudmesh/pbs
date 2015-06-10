@@ -6,9 +6,12 @@ systems. It integrates nicely with cmd3 and therefore provides a
 convenient shell and commandline interface.
 
 The advantage of Cloudmesh PBS is that it can start pbs jobs on remote
-machines while using some simple templates. Jobs submitted with it are
+machines while using job templates to do so. Jobs submitted with Cloudmesh PBS are
 entered in a local database and their status on the remote machines can be
-monitored. We provide a simple python API. A REST interface is being developed.
+monitored. Thus even if the job disappears from the queuing system either
+due to system issues or because they are long finished a record of it is maintained.
+In addition to the cmd3 commandshell we provide a simple python API. A REST
+interface is being developed.
 
 Project requirements:
 ----------------------------------------------------------------------
@@ -51,8 +54,10 @@ Development Installation
   git clone git@github.com:cloudmesh/cmd3.git
   git clone git@github.com:cloudmesh/pbs.git
   cd base
+  git checkout sh
   python setup.py install
   cd ../cmd3
+  git checkout sh
   python setup.py install
   cd ../pbs
   python setup.py install
@@ -70,39 +75,38 @@ TODO: other tests to be defined
 Usage
 ----------------------------------------------------------------------
 
-Service Specification
+Service Access Specification
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When dealing with remote services we often need to customize
 interfaces and access. Instead of completely reinventing a
-specification file, we are leveraging first the ssh config file for
-the remote login to the servers that allow us to execute pbs
-commands. Second we have defined a simple yaml file that allows us to
-set up some service specific items. At this time it supports the
-specification of jobs submitted through various supercomputers that
-are either managed individually through queues, through groups of
-queues that are managed for multiple machines in a single management
-node.
+specification file, we are leveraging the ssh config file for
+the remote login to the servers. Second we have defined a simple yaml
+file that allows us to set up some service specific items. At this time
+it supports the specification of jobs submitted through various
+supercomputers that are either managed individually through queues,
+through groups of queues that are managed for multiple machines in a
+single management node.
 
 SSH Config
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 We assume that you have set up all machine in ssh config that you like
-to access with a simple keyword. For example you like to access the
-machine cluster.example.com. We also assume you have the username
-albert on that machine.  In this case we assume you have set up a
-simple ssh config such as::
+to access with a simple keyword. For example, if you like to access the
+machine cluster.example.com on which you have the username albert then
+you have to set up the machine as follows in the ssh config file::
 
   Host cluster
      Hostname cluster.example.com
      User albert
 
-Naturally once you place your public key in the authorized_hosts files
+Naturally you need to place your public key in the authorized_hosts files
 on the cluster, you will be able to log into the machine with::
 
   ssh cluster
 
-Naturally, you can try commands such as::
+To execute command remorely you can specify them in the ssh command.
+Here is an example the executes uname -a on the cluster machine::
 
   ssh cluster uname -a
 
@@ -128,12 +132,13 @@ have::
           - batch
           - long
 
-This file is places in the directory ~/.cloudmesh
+This file is placed in the directory ~/.cloudmesh
 
 The important part of the file is in the cloudmesh - pbs portion. Here
 the name of the machine that we used in .ssh/config is used,
-e.g. cluster. The manager is specified to also be the machine
-cluster. This is the machine on which the qsub and qstat commands are
+e.g. cluster. The manager allows to specify a manager proxy in case
+the machine does not have a dedicated login node from which you can run qstat.
+E.g. this is the machine on which the qsub and qstat commands are
 executed for this machine. If the management node is different it can
 be specified here. The scripts attribute specifies where the pbs
 scripts are placed on the remote machine before they are submitted.
