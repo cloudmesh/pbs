@@ -109,6 +109,11 @@ class cm_shell_job:
                 job server ps
                 job server info
                 job server pid
+                job script add FILENAME [--name=NAME]
+                job script delete NAMES
+                job script get NAME FILENAME
+                job script cat NAME
+                job script list
                 job info
                 job stat
                 job list [--output=FORMAT]
@@ -231,6 +236,69 @@ class cm_shell_job:
                 raise Exception("connection error")
             return db
 
+        if arguments["script"]:
+
+            if arguments["add"]:
+                pprint (arguments)
+                # job script add FILENAME [--name=NAME]
+                filename = arguments["FILENAME"]
+                if "." in filename:
+                    name = filename.split(".")[0]
+                else:
+                    name = filename
+
+                if arguments["--name"] is not None:
+                    name =arguments["--name"]
+
+                print (name)
+                print (filename)
+                Console.ok("add script")
+
+                db = connect()
+                db.add_script_from_file(name, filename)
+                return
+
+            elif arguments["delete"]:
+                # job script delete NAMES
+
+                if arguments["NAMES"]:
+                    names = hostlist.expand_hostlist(arguments["NAMES"])
+
+                    db = connect()
+                    for name in names:
+                        print ("Delete Script", name)
+                        db.delete_script(name)
+                return
+
+            elif arguments["get"]:
+                # job script get NAME FILENAME
+                Console.ok("get script")
+
+                if arguments["NAME"]:
+                    name = arguments["NAME"]
+                    filename = arguments["FILENAME"]
+                    db = connect()
+                    db.write_script(name, filename)
+
+                return
+
+            elif arguments["cat"]:
+                # job script cat NAME
+
+                if arguments["NAME"]:
+                    name = arguments["NAME"]
+                    db = connect()
+                    script = db.get_script(name)
+                    print (script)
+
+                return
+            elif arguments["list"]:
+
+                db = connect()
+                scripts = db.list_scripts()
+                if scripts is not None:
+                    print("\n".join(scripts))
+                return
 
         if arguments["server"]:
 

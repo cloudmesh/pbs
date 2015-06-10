@@ -339,6 +339,28 @@ Terminate the server::
 
     cm job server stop
 
+Job Script Management
+-----------------------
+
+TODO implement
+
+Add Scripts::
+
+    cm job script add FILENAME
+
+Get a Script::
+
+    cm job script get NAME FILENAME
+
+List the Scripts::
+
+    cm job script list
+
+Delete a Script::
+
+    cm job script delete NAMES
+
+
 Job Management
 ---------------
 

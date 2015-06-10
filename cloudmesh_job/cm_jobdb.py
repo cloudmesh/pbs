@@ -368,6 +368,23 @@ class JobDB(object):
         script = self.jobscripts.find(({"_id": name}))[0]['script']
         return script
 
+    def list_scripts(self):
+        script_names = []
+        cursor = self.jobscripts.find()
+        for script in cursor:
+            name= script["_id"]
+            script_names.append(name)
+        if script_names == []:
+            return None
+        else:
+            return script_names
+
+    def delete_script(self, name):
+        if name is "all":
+            self.jobscripts.remove({})
+        else:
+            self.jobscripts.remove({"_id": name})
+
     def add(self, job):
         """
         job is a dictionary. One of its attributes is 'name'.
