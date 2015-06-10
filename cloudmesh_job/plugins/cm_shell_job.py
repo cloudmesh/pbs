@@ -292,6 +292,7 @@ class cm_shell_job:
                     print (script)
 
                 return
+            
             elif arguments["list"]:
 
                 db = connect()

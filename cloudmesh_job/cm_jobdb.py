@@ -348,7 +348,7 @@ class JobDB(object):
         :param filename: the script file
         :return:
         """
-        with open ("data.txt", "r") as f:
+        with open (filename, "r") as f:
             data = f.read()
         self.add_script(name, data)
 
@@ -380,7 +380,7 @@ class JobDB(object):
             return script_names
 
     def delete_script(self, name):
-        if name is "all":
+        if "all" == name:
             self.jobscripts.remove({})
         else:
             self.jobscripts.remove({"_id": name})
