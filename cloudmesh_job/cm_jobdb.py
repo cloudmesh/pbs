@@ -213,11 +213,11 @@ class JobDB(object):
         self.database = client["jobsdb"]
         self.jobid = self.database["jobsid"]
         self.jobs = self.database["jobs"]
+        self.jobscripts = self.database["jobscripts"]
         self.id = self.database["id"]  # manages the counter for the job
 
         if self.debug:
             Console.info("Connecting to the Mongo Database")
-
 
     def add_from_yaml(self, filename):
         """
@@ -329,6 +329,44 @@ class JobDB(object):
 
             self.jobs.save(matchingJob)
             return "todo"  # this should return the database object
+
+    def add_script(self, name, script):
+        """
+        uploads the script with the given name
+
+        :param name: name of the script
+        :param script: the script text
+        """
+        id_dict = {'_id': name, 'script': script}
+        self.jobscripts.save(id_dict)
+
+    def add_script_from_file(self, name, filename):
+        """
+        uploads the script with the given name
+
+        :param name: name of the script
+        :param filename: the script file
+        :return:
+        """
+        with open ("data.txt", "r") as f:
+            data = f.read()
+        self.add_script(name, data)
+
+    def write_script(self, name, filename):
+        print("Writing script", name, "to", filename)
+        data = self.get_script(name)
+        with open (filename, "w") as f:
+            f.write(data)
+
+    def get_script(self, name):
+        """
+        returns the script with the given name
+
+        :param name: The name of the script
+        :return: The script as a String
+        """
+        script = self.jobscripts.find(({"_id": name}))[0]['script']
+        return script
 
     def add(self, job):
         """

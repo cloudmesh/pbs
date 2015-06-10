@@ -229,6 +229,28 @@ class TestJobDB:
         print (a, b)
         assert b == a + 1
 
+    def test_15_jobscript(self):
+        HEADING()
+        db = self.db
+        db.connect()
+
+        name = "test1"
+        contents = "hallo"
+
+        db.add_script(name, contents)
+        db.add_script("test2", "other")
+        script = db.get_script(name)
+
+        print ("Script:", script)
+        print ("Content:", contents)
+
+        db.write_script(name, "/tmp/script.txt")
+        what = Shell.cat("/tmp/script.txt")
+
+        assert contents == what
+        assert contents == script
+
+
 
     def test_999_stop(self):
         """
