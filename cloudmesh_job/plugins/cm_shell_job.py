@@ -135,73 +135,61 @@ class cm_shell_job:
                 manages a job catalog to submit them to a computation cloud
                 or Grid.
 
-                job server start
+                Server Management
 
-                    starts the job server
+                    job server start
+                        starts the job server
 
-                job server stop
+                    job server stop
+                        stops the job server
 
-                    stops the job server
+                    job server clean
+                        removes all data in the job server and does a graceful clean, e.g deletes all scheduled jobs
 
-                job server clean
+                    job server kill
+                        kills just the job server, but does not delete the jobs from the schedulers.
+                        this command should not be called in normal circumstances.
 
-                    removes all data in the job server and does a graceful clean, e.g deletes all scheduled jobs
+                Job Management
 
-                job server kill
+                    job set GROUP
+                        sets the default job group
 
-                    kills just the job server, but does not delete the jobs from the schedulers.
-                    this command should not be called in normal circumstances.
+                    job add  GROUP TODO
+                        adds a job to a group
 
-                job set GROUP
+                    job server start
+                        starts the server
 
-                    sets the default job group
+                    job server stop
+                        stops the server
 
-                job add  GROUP TODO
+                    job stat
+                        prints a simple statistics of the jobs
 
-                    adds a job to a group
+                    job add NAMES [--host=HOST] [--option=OPTIONS] [--inputs=INPUTS] [--outputs=OUTPUTS]
+                        adds a number of jobs
 
-                job server start
+                    job add --file=filename
+                        adds the job from the file. The postfix of the file deterimnes which
+                        format it is. The formats supported are .csv, .yaml, .json
 
-                    starts the server
+                    job write --file=filename
+                        writes the jobs to a file. The postfix of the file deterimnes which
+                        format it is. Thfe formats supported are .csv, .yaml, .json
 
-                job server stop
+                    job list [--output=OUTPUT]
+                        lists the jobs in the format specified
 
-                    stops the server
+                    job find --name=NAME
+                        find the job with the given name
 
-                job stat
+                    job find --attribute=ATTRIBUTE --value=VALUE
+                        find jobs that match the given attribute.
 
-                    prints a simple statistics of the jobs
+                    job delete JOBLIST
 
-                job add NAMES [--host=HOST] [--option=OPTIONS] [--inputs=INPUTS] [--outputs=OUTPUTS]
-
-                    adds a number of jobs
-
-                job add --file=filename
-
-                    adds the job from the file. The postfix of the file deterimnes which
-                    format it is. The formats supported are .csv, .yaml, .json
-
-                job write --file=filename 
-
-                    writes the jobs to a file. The postfix of the file deterimnes which
-                    format it is. Thfe formats supported are .csv, .yaml, .json
-
-
-                job list [--output=OUTPUT]
-
-                    lists the jobs in the format specified
-
-                job find --name=NAME
-
-                    find the job with the given name
-
-                job find --attribute=ATTRIBUTE --value=VALUE
-
-                    find jobs that match the given attribute.
-
-                job delete JOBLIST
-
-                    delete the job with the specified names in the joblist.
+                        delete the job with the specified names in the joblist.
 
                 THE FOLLOWING IS NOT YET DEFINED OR MAY CHANGE
 
@@ -212,31 +200,24 @@ class cm_shell_job:
                     adds a job to the job server and returns its id
 
                 job last
-
                     returns the last job added to the server
 
                 job delete ID
-
                     deletes the job from the job server and cancels it if it is scheduled for execution.
 
                 job info ID
-
                     give the info of a job
 
                 job submit ID HOST
-
                     submits the job with the given ID to the host
 
                 job list GROUP
-
                     lists the jobs in the group
 
                 job status [ID | GROUP]
-
                     list the status of a single job or the status of all jobs in the group
 
                 job status statistics
-
                     list the statistics of the jobs in the job server (e.g. for the states)
         """
         # pprint(arguments)
