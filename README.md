@@ -1,5 +1,4 @@
-Cloudmesh PBS
-======================================================================
+# Cloudmesh PBS
 
 Cloudmesh PBS provides an easy mechanism to interface with queuing
 systems. It integrates nicely with cmd3 and therefore provides a
@@ -13,24 +12,20 @@ due to system issues or because they are long finished a record of it is maintai
 In addition to the cmd3 commandshell we provide a simple python API. A REST
 interface is being developed.
 
-Project requirements:
-----------------------------------------------------------------------
+## Project requirements:
 
 * cmd3
 * cloudmesh_base
 
-Github repository
-----------------------------------------------------------------------
+## Github repository
 
 The source code can be found at:
 
 * https://github.com/cloudmesh/pbs
 
-Installation
-----------------------------------------------------------------------
+## Installation
 
-Installation from pypi
-^^^^^^^^^^^^^^^^^^^^^^^
+### Installation from pypi
 
 (not yet supported)
 
@@ -42,8 +37,7 @@ following commands::
   pip install cloudmesh_pbs
 
 
-Development Installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Development Installation
 
 ::
 
@@ -72,11 +66,9 @@ TODO: other tests to be defined
 
 
 
-Usage
-----------------------------------------------------------------------
+### Usage
 
-Service Access Specification
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Service Access Specification
 
 When dealing with remote services we often need to customize
 interfaces and access. Instead of completely reinventing a
@@ -88,8 +80,7 @@ supercomputers that are either managed individually through queues,
 through groups of queues that are managed for multiple machines in a
 single management node.
 
-SSH Config
-~~~~~~~~~~~~~~~~~~~~~~~~
+#### SSH Config
 
 We assume that you have set up all machine in ssh config that you like
 to access with a simple keyword. For example, if you like to access the
@@ -147,8 +138,7 @@ queues attribute
 
 .. note:: queue management will be enhanced
 
-API
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### API
 
 The API to interface with the queues is straight forward and
 documented in more details here::
@@ -206,8 +196,7 @@ representation. To optain the PBS variable list as a dict we can use::
     d = pbs.variable_list(r)
 
 
-Status of the job
-~~~~~~~~~~~~~~~~~~~~~~~~
+#### Status of the job
 
 The status of a job can be obtained with::
 
@@ -217,28 +206,23 @@ It will not only include the status, but also the environment
 variables the job is executed in. 
   
 
-Termination of the Job
-~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Termination of the Job
 
 TBD
 
-Listing of all jobs
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Listing of all jobs
 
 TBD
 
-Persistent Database
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Persistent Database
 
 TBD
 
-Cloudmesh integration
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Cloudmesh integration
 
 TBD
 
-Swagger
---------------------------
+#### Swagger
 
 Often we need to document REST APIs that we write so others can look
 up their usage. Swagger is a tool that allows us to do that while
@@ -288,8 +272,7 @@ pbs code is under development, this is not yet completed, but it shows
 you a simple way on how to get a documentation from a running REST
 service via swagger.
 
-Excersises
-================
+## Excersises
 
 Do not modify server.py, but instead create server-rest.py We want to
 maintain server.py as a simple example.
@@ -320,13 +303,11 @@ D. 1. password authentication via https
 D. 2. tokenbased authentication
 
    
-Cloudmesh Job
-===============
+## Cloudmesh Job
 
 Job management
 
-Job Server
------------
+### Job Server
 
 Start job server::
 
@@ -344,8 +325,7 @@ Terminate the server::
 
     cm job server stop
 
-Job Script Management
------------------------
+### Job Script Management
 
 TODO implement
 
@@ -366,8 +346,7 @@ Delete a Script::
     cm job script delete NAMES
 
 
-Job Management
----------------
+### Job Management
 
 Add jobs::
 
